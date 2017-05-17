@@ -25,5 +25,5 @@ TEST_F(SubsidyTest, testCarlos) {
     edges[3] = {3,2,-3};
     edges[4] = {0,3,7};
 
-    ASSERT_EQ(binarySearchTax(4, 5, edges), 8); // estamos seguros de esto?
+    ASSERT_EQ(binarySearchTax(4, 5, edges), 7); // estamos seguros de esto?
 }

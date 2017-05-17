@@ -27,3 +27,14 @@ TEST_F(SubsidyTest, testCarlos) {
 
     ASSERT_EQ(binarySearchTax(4, 5, edges), 7); // estamos seguros de esto?
 }
+
+TEST_F(SubsidyTest, equalWeightEdges) {
+    edges = new edge[5];
+    edges[0] = {2,0,20};
+    edges[1] = {0,1,20};
+    edges[2] = {1,3,20};
+    edges[3] = {3,2,20};
+    edges[4] = {0,3,20};
+
+    ASSERT_EQ(binarySearchTax(4, 5, edges), 20); // estamos seguros de esto?
+}

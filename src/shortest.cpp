@@ -123,21 +123,20 @@ void dijkstra(int source, int n, int m, int* distance, const edge* edges) {
 
     // Step 5: Loop until priority queue becomes empty
     while (!pq.empty()) {
-            // The first vertex in pair is the minimum distance
-            // vertex, extract it from priority queue.
-            // vertex label is stored in second of pair (it
-            // has to be done this way to keep the vertices
-            // sorted distance (distance must be first item
-            // in pair)
-            int u = pq.top().node;
-            pq.pop();
+        // The first vertex in pair is the minimum distance
+        // vertex, extract it from priority queue.
+        // vertex label is stored in second of pair (it
+        // has to be done this way to keep the vertices
+        // sorted distance (distance must be first item
+        // in pair)
+        int u = pq.top().node;
+        pq.pop();
 
-            // 'i' is used to get all adjacent vertices of a vertex
-            std::list < adjacency >::iterator i;
-            for (i = adj[u].begin(); i != adj[u].end(); ++i) {
-                if(relax(distance, distance, i->node, u, i->weight)) {
-                    pq.push({i->node, distance[i->node]});
-                }
+        // 'i' is used to get all adjacent vertices of a vertex
+        std::list < adjacency >::iterator i;
+        for (i = adj[u].begin(); i != adj[u].end(); ++i) {
+            if(relax(distance, distance, u, i->node, i->weight)) {
+                pq.push({i->node, distance[i->node]});
             }
         }
     }

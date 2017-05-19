@@ -19,4 +19,9 @@ struct adjacency {
     int weight;
 };
 
+bool operator<(const adjacency&, const adjacency&);
+bool operator>(const adjacency&, const adjacency&);
+bool operator==(const adjacency&, const adjacency&);
+bool operator!=(const adjacency&, const adjacency&);
+
 #endif //ALGO3_TP2_GRAPH_H

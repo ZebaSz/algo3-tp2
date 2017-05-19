@@ -16,12 +16,10 @@
  * @param w the weight of the edge (u,v)
  * @return true if the distance was relaxed
  */
-bool relax(int* prev, int* cur, int u, int v, int w) {
-    if(prev[u] != INF && prev[u] + w < prev[v]) {
-        cur[v] = prev[u] + w;
+bool relax(int *distance, int u, int v, int w) {
+    if(distance[u] != INF && distance[u] + w < distance[v]) {
+        distance[v] = distance[u] + w;
         return true;
-    } else {
-        cur[v] = prev[v];
     }
     return false;
 }
@@ -30,12 +28,12 @@ bool relax(int* prev, int* cur, int u, int v, int w) {
  * Bellman-Ford-type node distance relaxation
  *
  * @param prev the list of distances before relaxing
- * @param cur the list of distances after relaxing
+ * @param distance the list of distances after relaxing
  * @param e the edge to use when relaxing
  * @return true if the distance was relaxed
  */
-bool relax(int* prev, int* cur, const edge& e) {
-    return relax(prev, cur, e.start, e.end, e.weight);
+bool relax(int *distance, const edge &e) {
+    return relax(distance, e.start, e.end, e.weight);
 }
 
 /**
@@ -50,30 +48,21 @@ bool relax(int* prev, int* cur, const edge& e) {
  * @return true if a negative cycle has been found; minimum distances otherwise
  */
 bool bellmanFord(int source, int n, int m, int* distance, const edge* edges) {
-    // Step 1: initialize distances
-    // the dist array works as 2 different arrays,
-    // allowing us to switch between them per iteraton
-    int dist[n * 2];
-
     for(int v = 0; v < n; v++) {
-        dist[v] = INF;
+        distance[v] = INF;
     }
-    dist[source] = 0;
+    distance[source] = 0;
 
     // Step 2: relax edges repeatedly
     for(int v = 0; v < n; v++) {
         for(int e = 0; e < m; e++) {
-            relax(&dist[n * (v % 2)], &dist[n * (1 - v%2)], edges[e]);
+            relax(distance, edges[e]);
         }
-    }
-
-    for(int v = 0; v < n; v++) {
-        distance[v] = dist[v + n * (n % 2)];
     }
 
     // Step 3: check for negative-weight cycles
     for(int e = 0; e < m; e++) {
-        if(relax(distance, distance, edges[e])){
+        if(relax(distance, edges[e])){
             Utils::log(DEBUG, "Found negative-weight cycle");
             return true;
         };
@@ -135,7 +124,7 @@ void dijkstra(int source, int n, int m, int* distance, const edge* edges) {
         // 'i' is used to get all adjacent vertices of a vertex
         std::list < adjacency >::iterator i;
         for (i = adj[u].begin(); i != adj[u].end(); ++i) {
-            if(relax(distance, distance, u, i->node, i->weight)) {
+            if(relax(distance, u, i->node, i->weight)) {
                 pq.push({i->node, distance[i->node]});
             }
         }

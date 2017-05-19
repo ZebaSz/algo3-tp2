@@ -12,7 +12,7 @@ protected:
     }
 };
 
-TEST_F(ShortestPathTest, testCarlos) {
+TEST_F(ShortestPathTest, dijkstra) {
     edge edges[5];
     edges[0] = {2,0,20};
     edges[1] = {0,1,6};
@@ -27,11 +27,17 @@ TEST_F(ShortestPathTest, testCarlos) {
     ASSERT_EQ(distance[2], 5);
 }
 
-TEST_F(ShortestPathTest, equalWeightEdges) {
+TEST_F(ShortestPathTest, bellmanFord) {
     edge edges[5];
     edges[0] = {2,0,20};
-    edges[1] = {0,1,20};
-    edges[2] = {1,3,20};
-    edges[3] = {3,2,20};
-    edges[4] = {0,3,20};
+    edges[1] = {0,1,6};
+    edges[2] = {1,3,8};
+    edges[3] = {3,2,-3};
+    edges[4] = {0,3,7};
+
+    int distance[4];
+
+    bellmanFord(1, 4, 5, distance, edges);
+
+    ASSERT_EQ(distance[2], 5);
 }

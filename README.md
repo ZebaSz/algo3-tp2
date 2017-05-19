@@ -1,1 +1,9 @@
-# algo3-tp2
+# Problema 1
+- Delivery
+
+# Problema 2
+- Subsidy
+
+# Problema 3
+- Reconfiguration
+

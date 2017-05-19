@@ -143,7 +143,7 @@ void dijkstra(int source, int n, int m, int* distance, const edge* edges, bool d
         // Relax with adjacency nodes
         for (i = adj[u].begin(); i != adj[u].end(); ++i) {
             if(relax(distance, u, i->node, i->weight)) {
-                std::cout << "Pusheo " << i->node << " con distancia " << distance[i->node] << std::endl;
+                Utils::log(DEBUG, "Pusheo %d con distancia %d", i->node, distance[i->node]);
                 pq.push({i->node, distance[i->node]});
             }
         }

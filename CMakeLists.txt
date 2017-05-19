@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 project(algo3_tp2)
 
 set(SOURCE_FILES
-        src/shortest.cpp src/graph.h
-        src/Utils.cpp src/subsidy.cpp
-        src/disjointSet.cpp src/disjointSet.h src/graph.cpp)
+        src/Utils.cpp src/graph.cpp
+        src/shortest.cpp src/spanning.cpp src/disjointSet.cpp
+        src/subsidy.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 

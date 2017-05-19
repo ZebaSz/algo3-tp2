@@ -10,5 +10,8 @@ struct edge {
 };
 
 bool operator<(const edge&, const edge&);
+bool operator>(const edge&, const edge&);
+bool operator==(const edge&, const edge&);
+bool operator!=(const edge&, const edge&);
 
 #endif //ALGO3_TP2_GRAPH_H

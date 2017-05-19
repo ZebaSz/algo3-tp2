@@ -91,6 +91,18 @@ bool bellmanFordWithAdjustment(int n, int m, int c, int *distance, const edge *e
     return bellmanFord(0, n, m, distance, adjustedEdges);
 }
 
+/**
+ * A generic implementation of Dijkstra shortest path algorithm for regular graph and digraph
+ *
+ * @param source the source node
+ * @param n the number of nodes
+ * @param m the number of edges
+ * @param distance the list of distances to output
+ * @param edges the list of edges
+ * @param digraph true if it is a digraph
+ *
+ */
+
 void dijkstra(int source, int n, int m, int* distance, const edge* edges, bool digraph) {
     // Step 1: create adjacency struct
     std::list <adjacency>* adj = new std::list <adjacency> [n];

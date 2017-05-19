@@ -17,14 +17,18 @@ TEST_F(ShortestPathTest, dijkstra) {
     edges[0] = {2,0,20};
     edges[1] = {0,1,6};
     edges[2] = {1,3,8};
-    edges[3] = {3,2,-3};
+    edges[3] = {3,2,3};
     edges[4] = {0,3,7};
 
     int distance[4];
 
-    dijkstra(1, 4, 5, distance, edges);
+    dijkstra(3, 4, 5, distance, edges, false);
 
-    ASSERT_EQ(distance[2], 5);
+    ASSERT_EQ(distance[0], 7);
+
+    dijkstra(3, 4, 5, distance, edges, true);
+
+    ASSERT_EQ(distance[0], 23);
 }
 
 TEST_F(ShortestPathTest, bellmanFord) {

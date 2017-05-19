@@ -91,7 +91,7 @@ bool bellmanFordWithAdjustment(int n, int m, int c, int *distance, const edge *e
     return bellmanFord(0, n, m, distance, adjustedEdges);
 }
 
-void dijkstra(int source, int n, int m, int* distance, const edge* edges) {
+void dijkstra(int source, int n, int m, int* distance, const edge* edges, bool digraph) {
     // Step 1: create adjacency struct
     std::list <adjacency>* adj = new std::list <adjacency> [n];
 
@@ -102,8 +102,15 @@ void dijkstra(int source, int n, int m, int* distance, const edge* edges) {
     distance[source] = 0;
 
     // Step 3: initialize adjacency lists
-    for(int e = 0; e < m; e++) {
-        adj[edges[e].start].push_back({edges[e].end, edges[e].weight});
+    if (digraph){
+        for(int e = 0; e < m; e++) {
+            adj[edges[e].start].push_back({edges[e].end, edges[e].weight});
+        }
+    } else {
+        for(int e = 0; e < m; e++) {
+            adj[edges[e].start].push_back({edges[e].end, edges[e].weight});
+            adj[edges[e].end].push_back({edges[e].start, edges[e].weight});
+        }
     }
 
     // Step 4: initialize priority queue
@@ -114,19 +121,21 @@ void dijkstra(int source, int n, int m, int* distance, const edge* edges) {
     while (!pq.empty()) {
         // The first vertex in pair is the minimum distance
         // vertex, extract it from priority queue.
-        // vertex label is stored in second of pair (it
-        // has to be done this way to keep the vertices
-        // sorted distance (distance must be first item
-        // in pair)
+
         int u = pq.top().node;
         pq.pop();
 
         // 'i' is used to get all adjacent vertices of a vertex
         std::list < adjacency >::iterator i;
+
+        // Relax with adjacency nodes
         for (i = adj[u].begin(); i != adj[u].end(); ++i) {
             if(relax(distance, u, i->node, i->weight)) {
+                std::cout << "Pusheo " << i->node << " con distancia " << distance[i->node] << std::endl;
                 pq.push({i->node, distance[i->node]});
             }
         }
     }
+
+    delete[] adj; 
 }

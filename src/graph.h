@@ -14,4 +14,9 @@ bool operator>(const edge&, const edge&);
 bool operator==(const edge&, const edge&);
 bool operator!=(const edge&, const edge&);
 
+struct adjacency {
+    int node;
+    int weight;
+};
+
 #endif //ALGO3_TP2_GRAPH_H

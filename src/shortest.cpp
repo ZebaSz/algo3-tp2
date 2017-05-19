@@ -1,10 +1,30 @@
 #include <climits>
 #include "shortest.h"
 #include "Utils.h"
-#include <iostream>       // std::cout
-#include <queue>          // std::priority_queue
-#include <functional>     // std::greater
-#include <list>           // std::list
+#include <iostream>
+#include <queue>
+#include <functional>
+#include <list>
+
+/**
+ * Node distance relaxation
+ *
+ * @param prev the list of distances before relaxing
+ * @param cur the list of distances after relaxing
+ * @param u the intermediary node
+ * @param v the destination node
+ * @param w the weight of the edge (u,v)
+ * @return true if the distance was relaxed
+ */
+bool relax(int* prev, int* cur, int u, int v, int w) {
+    if(prev[u] != INF && prev[u] + w < prev[v]) {
+        cur[v] = prev[u] + w;
+        return true;
+    } else {
+        cur[v] = prev[v];
+    }
+    return false;
+}
 
 /**
  * Bellman-Ford-type node distance relaxation
@@ -15,13 +35,7 @@
  * @return true if the distance was relaxed
  */
 bool relax(int* prev, int* cur, const edge& e) {
-    if(prev[e.start] != INF && prev[e.start] + e.weight < prev[e.end]) {
-        cur[e.end] = prev[e.start] + e.weight;
-        return true;
-    } else {
-        cur[e.end] = prev[e.end];
-    }
-    return false;
+    return relax(prev, cur, e.start, e.end, e.weight);
 }
 
 /**
@@ -88,11 +102,9 @@ bool bellmanFordWithAdjustment(int n, int m, int c, int *distance, const edge *e
     return bellmanFord(0, n, m, distance, adjustedEdges);
 }
 
-typedef std::pair<int, int> intPair;
-
-void dijkstra (int source, int n, int m, int* distance, const edge* edges) {
+void dijkstra(int source, int n, int m, int* distance, const edge* edges) {
     // Step 1: create adjacency struct
-    std::list <intPair>* adjacency = new std::list <intPair> [n];
+    std::list <adjacency>* adj = new std::list <adjacency> [n];
 
     // Step 2: initialize distances
     for(int v = 0; v < n; v++) {
@@ -101,32 +113,31 @@ void dijkstra (int source, int n, int m, int* distance, const edge* edges) {
     distance[source] = 0;
 
     // Step 3: initialize adjacency lists
-    for(int e = 0; e < m; e++){
-        adjacency[edges[e].start].push_back(std::make_pair(edges[e].end, edges[e].weight));
+    for(int e = 0; e < m; e++) {
+        adj[edges[e].start].push_back({edges[e].end, edges[e].weight});
     }
 
     // Step 4: initialize priority queue
-    std::priority_queue< intPair, std::vector <intPair> , std::greater<intPair> > pq;
-    pq.push(std::make_pair(0, source));
+    std::priority_queue< adjacency, std::vector <adjacency> , std::greater<adjacency> > pq;
+    pq.push({source, 0});
 
     // Step 5: Loop until priority queue becomes empty
-    while (!pq.empty())
-    {
+    while (!pq.empty()) {
             // The first vertex in pair is the minimum distance
             // vertex, extract it from priority queue.
             // vertex label is stored in second of pair (it
             // has to be done this way to keep the vertices
             // sorted distance (distance must be first item
             // in pair)
-            int u = pq.top().second;
+            int u = pq.top().node;
             pq.pop();
 
             // 'i' is used to get all adjacent vertices of a vertex
-            std::list < std::pair<int, int> >::iterator i;
-            for (i = adjacency[u].begin(); i != adjacency[u].end(); ++i)
-            {
-                //relax(prev, cur, edges)
-            pq.push(std::make_pair(distance[(*i).first], (*i).first));
+            std::list < adjacency >::iterator i;
+            for (i = adj[u].begin(); i != adj[u].end(); ++i) {
+                if(relax(distance, distance, i->node, u, i->weight)) {
+                    pq.push({i->node, distance[i->node]});
+                }
             }
         }
     }

@@ -3,7 +3,8 @@ project(algo3_tp2)
 
 set(SOURCE_FILES
         src/shortest.cpp src/graph.h
-        src/Utils.cpp src/subsidy.cpp)
+        src/Utils.cpp src/subsidy.cpp
+        src/disjointSet.cpp src/disjointSet.h src/graph.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 

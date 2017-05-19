@@ -36,5 +36,5 @@ TEST_F(SubsidyTest, equalWeightEdges) {
     edges[3] = {3,2,20};
     edges[4] = {0,3,20};
 
-    ASSERT_EQ(binarySearchTax(4, 5, edges), 20); // estamos seguros de esto?
+    ASSERT_EQ(binarySearchTax(4, 5, edges), 20);
 }

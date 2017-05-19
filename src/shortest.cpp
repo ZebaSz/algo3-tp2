@@ -5,14 +5,17 @@
 /**
  * Bellman-Ford-type node distance relaxation
  *
- * @param distance the list of distances
+ * @param prev the list of distances before relaxing
+ * @param cur the list of distances after relaxing
  * @param e the edge to use when relaxing
  * @return true if the distance was relaxed
  */
-bool relax(int* distance, const edge& e) {
-    if(distance[e.start] != INF && distance[e.start] + e.weight < distance[e.end]) {
-        distance[e.end] = distance[e.start] + e.weight;
+bool relax(int* prev, int* cur, const edge& e) {
+    if(prev[e.start] != INF && prev[e.start] + e.weight < prev[e.end]) {
+        cur[e.end] = prev[e.start] + e.weight;
         return true;
+    } else {
+        cur[e.end] = prev[e.end];
     }
     return false;
 }
@@ -30,21 +33,29 @@ bool relax(int* distance, const edge& e) {
  */
 bool bellmanFord(int source, int n, int m, int* distance, const edge* edges) {
     // Step 1: initialize distances
+    // the dist array works as 2 different arrays,
+    // allowing us to switch between them per iteraton
+    int dist[n * 2];
+
     for(int v = 0; v < n; v++) {
-        distance[v] = INF;
+        dist[v] = INF;
     }
-    distance[source] = 0;
+    dist[source] = 0;
 
     // Step 2: relax edges repeatedly
     for(int v = 0; v < n; v++) {
         for(int e = 0; e < m; e++) {
-            relax(distance, edges[e]);
+            relax(&dist[n * (v % 2)], &dist[n * (1 - v%2)], edges[e]);
         }
+    }
+
+    for(int v = 0; v < n; v++) {
+        distance[v] = dist[v + n * (n % 2)];
     }
 
     // Step 3: check for negative-weight cycles
     for(int e = 0; e < m; e++) {
-        if(relax(distance, edges[e])){
+        if(relax(distance, distance, edges[e])){
             Utils::log(DEBUG, "Found negative-weight cycle");
             return true;
         };

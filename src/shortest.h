@@ -4,7 +4,7 @@
 #include "graph.h"
 
 bool bellmanFord(int source, int n, int m, int* distance, const edge* edges);
-bool bellmanFordWithAdjustment(int n, int m, int c, int *distance, const edge *edges);
+bool bellmanFordWithAdjustment(int source, int n, int m, int c, int *distance, const edge *edges);
 
 void dijkstra(int source, int n, int m, int* distance, const edge* edges, bool digraph);
 

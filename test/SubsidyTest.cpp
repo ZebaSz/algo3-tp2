@@ -41,3 +41,36 @@ TEST_F(SubsidyTest, equalWeightEdges) {
 
     ASSERT_EQ(binarySearchTax(4, 5, edges), 20);
 }
+
+
+
+TEST_F(SubsidyTest, twoComps) {
+    edges = new edge[10];
+    edges[0] = {2,0,20};
+    edges[1] = {0,1,20};
+    edges[2] = {1,3,20};
+    edges[3] = {3,2,20};
+    edges[4] = {0,3,20};
+    edges[5] = {7,5,20};
+    edges[6] = {5,6,6};
+    edges[7] = {6,8,8};
+    edges[8] = {8,7,-3};
+    edges[9] = {5,8,7};
+    ASSERT_EQ(binarySearchTax(9, 10, edges), 7);
+
+    delete edges;
+
+    edges = new edge[10];
+    edges[0] = {2,0,5};
+    edges[1] = {0,1,5};
+    edges[2] = {1,3,5};
+    edges[3] = {3,2,5};
+    edges[4] = {0,3,5};
+    edges[5] = {7,5,20};
+    edges[6] = {5,6,6};
+    edges[7] = {6,8,8};
+    edges[8] = {8,7,-3};
+    edges[9] = {5,8,7};
+    ASSERT_EQ(binarySearchTax(9, 10, edges), 5);
+
+ }

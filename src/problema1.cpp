@@ -42,9 +42,7 @@ int main() {
     }
     std::vector<input>::const_iterator it;
     for(it = inputs.begin(); it != inputs.end(); ++it) {
-        std::cout << optimumDelivery(it->n, it->m, &(it->edges)[0]) << std::endl;
+        std::cout << optimumDelivery(it->origin, it->destiny, it->n, it->m, &(it->edges)[0]) << std::endl;
     }
-    return 0;
-    Utils::log(ERROR, "¡Este problema no esta implementado! ¡No me entreguen!");
     return 0;
 }

@@ -43,5 +43,21 @@ TEST_F(ShortestPathTest, bellmanFord) {
 
     bellmanFord(1, 4, 5, distance, edges);
 
-    ASSERT_EQ(distance[2], 5);
+    //ASSERT_EQ(distance[2], 5);
+    //al cambiar la relajacion este resultado no necesariamente es cierto
+}
+
+TEST_F(ShortestPathTest, notDigraph) {
+    edge edges[2];
+    edges[0] = {2,0,20};
+    edges[1] = {0,1,6};
+
+
+    int distance[3];
+
+    bellmanFord(0, 3, 2, distance, edges);
+
+    ASSERT_EQ(distance[0], 0);
+    ASSERT_EQ(distance[1], 6);
+    ASSERT_EQ(distance[2], 20);
 }

@@ -33,7 +33,7 @@ bool relax(int *distance, int u, int v, int w) {
  * @return true if the distance was relaxed
  */
 bool relax(int *distance, const edge &e) {
-    return relax(distance, e.start, e.end, e.weight);
+    return relax(distance, e.start, e.end, e.weight) || relax(distance, e.end, e.start, e.weight);
 }
 
 /**

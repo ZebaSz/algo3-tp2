@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+ #include <gtest/gtest.h>
 #include "../src/disjointSet.h"
 
 class DisjointSetTest : public ::testing::Test {
@@ -65,3 +65,17 @@ TEST_F(DisjointSetTest, joinTransitive) {
         }
     }
 }
+
+ TEST_F(DisjointSetTest, representant) {
+     ds = new disjointSet(7);
+     ds->join(0, 1);
+     ds->join(2, 3);
+     ds->join(1, 2);
+     ds->join(4,5);
+     std::vector<int> v = {3,5,6};
+     std::vector<int> r = ds->representants();
+     ASSERT_TRUE(r.size() == v.size() );
+     for (int i = 0; i < r.size(); ++i) {
+         ASSERT_TRUE(r[i] == v[i]);
+     }
+ }

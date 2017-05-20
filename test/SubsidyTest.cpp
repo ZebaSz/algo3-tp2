@@ -25,8 +25,9 @@ TEST_F(SubsidyTest, testCarlos) {
     edges[3] = {3,2,-3};
     edges[4] = {0,3,7};
 
-    //ASSERT_EQ(binarySearchTax(4, 5, edges), 7);
-    //no estamos seguros de este resultado a causa del cambio en la relajacion dirigida
+
+    ASSERT_EQ(binarySearchTax(4, 5, edges),7);
+
 
 }
 

@@ -1,5 +1,7 @@
 #include "delivery.h"
 #include "shortest.h"
+#include <climits>
+
 
 void addEdgeToPremiumGraph(int start, int end, int p, int d, int k, int n, std::vector<edge> edges){
     //Vamos a agregar el eje a todos los niveles y si es premium lo conectamos con el nivel de arriba
@@ -21,6 +23,14 @@ void addEdgeToPremiumGraph(int start, int end, int p, int d, int k, int n, std::
     }
 }
 
-int optimumDelivery(int origin, int destiny, int n, int m, const edge* edges){
-    //TODO: Pasarle dijkstra, quedarse con el mejor valor
+int optimumDelivery(int origin, int destiny, int n, int m, int k, const edge* edges){
+    int distance[k*n];
+    dijkstra(origin, n, m, distance, edges, true);
+    int answer = INF;
+    for(int i = 0; i < k; i++){
+        if (distance[destiny + i*n] < answer){
+            answer = distance[destiny + i*n];
+        }
+    }
+    return answer;
 }

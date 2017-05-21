@@ -15,7 +15,7 @@ void addEdgeToPremiumGraph(int start, int end, int p, int d, int k, int n, std::
             edges->push_back({c2, c1 + n, d});//Como las rutas son doblemano y nosotros estamos representandolo con un digrafo hay que hacer ambos sentidos
         }
     } else {
-        for(int c = 0; c < k; c++){
+        for(int c = 0; c < k + 1; c++){
             int c1 = start + c*n;
             int c2 = end + c*n;
             edges->push_back({c1, c2, d});//Si la ruta no es premium conectamos ida y vuelta los del mismo nivel
@@ -37,5 +37,9 @@ int optimumDelivery(int origin, int destiny, int n, int m, int k, const edge* ed
             answer = distance[destiny + i * n];
         }
     }
-    return answer;
+    if (answer == INF){
+        return -1;
+    } else {
+        return answer;
+    }
 }

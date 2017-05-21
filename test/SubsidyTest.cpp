@@ -58,7 +58,7 @@ TEST_F(SubsidyTest, twoComps) {
     edges[9] = {5,8,7};
     ASSERT_EQ(binarySearchTax(9, 10, edges), 7);
 
-    delete edges;
+    delete[] edges;
 
     edges = new edge[10];
     edges[0] = {2,0,5};
@@ -72,5 +72,4 @@ TEST_F(SubsidyTest, twoComps) {
     edges[8] = {8,7,-3};
     edges[9] = {5,8,7};
     ASSERT_EQ(binarySearchTax(9, 10, edges), 5);
-
  }

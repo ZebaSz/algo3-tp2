@@ -4,7 +4,7 @@ project(algo3_tp2)
 set(SOURCE_FILES
         src/Utils.cpp src/graph.cpp
         src/shortest.cpp src/spanning.cpp src/disjointSet.cpp
-        src/subsidy.cpp src/reconfiguration.cpp src/delivery.cpp)
+        src/subsidy.cpp src/reconfiguration.cpp src/delivery.cpp data/grafGen.cpp data/grafGen.h)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -pedantic")
 
@@ -19,4 +19,4 @@ target_link_libraries (problema3 algo3-tp2-base)
 
 add_subdirectory(test)
 
-#add_subdirectory(data)
+add_subdirectory(data)

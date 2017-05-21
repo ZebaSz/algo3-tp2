@@ -18,20 +18,23 @@ void addEdgeToPremiumGraph(int start, int end, int p, int d, int k, int n, std::
         for(int c = 0; c < k; c++){
             int c1 = start + c*n;
             int c2 = end + c*n;
-            edges->push_back({c1, c2, d});
+            edges->push_back({c1, c2, d});//Si la ruta no es premium conectamos ida y vuelta los del mismo nivel
             edges->push_back({c2, c1, d});
         }
     }
 }
 
-int optimumDelivery(int origin, int destiny, int n, int m, int k, const edge* edges){
-    int distance[(k+1)*n];
-    dijkstra(origin, (k+1)*n, m*k, distance, edges, true);
+
+int optimumDelivery(int origin, int destiny, int n, int m, int k, const edge* edges) {
+    int premiumGraphNodes = (k + 1) * n;
+    int premiumGraphEdges = m * k * 2;
+    int distance[(k + 1) * n];
+    dijkstra(origin, premiumGraphNodes, premiumGraphEdges, distance, edges, true);
     int answer = INF;
-    for(int i = 0; i < k+1; i++){
-        Utils::log(DELIVERY, "Resultado posible %d", distance[destiny + i*n]);
-        if (distance[destiny + i*n] < answer){
-            answer = distance[destiny + i*n];
+    for (int i = 0; i <= k; i++) {
+        Utils::log(DELIVERY, "Resultado posible %d", distance[destiny + i * n]);
+        if (distance[destiny + i * n] < answer) {
+            answer = distance[destiny + i * n];
         }
     }
     return answer;

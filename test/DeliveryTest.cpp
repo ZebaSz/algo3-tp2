@@ -4,45 +4,24 @@
 
 class DeliveryTest : public ::testing::Test {
 protected:
-    edge* edges;
-    struct input {
-        int n;
-        int m;
-        int origin;
-        int destiny;
-        int k;
-        int countPremium;
-        std::vector<edge> vEdges;
-    };
-
-    virtual void SetUp() {
-        edges = NULL;
-    }
-
-    virtual void TearDown() {
-        if(edges != NULL) {
-            delete[] edges;
-        }
-    }
+    int n;
+    int origin;
+    int destination;
+    int k;
+    edgeList edges;
 };
 
 TEST_F(DeliveryTest, fewEdges) {
-    input in;
-    in.n = 4;
-    in.m = 6;
-    in.origin = 2;
-    in.destiny = 0;
-    in.k = 1;
-    in.countPremium = 0;
-    addEdgeToPremiumGraph(2, 0, 0, 20, in.k, in.n, &in.vEdges);
-    addEdgeToPremiumGraph(1, 0, 1, 6, in.k, in.n, &in.vEdges);
-    addEdgeToPremiumGraph(1, 3, 0, 8, in.k, in.n, &in.vEdges);
-    addEdgeToPremiumGraph(0, 3, 0, 7, in.k, in.n, &in.vEdges);
-    addEdgeToPremiumGraph(2, 3, 1, 2, in.k, in.n, &in.vEdges);
-    addEdgeToPremiumGraph(2, 1, 1, 3, in.k, in.n, &in.vEdges);
-    in.countPremium = 3;
+    n = 4;
+    origin = 2;
+    destination = 0;
+    k = 1;
+    addEdgeToPremiumGraph(2, 0, 0, 20, k, n, edges);
+    addEdgeToPremiumGraph(1, 0, 1, 6, k, n, edges);
+    addEdgeToPremiumGraph(1, 3, 0, 8, k, n, edges);
+    addEdgeToPremiumGraph(0, 3, 0, 7, k, n, edges);
+    addEdgeToPremiumGraph(2, 3, 1, 2, k, n, edges);
+    addEdgeToPremiumGraph(2, 1, 1, 3, k, n, edges);
 
-    ASSERT_EQ(optimumDelivery(in.origin, in.destiny, in.n, in.countPremium, in.m, in.k, &(in.vEdges[0])), 9);
-
-
+    ASSERT_EQ(optimumDelivery(origin, destination, n, k, edges), 9);
 }

@@ -13,7 +13,7 @@
  * @param edges the list of edges
  * @return a minimum spanning tree represented by a set of edges
  */
-std::set<edge> kruskal(int n, int& p, const std::vector<edge>& edges);
+std::set<edge> kruskal(int n, int& p, const edgeList& edges);
 
 /**
  * An implementation of Kruskal's minimum spanning tree algorithm
@@ -25,7 +25,7 @@ std::set<edge> kruskal(int n, int& p, const std::vector<edge>& edges);
  * @param min if true, the result will be a min spanning tree, or a max spanning tree otherwise
  * @return a minimum (or maximum) spanning tree represented by a set of edges
  */
-std::set<edge> kruskal(int n, int& p, const std::vector<edge>& edges, bool min);
+std::set<edge> kruskal(int n, int& p, const edgeList& edges, bool min);
 
 /**
  * An implementation of Kruskal's minimum spanning tree algorithm
@@ -37,6 +37,6 @@ std::set<edge> kruskal(int n, int& p, const std::vector<edge>& edges, bool min);
  * @param min if true, the result will be a min spanning tree, or a max spanning tree otherwise
  * @return a minimum (or maximum) spanning tree represented by a set of edges
  */
-std::set<edge> kruskal(disjointSet& ds, int& p, const std::vector<edge>& edges, bool min);
+std::set<edge> kruskal(disjointSet& ds, int& p, const edgeList& edges, bool min);
 
 #endif //ALGO3_TP2_SPANNING_H

@@ -6,7 +6,7 @@ class KruskalTest : public ::testing::Test {
 protected:
     int p;
     int n;
-    std::vector<edge> edges;
+    edgeList edges;
 
     virtual void SetUp() {
     }
@@ -81,6 +81,8 @@ TEST_F(KruskalTest, k4Ds) {
     edges.push_back({1,2,9});
     edges.push_back({1,3,10});
     edges.push_back({2,3,11});
+
+    n = 4;
 
     disjointSet ds(n);
     ds.join(1, 2);

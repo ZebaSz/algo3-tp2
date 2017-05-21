@@ -1,6 +1,8 @@
 #ifndef ALGO3_TP2_GRAPH_H
 #define ALGO3_TP2_GRAPH_H
 
+#include <vector>
+
 #define INF INT_MAX
 
 struct edge {
@@ -8,6 +10,8 @@ struct edge {
     int end;
     int weight;
 };
+
+typedef std::vector<edge> edgeList;
 
 bool operator<(const edge&, const edge&);
 bool operator>(const edge&, const edge&);

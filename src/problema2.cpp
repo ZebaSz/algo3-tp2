@@ -1,14 +1,10 @@
-#include <stdio.h>
 #include <iostream>
-#include <vector>
-#include "Utils.h"
-#include "graph.h"
 #include "subsidy.h"
 
 struct input {
     int n;
     int m;
-    std::vector<edge> edges;
+    edgeList edges;
 };
 
 int main() {
@@ -35,7 +31,7 @@ int main() {
     }
     std::vector<input>::const_iterator it;
     for(it = inputs.begin(); it != inputs.end(); ++it) {
-        std::cout << binarySearchTax(it->n, it->m, &(it->edges)[0]) << std::endl;
+        std::cout << binarySearchTax(it->n, it->m, it->edges) << std::endl;
     }
     return 0;
 }

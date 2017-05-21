@@ -3,18 +3,18 @@
 #include <cstddef>
 #include "spanning.h"
 
-std::set<edge> kruskal(int n, int& p, const std::vector<edge>& edges) {
+std::set<edge> kruskal(int n, int& p, const edgeList& edges) {
     return kruskal(n, p, edges, true);
 }
 
-std::set<edge> kruskal(int n, int& p, const std::vector<edge>& edges, bool min) {
+std::set<edge> kruskal(int n, int& p, const edgeList& edges, bool min) {
     disjointSet ds(n);
     return kruskal(ds, p, edges, min);
 }
 
-std::set<edge> kruskal(disjointSet &ds, int& p, const std::vector<edge>& edges, bool min) {
+std::set<edge> kruskal(disjointSet &ds, int& p, const edgeList& edges, bool min) {
     std::set<edge> tree;
-    std::vector<edge> sortedEdges(edges);
+    edgeList sortedEdges(edges);
     if(min) {
         std::sort(sortedEdges.begin(), sortedEdges.end());
     } else {

@@ -1,18 +1,14 @@
-#include <stdio.h>
 #include <iostream>
-#include <vector>
-#include "Utils.h"
-#include "graph.h"
 #include "delivery.h"
 
 struct input {
     int n;
     int m;
     int origin;
-    int destiny;
+    int destination;
     int k;
     int countPremium;
-    std::vector<edge> edges;
+    edgeList edges;
 };
 
 int main() {
@@ -29,7 +25,7 @@ int main() {
             in.n = n;
             in.m = m;
             in.origin = origin;
-            in.destiny = destiny;
+            in.destination = destiny;
             in.k = k;
             in.countPremium = 0;
             for(int i = 0; i < m; ++i) {
@@ -38,14 +34,14 @@ int main() {
                 --c1;
                 --c2;
                 if (p == 1) in.countPremium++;
-                addEdgeToPremiumGraph(c1, c2, p, d, k, n, &in.edges);
+                addEdgeToPremiumGraph(c1, c2, p, d, k, n, in.edges);
             }
             inputs.push_back(in);
         }
     }
     std::vector<input>::const_iterator it;
     for(it = inputs.begin(); it != inputs.end(); ++it) {
-        std::cout << optimumDelivery(it->origin, it->destiny, it->n, it->countPremium, it->m, it->k, &(it->edges)[0]) << std::endl;
+        std::cout << optimumDelivery(it->origin, it->destination, it->n, it->k, it->edges) << std::endl;
     }
     return 0;
 }

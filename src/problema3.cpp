@@ -1,12 +1,10 @@
-#include <vector>
 #include <iostream>
-#include "graph.h"
 #include "reconfiguration.h"
 
 struct input {
     int n;
-    std::vector<edge> existing;
-    std::vector<edge> potential;
+    edgeList existing;
+    edgeList potential;
 };
 
 int main() {

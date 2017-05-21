@@ -1,10 +1,9 @@
 #include <climits>
+#include <list>
+#include <functional>
+#include <queue>
 #include "shortest.h"
 #include "Utils.h"
-#include <iostream>
-#include <queue>
-#include <functional>
-#include <list>
 
 /**
  * Node distance relaxation
@@ -41,13 +40,12 @@ bool relax(int *distance, const edge &e) {
  *
  * @param source the source node
  * @param n the number of nodes
- * @param m the number of edges
  * @param distance the list of distances to output
  * @param edges the list of edges
  *
  * @return true if a negative cycle has been found; minimum distances otherwise
  */
-bool bellmanFord(int source, int n, int m, int* distance, const edge* edges) {
+bool bellmanFord(int source, int n, int *distance, const edgeList &edges) {
     for(int v = 0; v < n; v++) {
         distance[v] = INF;
     }
@@ -55,14 +53,16 @@ bool bellmanFord(int source, int n, int m, int* distance, const edge* edges) {
 
     // Step 2: relax edges repeatedly
     for(int v = 0; v < n; v++) {
-        for(int e = 0; e < m; e++) {
-            relax(distance, edges[e]);
+        edgeList::const_iterator it;
+        for(it = edges.begin(); it != edges.end(); ++it){
+            relax(distance, *it);
         }
     }
 
     // Step 3: check for negative-weight cycles
-    for(int e = 0; e < m; e++) {
-        if(relax(distance, edges[e])){
+    edgeList::const_iterator it;
+    for(it = edges.begin(); it != edges.end(); ++it){
+        if(relax(distance, *it)){
             Utils::log(DEBUG, "Found negative-weight cycle");
             return true;
         };
@@ -75,21 +75,19 @@ bool bellmanFord(int source, int n, int m, int* distance, const edge* edges) {
  * with an extra adjustment parameter
  *
  * @param n the number of nodes
- * @param m the number of edges
  * @param c a number that will be subtracted from all weights
  * @param distance the list of distances to output
  * @param edges the list of edges
  *
  * @return true if a negative cycle has been found; minimum distances otherwise
  */
-bool bellmanFordWithAdjustment(int source, int n, int m, int c, int *distance, const edge *edges) {
-    edge* adjustedEdges = new edge[m];
-    for(int e = 0; e < m; e++){
-        adjustedEdges[e] = edges[e];
-        adjustedEdges[e].weight -= c;
+bool bellmanFordWithAdjustment(int source, int n, int c, int *distance, const edgeList &edges) {
+    edgeList adjustedEdges(edges.begin(), edges.end());
+    edgeList::iterator it;
+    for(it = adjustedEdges.begin(); it != adjustedEdges.end(); ++it){
+        it->weight -= c;
     }
-    bool res = bellmanFord(source, n, m, distance, adjustedEdges);
-    delete[] adjustedEdges;
+    bool res = bellmanFord(source, n, distance, adjustedEdges);
     return res;
 }
 
@@ -105,9 +103,9 @@ bool bellmanFordWithAdjustment(int source, int n, int m, int c, int *distance, c
  *
  */
 
-void dijkstra(int source, int n, int m, int* distance, const edge* edges, bool digraph) {
+void dijkstra(int source, int n, int *distance, const edgeList &edges, bool digraph) {
     // Step 1: create adjacency struct
-    std::list <adjacency>* adj = new std::list <adjacency> [n];
+    std::list<adjacency>* adj = new std::list<adjacency>[n];
 
     // Step 2: initialize distances
     for(int v = 0; v < n; v++) {
@@ -117,13 +115,15 @@ void dijkstra(int source, int n, int m, int* distance, const edge* edges, bool d
 
     // Step 3: initialize adjacency lists
     if (digraph){
-        for(int e = 0; e < m; e++) {
-            adj[edges[e].start].push_back({edges[e].end, edges[e].weight});
+        edgeList::const_iterator it;
+        for(it = edges.begin(); it != edges.end(); ++it) {
+            adj[it->start].push_back({it->end, it->weight});
         }
     } else {
-        for(int e = 0; e < m; e++) {
-            adj[edges[e].start].push_back({edges[e].end, edges[e].weight});
-            adj[edges[e].end].push_back({edges[e].start, edges[e].weight});
+        edgeList::const_iterator it;
+        for(it = edges.begin(); it != edges.end(); ++it) {
+            adj[it->start].push_back({it->end, it->weight});
+            adj[it->end].push_back({it->start, it->weight});
         }
     }
 

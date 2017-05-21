@@ -6,8 +6,8 @@
 class ReconfigurationTest : public ::testing::Test {
 protected:
     int p;
-    std::vector<edge> existing;
-    std::vector<edge> potential;
+    edgeList existing;
+    edgeList potential;
 };
 
 TEST_F(ReconfigurationTest, isTree) {

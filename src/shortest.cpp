@@ -83,12 +83,14 @@ bool bellmanFord(int source, int n, int m, int* distance, const edge* edges) {
  * @return true if a negative cycle has been found; minimum distances otherwise
  */
 bool bellmanFordWithAdjustment(int source, int n, int m, int c, int *distance, const edge *edges) {
-    edge adjustedEdges[m];
+    edge* adjustedEdges = new edge[m];
     for(int e = 0; e < m; e++){
         adjustedEdges[e] = edges[e];
         adjustedEdges[e].weight -= c;
     }
-    return bellmanFord(source, n, m, distance, adjustedEdges);
+    bool res = bellmanFord(source, n, m, distance, adjustedEdges);
+    delete[] adjustedEdges;
+    return res;
 }
 
 /**

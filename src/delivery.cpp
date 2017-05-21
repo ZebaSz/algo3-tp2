@@ -24,15 +24,16 @@ void addEdgeToPremiumGraph(int start, int end, int p, int d, int k, int n, std::
 int optimumDelivery(int origin, int destiny, int n, int m, int k, const edge* edges) {
     int premiumGraphNodes = (k + 1) * n;
     int premiumGraphEdges = m * k * 2;
-    int distance[(k + 1) * n];
+    int* distance = new int[(k + 1) * n];
     dijkstra(origin, premiumGraphNodes, premiumGraphEdges, distance, edges, true);
     int answer = INF;
     for (int i = 0; i <= k; i++) {
-        Utils::log(DELIVERY, "Resultado posible %d", distance[destiny + i * n]);
+        Utils::log(INFO, "Resultado posible %d", distance[destiny + i * n]);
         if (distance[destiny + i * n] < answer) {
             answer = distance[destiny + i * n];
         }
     }
+    delete[] distance;
     if (answer == INF){
         return -1;
     } else {

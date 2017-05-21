@@ -1,7 +1,7 @@
 #include <cstddef>
 #include "disjointSet.h"
 
-disjointSet::disjointSet(int n) : cardinal(n),count(n), id(NULL) {
+disjointSet::disjointSet(int n) : cardinal(n), count(n), id(NULL) {
     id = new int[n];
     for(int i = 0; i < n; ++i) {
         id[i] = i;
@@ -42,7 +42,7 @@ std::vector<int> disjointSet::representants() {
     std::vector<int> res;
     for (int i = 0; i < cardinal; ++i) {
         bool found = false;
-        for(int j = 0; j < res.size(); ++j){
+        for(size_t j = 0; j < res.size(); ++j){
             if(find(i) == res[j]){
                 found = true;
             }

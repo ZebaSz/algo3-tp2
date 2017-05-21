@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstddef>
 #include "subsidy.h"
 #include "shortest.h"
 #include "disjointSet.h"
@@ -30,7 +31,7 @@ bool adjustedBellmanFordToEachComponent(int n, int m, int c, const edge *edges){
     }
     std::vector<int> r = ds.representants();
     bool detected = false;
-    for(int i = 0; i < r.size(); i++){
+    for(size_t i = 0; i < r.size(); i++){
         int distance[n];
         if(bellmanFordWithAdjustment(r[i], n, m, c, distance, edges)) {
             detected = true;

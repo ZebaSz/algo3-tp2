@@ -11,7 +11,7 @@ struct input {
     int origin;
     int destiny;
     int k;
-    int countEdges;
+    int countPremium;
     std::vector<edge> edges;
 };
 
@@ -31,12 +31,13 @@ int main() {
             in.origin = origin;
             in.destiny = destiny;
             in.k = k;
-            in.countEdges = 0;
+            in.countPremium = 0;
             for(int i = 0; i < m; ++i) {
                 int c1, c2, p, d;
                 std::cin >> c1 >> c2 >> p >> d;
                 --c1;
                 --c2;
+                if (p == 1) in.countPremium++;
                 addEdgeToPremiumGraph(c1, c2, p, d, k, n, &in.edges);
             }
             inputs.push_back(in);
@@ -44,7 +45,7 @@ int main() {
     }
     std::vector<input>::const_iterator it;
     for(it = inputs.begin(); it != inputs.end(); ++it) {
-        std::cout << optimumDelivery(it->origin, it->destiny, it->countEdges, it->m, it->k, &(it->edges)[0]) << std::endl;
+        std::cout << optimumDelivery(it->origin, it->destiny, it->n, it->countPremium, it->m, it->k, &(it->edges)[0]) << std::endl;
     }
     return 0;
 }

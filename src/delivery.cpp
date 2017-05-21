@@ -1,6 +1,7 @@
 #include "delivery.h"
 #include "shortest.h"
 #include <climits>
+#include "Utils.h"
 
 
 void addEdgeToPremiumGraph(int start, int end, int p, int d, int k, int n, std::vector<edge>* edges){
@@ -24,10 +25,11 @@ void addEdgeToPremiumGraph(int start, int end, int p, int d, int k, int n, std::
 }
 
 int optimumDelivery(int origin, int destiny, int n, int m, int k, const edge* edges){
-    int distance[k*n];
-    dijkstra(origin, k*n, m*k, distance, edges, true); //TODO: Le estamos pasando mal los parámetros a Dijkstra
+    int distance[(k+1)*n];
+    dijkstra(origin, (k+1)*n, m*k, distance, edges, true);
     int answer = INF;
-    for(int i = 0; i < k; i++){
+    for(int i = 0; i < k+1; i++){
+        Utils::log(DELIVERY, "Resultado posible %d", distance[destiny + i*n]);
         if (distance[destiny + i*n] < answer){
             answer = distance[destiny + i*n];
         }

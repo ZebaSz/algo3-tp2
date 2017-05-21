@@ -2,9 +2,9 @@
 #define ALGO3_TP2_UTILS_H
 
 typedef int logLevel;
-enum LOG_LEVEL {TRACE, DEBUG, INFO, WARN, ERROR, OFF};
+enum LOG_LEVEL {TRACE, DEBUG, DELIVERY, INFO, WARN, ERROR, OFF};
 
-#define CUR_LOG_LEVEL DEBUG
+#define CUR_LOG_LEVEL DELIVERY
 
 namespace Utils {
     void log(logLevel level, const char* format, ...);

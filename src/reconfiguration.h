@@ -5,6 +5,6 @@
 #include <set>
 #include "graph.h"
 
-std::set<edge> rebuildRoads(int n, const std::vector<edge>& existing, const std::vector<edge>& potential);
+std::set<edge> rebuildRoads(int n, int& p, const std::vector<edge>& existing, const std::vector<edge>& potential);
 
 #endif //ALGO3_TP2_RECONFIGURATION_H

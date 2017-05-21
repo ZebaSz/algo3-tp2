@@ -1,8 +1,7 @@
-#include <gtest/gtest.h>
-#include "../src/graph.h"
+#include "AbstractGraphTest.h"
 #include "../src/subsidy.h"
 
-class SubsidyTest : public ::testing::Test {
+class SubsidyTest : public AbstractGraphTest {
 protected:
     edgeList edges;
 };

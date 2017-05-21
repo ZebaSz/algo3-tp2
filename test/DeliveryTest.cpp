@@ -1,8 +1,7 @@
-#include <gtest/gtest.h>
-#include "../src/graph.h"
+#include "AbstractGraphTest.h"
 #include "../src/delivery.h"
 
-class DeliveryTest : public ::testing::Test {
+class DeliveryTest : public AbstractGraphTest {
 protected:
     int n;
     int origin;

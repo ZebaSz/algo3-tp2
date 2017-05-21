@@ -7,9 +7,6 @@ protected:
     int p;
     int n;
     edgeList edges;
-
-    virtual void SetUp() {
-    }
 };
 
 TEST_F(KruskalTest, treeSize) {

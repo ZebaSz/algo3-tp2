@@ -1,9 +1,7 @@
-#include <gtest/gtest.h>
-#include "../src/graph.h"
-#include "../src/shortest.h"
+#include "AbstractGraphTest.h"
 #include "../src/reconfiguration.h"
 
-class ReconfigurationTest : public ::testing::Test {
+class ReconfigurationTest : public AbstractGraphTest {
 protected:
     int p;
     edgeList existing;

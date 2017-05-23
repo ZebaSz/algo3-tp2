@@ -53,3 +53,17 @@ void genRandomTree(int n, edgeList &edges, edgeList &tree, int maxW) {
     kruskaLists(n, edges, tree);
 }
 
+void genConex(int n, int m, edgeList &tree, int maxW) {
+    // n-1 < m < n * (n-1)
+    edgeList edges;
+    genRandomTree(n, edges, tree, maxW);
+    edgeList::const_iterator it = edges.begin();
+    int edgesToAdd = m -(n-1);
+    edge tempEdge;
+    for (int i = 0; i < edgesToAdd; ++i) {
+        tempEdge = *it;
+        it = edges.erase(it);
+        tree.push_back(tempEdge);
+    }
+}
+

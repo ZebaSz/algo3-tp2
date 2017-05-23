@@ -1,10 +1,4 @@
-//
-// Created by catofthecannals on 21/05/17.
-//
-
 #include "grafGen.h"
-
-
 
 void genKGraph(int n, edgeList &edges, int maxW, bool digraph){
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();

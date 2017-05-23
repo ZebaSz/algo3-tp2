@@ -34,3 +34,20 @@ std::set<edge> kruskal(disjointSet &ds, int& p, const edgeList& edges, bool min)
     return tree;
 }
 
+void kruskaLists(int n, edgeList &edges, edgeList &tree) {
+    disjointSet ds(n);
+    std::sort(edges.begin(), edges.end());
+    edgeList::const_iterator it;
+    for(it = edges.begin(); it != edges.end(); ){
+        int u = it->start;
+        int v = it->end;
+        if(!ds.connected(u, v)){
+            tree.push_back(*it);
+            ds.join(u, v);
+            it = edges.erase(it);
+        } else {
+            it++;
+        }
+    }
+}
+

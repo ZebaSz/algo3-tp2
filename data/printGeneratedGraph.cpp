@@ -8,11 +8,19 @@ int main(){
     int n = 10;
     int m = 30;
     edgeList edges;
+    edgeList tree;
     int maxW = 20;
     bool digraph = true;
-    genRandomGraph(n, m, edges, maxW, digraph);
-
+    //genRandomGraph(n, m, edges, maxW, digraph);
+    genRandomTree(n, edges, tree, maxW);
+    /*
     for (int i = 0; i < edges.size(); ++i) {
         std::cout << edges[i].start << "," << edges[i].end << "," << edges[i].weight << std::endl;
     }
+    */
+
+    for (int i = 0; i < tree.size(); ++i) {
+        std::cout << tree[i].start << "," << tree[i].end << "," << tree[i].weight << std::endl;
+    }
+
 }

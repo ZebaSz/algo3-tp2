@@ -5,6 +5,7 @@
 #include "grafGen.h"
 
 
+
 void genKGraph(int n, edgeList &edges, int maxW, bool digraph){
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator (seed);
@@ -45,5 +46,10 @@ void genRandomGraph(int n, int m, edgeList &edges, int maxW, bool digraph) {
         edges.pop_back();
     }
 
+}
+
+void genRandomTree(int n, edgeList &edges, edgeList &tree, int maxW) {
+    genKGraph(n, edges, maxW, false);
+    kruskaLists(n, edges, tree);
 }
 

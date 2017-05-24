@@ -162,4 +162,4 @@ void dijkstra(int source, int n, int *distance, const edgeList &edges, bool digr
         delete[] adjacencyMatrix[i];
     }
     delete[] adjacencyMatrix;
-} //FIXME PIERDO MEMORIA SOY UNA LECHUGA AH ERA UN DIJKSTRA CERATI
+}

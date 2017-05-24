@@ -16,7 +16,7 @@
  * @return true if the distance was relaxed
  */
 bool relax(int *distance, int u, int v, int w) {
-    if(distance[u] != INF && distance[u] + w < distance[v]) {
+    if(distance[u] != INF && w != INF && distance[u] + w < distance[v]) {
         distance[v] = distance[u] + w;
         return true;
     }
@@ -104,8 +104,16 @@ bool bellmanFordWithAdjustment(int source, int n, int c, int *distance, const ed
  */
 
 void dijkstra(int source, int n, int *distance, const edgeList &edges, bool digraph) {
-    // Step 1: create adjacency struct
-    std::list<adjacency>* adj = new std::list<adjacency>[n];
+
+    // Step 1: create adjacency matrix and boolean struct
+    bool* visiteNodes = new bool[n];
+    int** adjacencyMatrix = new int*[n];
+    for (int i = 0; i < n; i++){
+        adjacencyMatrix[i] = new int[n];
+        for (int j = 0; j < n; j++){
+            adjacencyMatrix[i][j] = INF;
+        }
+    }
 
     // Step 2: initialize distances
     for(int v = 0; v < n; v++) {
@@ -113,43 +121,40 @@ void dijkstra(int source, int n, int *distance, const edgeList &edges, bool digr
     }
     distance[source] = 0;
 
-    // Step 3: initialize adjacency lists
+    // Step 3: initialize adjacency matrix values
     if (digraph){
         edgeList::const_iterator it;
         for(it = edges.begin(); it != edges.end(); ++it) {
-            adj[it->start].push_back({it->end, it->weight});
+            adjacencyMatrix[it->start][it->end] = it->weight;
         }
     } else {
         edgeList::const_iterator it;
         for(it = edges.begin(); it != edges.end(); ++it) {
-            adj[it->start].push_back({it->end, it->weight});
-            adj[it->end].push_back({it->start, it->weight});
+            adjacencyMatrix[it->start][it->end] = it->weight;
+            adjacencyMatrix[it->end][it->start] = it->weight;
         }
     }
 
-    // Step 4: initialize priority queue
-    std::priority_queue< adjacency, std::vector <adjacency> , std::greater<adjacency> > pq;
-    pq.push({source, 0});
-
-    // Step 5: Loop until priority queue becomes empty
-    while (!pq.empty()) {
+    // Step 4: Loop until every node has been visited
+    int nextVisitedNode = source;
+    while (nextVisitedNode != INF) {
+        visiteNodes[nextVisitedNode] = true;
+        int myNode = nextVisitedNode;
+        nextVisitedNode = INF;
         // The first vertex in pair is the minimum distance
         // vertex, extract it from priority queue.
-
-        int u = pq.top().node;
-        pq.pop();
-
-        // 'i' is used to get all adjacent vertices of a vertex
-        std::list < adjacency >::iterator i;
-
-        // Relax with adjacency nodes
-        for (i = adj[u].begin(); i != adj[u].end(); ++i) {
-            if(relax(distance, u, i->node, i->weight)) {
-                Utils::log(DEBUG, "Pusheo %d con distancia %d", i->node, distance[i->node]);
-                pq.push({i->node, distance[i->node]});
+        for (int v = 0; v < n; v++){
+            if (!visiteNodes[v]){
+                relax(distance, myNode, v, adjacencyMatrix[myNode][v]);
+                if (nextVisitedNode == INF) nextVisitedNode = v;
+                if (distance[nextVisitedNode] > distance[v]) nextVisitedNode = v;
             }
         }
     }
 
-    delete[] adj; 
-}
+    delete[] visiteNodes;
+    for (int i = 0; i < n; i++){
+        delete[] adjacencyMatrix[i];
+    }
+    delete[] adjacencyMatrix;
+} //FIXME PIERDO MEMORIA SOY UNA LECHUGA AH ERA UN DIJKSTRA CERATI

@@ -31,7 +31,7 @@ int optimumDelivery(int origin, int destiny, int n, int k, const edgeList &edges
     dijkstra(origin, premiumGraphNodes, distance, edges, true);
     int answer = INF;
     for (int i = 0; i <= k; i++) {
-        Utils::log(INFO, "Resultado posible %d", distance[destiny + i * n]);
+        Utils::log(DEBUG, "Resultado posible %d", distance[destiny + i * n]);
         if (distance[destiny + i * n] < answer) {
             answer = distance[destiny + i * n];
         }

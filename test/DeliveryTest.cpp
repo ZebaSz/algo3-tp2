@@ -57,6 +57,7 @@ TEST_F(DeliveryTest, straightPath) {
         } else {
             answerWithK = 20*10 - 20*5; // Solo hay 5 rutas premium.
         }
+        Utils::log(DEBUG, "Hasta aca llegue %d", i);
 
         ASSERT_EQ(optimumDelivery(origin, destination, n, k, edges), answerWithK);
     }

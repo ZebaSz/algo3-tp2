@@ -108,20 +108,23 @@ void dijkstra(int source, int n, int *distance, const edgeList &edges, bool digr
     // Step 1: create adjacency matrix and boolean struct
     bool* visiteNodes = new bool[n];
     int** adjacencyMatrix = new int*[n];
+
+    // Step 2: initialize values from both structures
     for (int i = 0; i < n; i++){
+        visiteNodes[i] = false;
         adjacencyMatrix[i] = new int[n];
         for (int j = 0; j < n; j++){
             adjacencyMatrix[i][j] = INF;
         }
     }
 
-    // Step 2: initialize distances
+    // Step 3: initialize distances
     for(int v = 0; v < n; v++) {
         distance[v] = INF;
     }
     distance[source] = 0;
 
-    // Step 3: initialize adjacency matrix values
+    // Step 4: initialize adjacency matrix values
     if (digraph){
         edgeList::const_iterator it;
         for(it = edges.begin(); it != edges.end(); ++it) {
@@ -135,7 +138,7 @@ void dijkstra(int source, int n, int *distance, const edgeList &edges, bool digr
         }
     }
 
-    // Step 4: Loop until every node has been visited
+    // Step 5: Loop until every node has been visited
     int nextVisitedNode = source;
     while (nextVisitedNode != INF) {
         visiteNodes[nextVisitedNode] = true;
@@ -152,6 +155,8 @@ void dijkstra(int source, int n, int *distance, const edgeList &edges, bool digr
         }
     }
 
+
+    // Step 6: Delete dynamic variables
     delete[] visiteNodes;
     for (int i = 0; i < n; i++){
         delete[] adjacencyMatrix[i];

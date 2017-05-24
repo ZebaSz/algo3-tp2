@@ -10,11 +10,11 @@ int main(){
     edgeList edges;
     edgeList tree;
     int maxW = 20;
-    bool digraph = true;
+    //bool digraph = true;
     //genRandomGraph(n, m, edges, maxW, digraph);
     //genRandomTree(n, edges, tree, maxW);
     genConex(n, m, edges, maxW);
-    for (int i = 0; i < edges.size(); ++i) {
+    for (size_t i = 0; i < edges.size(); ++i) {
         std::cout << edges[i].start << "," << edges[i].end << "," << edges[i].weight << std::endl;
 
     }

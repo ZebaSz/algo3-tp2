@@ -4,20 +4,81 @@
 En este problema, observamos la provincia de Optilandia, cuyas ciudades estan conectadas por rutas de una sola dirección, donde no necesariamente se puede llegar de una ciudad a todas las demás. Sin embargo, sabemos que desde cualquier ciudad se puede llegar, al menos, a otra ciudad. Cada una de estas rutas tiene una cabina de peaje y, por ende, recorrer cada una de ellas tiene un costo. Sin embargo, por decisiones gubernamentales, cada uno de estos peajes se vio reducido por un costo fijo c (si antes la ruta A valía A1, y la ruta B valía B1, ahora valen A1 - c y B1 - c respectivamente), pudiendo generar que una ruta no solo no le cobre a sus usuarios, sino que acabe dándole dinero.
 \\
 \par
-Si bien esto no es un problema para el gobierno, si lo sería que un usuario pueda irse desde una ciudad, hacer un recorrido y volver a la misma habiendo ganado plata. Por lo tanto, como el gobierno busca maximizar el subsidio otorgado, debemos buscar el valor c que permita otorgar el mayor subsidio por peaje sin que exista la posibilidad de que un usuario le saque plata al Estado. La complejidad del algoritmo debe ser no peor que O(nm.log(c)), donde n es la cantidad de ciudades, m es la cantidad de rutas y c es el costo del máximo peaje
+Si bien esto no es un problema para el gobierno, siempre y cuando se evite que un usuario pueda irse desde una ciudad, hacer un recorrido y volver a la misma habiendo ganado plata. Por lo tanto, como el gobierno busca maximizar el subsidio otorgado, debemos buscar el valor c que permita otorgar el mayor subsidio por peaje sin que exista la posibilidad de que un usuario le saque plata al Estado. La complejidad del algoritmo debe ser no peor que O(nm.log(c)), donde n es la cantidad de ciudades, m es la cantidad de rutas y c es el costo del máximo peaje
 \\
 \par
+
 \textbf{Agregar ejemplos}
 \\
 \par
 \subsection{Desarrollo}
-Dado este problema, podemos modelarlo utilizando grafos. Así, cada ciudad se representaría con un nodo, y cada una de las rutas que conecta dos ciudades, con una arista. Del mismo modo, el problema pasaría a ser alcanzar el camino mínimo de un nodo origen a un nodo destino, utilizando como máximo k aristas premium; y dado que las rutas son bidireccionales, podemos utilizar un grafo común no direccionado para esta representación.
+Dado este problema, podemos modelarlo utilizando digrafos. Así, cada ciudad se representaría con un nodo, y cada una de las rutas que conecta dos ciudades, con una arista dirigida. Consideraremos que un recorrido abusivo es representado por un ciclo negativo en el digrafo.
 \\
 \par
-A partir de esta representación, podemos poner el foco en las dificultades que trae consigo el problema. Sabemos que utilizando un algoritmo de camino mínimo, obtendríamos el camino más corto desde el nodo origen al nodo destino, pero nada sabríamos sobre cuantas rutas premium se estan utilizando. De este modo, si bien tenemos una aproximación buena del problema, tenemos que buscar la manera de poner en consideración las rutas premium y su uso. 
+El algoritmo propuesto para encontrar ciclos negativos es el algoritmo de Bellman-Ford. Es un algoritmo que encuentra caminos minimos entre un nodo y el resto de los nodos. Su complejidad es peor que la del algoritmo de Dijkstra, pero nos permite trabajar con aristas negativas y también identificar ciclos negativos. 
 \\
 \par
+\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{bellmanFord}{\In{n}{int}, \In{m}{int}, \In{edges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}}{bool}}
+		
+		int i, j
+		
+		\For{i in [0..n)}
+		{
+			distance[i] $\leftarrow$ INF
+		}
+		
+		distance[source] $\leftarrow$ 0
+		
+		\For{i in [0..n)}
+		{
+			\For{(u,v,w) in edges}
+			{
+				\If{distance[u] + w $<$ distance[v]}
+				{
+					distance[v] $\leftarrow$ distance[u] + w
+				}
+				
+			}
+		}
 
+		res $\leftarrow$ false
+		
+		\For{(u,v,w) in edges}
+			{
+				\If{distance[u] + w $<$ distance[v]}
+				{
+					res $\leftarrow$ true
+				}
+				
+			}
+
+	\end{algorithm}
+
+Este algoritmo basa su funcionamiento en el concepto de relajación de caminos. Esto consiste en mirar un eje (u,v) de peso w y evaluar si el peso del mejor camino encontrado desde source hasta u más w es menor que el peso del mejor camino encontrado desde source hasta v. En caso afirmativo el algoritmo ha encontrado una nueva ruta hasta v, utilizando al eje (u,v). Como cualquier camino mínimo no puede ser un ciclo, la cantidad de ejes utilizados en cualquier camino mínimo es a lo sumo la cantidad de nodos del grafo. Es por esto que las soluciones encontradas al terminar la enésima iteracion completa de la lista de ejes, sabemos que hemos hallado los mejores caminos que transitan hasta n nodos. Realizando una iteración extra podremos detectar la presencia de ciclos negativos. En esta iteración se detecta la posibilidad de relajar los caminos que deberían ser óptimos. La contradicción que plantea la mejora de un camino óptimo es la señal de que hay un ciclo negativo que permite "mejorar" la solución indefinidamente sin converger.
+\\
+\par
+Dado que en el problema original queremos detectar la existencia de ciclos negativos para distintas "versiones" del mismo grafo, usamos una función que permite crear una nueva versión del grafo a partir de la original. Diremos que una p versión nueva del grafo contiene la misma cantidad de nodos y representa al mismo conjunto de adyacencias. La diferencia radicará en que para todo eje (u,v,w) perteneciente al grafo original, hay un eje (u,v,w-p) perteneciente a la p versión.
+
+\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{bellmanFordWithAdjustment}{\In{n}{int}, \In{m}{int}, \In{edges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}, \In{p}{int}}{bool}}
+		
+		int i
+		
+		tuple(int, int, int) adjustedEdges[m] 
+		
+		\For{i in [0..m)}
+		{
+			adjustedEdges[i] $\leftarrow$ edges[i] - p	
+		}
+
+		res $\leftarrow$ bellmanFord(n, m, adjustedEdges, source, distance)		
+
+	\end{algorithm}
+
+Diremos que c es el peso de la arista mas pesada del grafo original. Vemos que la versión p $=$ 0 es equivalente al grafo original y por ende no puede tener ciclos negativos. Tambien vemos que el grafo original tiene ciclos, la versión p $=$ c + 1 tiene ciclos negativos, porque todas sus aristas tienen peso negativo. Por ende sabemos que nuestra solución esta acotada inferiormente por 0 y superiormente por c. Teniendo en cuenta que para un p cualquiera, si la versión p carece de ciclos negativos entonces para cualquier q $<$ p, la version q carece de ciclos negativos. La intuición aquí reside en notar que aumentar el peso de cada arista de un grafo sin ciclos negativos no puede producir ciclos negativos. También notamos que para un p cualquiera, si la versión p contiene ciclos negativos, entonces para cualquier r $>$ p, la versión r contiene ciclos negativos. Si llamamos t al peso de la suma de los ejes que pertenecen a cualquier ciclo negativo de la versión p, vemos que la suma correspondiente en la versión r será de valor igual a t + (p $-$ r) $\ast$ long(ciclo). como r $>$ p, este resultado sera menor que te y por ende negativo. Encontrar la solución al problema del mínimo subsidio posible será buscar el mínimo p / 0 $\leq$ p $<$ c+1. Sabemos que el valor de p será al menos cero y a lo sumo c, utilizaremos una busqueda binaria entre cero y c para encontrar la solución. 
 \subsection{Cota temporal}
 
 \subsection{Experimentacion}

@@ -20,7 +20,7 @@ El algoritmo propuesto para encontrar ciclos negativos es el algoritmo de Bellma
 \par
 \begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{Bellman-Ford}{\In{n}{int}, \In{m}{int}, \In{edges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}}{bool}}
+		\caption{\algoritmo{bellmanFord}{\In{n}{int}, \In{m}{int}, \In{edges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}}{bool}}
 		
 		int i, j
 		
@@ -56,8 +56,27 @@ El algoritmo propuesto para encontrar ciclos negativos es el algoritmo de Bellma
 
 	\end{algorithm}
 
+Este algoritmo basa su funcionamiento en el concepto de relajación de caminos. Esto consiste en mirar un eje (u,v) de peso w y evaluar si el peso del mejor camino encontrado desde source hasta u más w es menor que el peso del mejor camino encontrado desde source hasta v. En caso afirmativo el algoritmo ha encontrado una nueva ruta hasta v, utilizando al eje (u,v). Como cualquier camino mínimo no puede ser un ciclo, la cantidad de ejes utilizados en cualquier camino mínimo es a lo sumo la cantidad de nodos del grafo. Es por esto que las soluciones encontradas al terminar la enésima iteracion completa de la lista de ejes, sabemos que hemos hallado los mejores caminos que transitan hasta n nodos. Realizando una iteración extra podremos detectar la presencia de ciclos negativos. En esta iteración se detecta la posibilidad de relajar los caminos que deberían ser óptimos. La contradicción que plantea la mejora de un camino óptimo es la señal de que hay un ciclo negativo que permite "mejorar" la solución indefinidamente sin converger.
 \\
 \par
+Dado que en el problema original queremos detectar la existencia de ciclos negativos para distintas "versiones" del mismo grafo, usamos una función que permite crear una nueva versión del grafo a partir de la original. Diremos que una p versión nueva del grafo contiene la misma cantidad de nodos y representa al mismo conjunto de adyacencias. La diferencia radicará en que para todo eje (u,v,w) perteneciente al grafo original, hay un eje (u,v,w-p) perteneciente a la p versión.
+
+\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{bellmanFordWithAdjustment}{\In{n}{int}, \In{m}{int}, \In{edges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}, \In{p}{int}}{bool}}
+		
+		int i
+		
+		tuple(int, int, int) adjustedEdges[m] 
+		
+		\For{i in [0..m)}
+		{
+			adjustedEdges[i] $\leftarrow$ edges[i] - p	
+		}
+
+		res $\leftarrow$ bellmanFord(n, m, adjustedEdges, source, distance)		
+
+	\end{algorithm}
 
 \subsection{Cota temporal}
 

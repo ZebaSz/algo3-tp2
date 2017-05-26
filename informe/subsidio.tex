@@ -78,6 +78,7 @@ Dado que en el problema original queremos detectar la existencia de ciclos negat
 
 	\end{algorithm}
 
+Diremos que c es el peso de la arista mas pesada del grafo original. Vemos que la versión p $=$ 0 es equivalente al grafo original y por ende no puede tener ciclos negativos. Tambien vemos que el grafo original tiene ciclos, la versión p $=$ c + 1 tiene ciclos negativos, porque todas sus aristas tienen peso negativo. Por ende sabemos que nuestra solución esta acotada inferiormente por 0 y superiormente por c. Teniendo en cuenta que para un p cualquiera, si la versión p carece de ciclos negativos entonces para cualquier q $<$ p, la version q carece de ciclos negativos. La intuición aquí reside en notar que aumentar el peso de cada arista de un grafo sin ciclos negativos no puede producir ciclos negativos. También notamos que para un p cualquiera, si la versión p contiene ciclos negativos, entonces para cualquier r $>$ p, la versión r contiene ciclos negativos. Si llamamos t al peso de la suma de los ejes que pertenecen a cualquier ciclo negativo de la versión p, vemos que la suma correspondiente en la versión r será de valor igual a t + (p $-$ r) $\ast$ long(ciclo). como r $>$ p, este resultado sera menor que te y por ende negativo. Encontrar la solución al problema del mínimo subsidio posible será buscar el mínimo p / 0 $\leq$ p $<$ c+1. Sabemos que el valor de p será al menos cero y a lo sumo c, utilizaremos una busqueda binaria entre cero y c para encontrar la solución. 
 \subsection{Cota temporal}
 
 \subsection{Experimentacion}

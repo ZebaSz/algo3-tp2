@@ -1,8 +1,0 @@
-//
-// Created by catofthecannals on 23/05/17.
-//
-
-#ifndef ALGO3_TP2_BENCHMARKWRAPPERS_H
-#define ALGO3_TP2_BENCHMARKWRAPPERS_H
-
-#endif //ALGO3_TP2_BENCHMARKWRAPPERS_H

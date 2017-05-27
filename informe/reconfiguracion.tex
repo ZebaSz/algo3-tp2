@@ -12,6 +12,29 @@ Nos piden un algoritmo que dado las rutas y los costos de construcción y destru
 \\
 \par
 \subsection{Desarrollo}
+Como es usual, podemos representar a las ciudades como nodos de un grafo y a las rutas como los ejes, como no se especifica si las rutas vamos a asumir que las rutas son bidireccionales. Pero en este caso tenemos rutas existentes que se pueden destruir y rutas que se pueden crear, vamos a dividir estos ejes en dos grafos $C$ y $D$, ambos con los mismos nodos, $C$ va a tener los ejes con los costos de construcción de rutas y $D$ va a tener los costos de destrucción, los costos de las rutas se representa como el peso del eje que representa esa ruta. Notemos que los grafos $C$ y $D$ no tienen ejes en común, ya que si eso pasa podríamos destruir y construir la misma ruta y eso sería contraproducente.  
+\\
+\par
+Una vez encontrada la solución, vamos a tener ciudades que quedaron intactas y ciudades que se construyeron, entonces vamos a llamar $RC$ un subgrafo de $C$ como las rutas planeadas a construir y $RD$ un subgrafo de $D$ con las rutas que hay que mantener, podemos notar que $\overline{RD}$ son las rutas que tenemos que destruir, y que $RD \cup RC$ nos da como resultado la representación de la provincia una vez terminado el plan, llamemos a esto $R$. 
+\\
+\par
+El objetivo del algoritmo es que todas las ciudades se conecten solo de una manera, lo que en grafos sería que existe exactamente un camino simple entre todo par de
+nodos y cómo sabemos, si pasa esto, el grafo es un árbol osea que queremos llegar a que $R$ sea un árbol. 
+\\
+\par
+Lo primero que podemos notar, es que, si $RD$ no es un bosque, no vamos a poder agregar aristas y que resulte en un árbol, ya que si no es un bosque tendrá ciclos en consecuencia $R$ tendrá ciclos y no será un árbol.
+\\
+\par
+Como queremos que $R$ sea árbol, y $RD$ es un bosque, $RC$ va a tener ejes que unen las componentes conexas de $RD$, sin formar ciclos.  Además queremos que las aristas que se agreguen sus costo sea mínimo. El algoritmo de Kruskal nos va a resolver esto, ya que en la invariante mantiene un bosque y agrega aristas hasta tener un árbol, pero agrega aristas de forma óptima. Nos vamos a aprovechar de esto y vamos aplicar Kruskal con las aristas de $RD$ ya formadas, total no rompe la invariante, y va a elegir entre las aristas de $C$ (y las que elija a partir de ese momento resultaran en $RC$).
+\\
+\par
+Entonces sabemos buscar un $RC$ óptimo dado un $RD$, ahora tenemos que buscar un $RD$ tal que los costos resultantes sean mínimos. Para esto se nos ocurrió que $RD$ tiene que ser un “Bosque Generador Máximo de $D$”, con bosque generador máximo(BGM) nos referimos a un subgrafo tal que cada componente conexa del grafo original  es un árbol generador máximo. Hablemos un poco sobre la correctitud de esta afirmación, como vimos $RD$ tiene que ser un bosque, veamos que cada una de las componentes conexas de $RD$ tienen exactamente los mismos que las de $D$, o lo que es lo mismo, que $RD$ no tiene más componentes conexas.
+\\
+\par
+Profundicemos un poco sobre la propiedad que nos va a servir para la correctitud de BGM. Tenemos $D$ y componentes conexas $D_1 , D_2 , … , D_k$, al sacar un eje cualquiera, digamos de $D_i$, si este eje pertenecía a un ciclo de $D_i$ la componente conexa seguirá teniendo la mismos nodos, pero si este no pertenecía a un ciclo, entonces dividiremos a $D_i$ en dos componentes conexas, llamemoslas $D_i1$ y $D_i2$ y veamos que esta división de componentes nos empeora al aplicarle el Kruskal modificado descrito anteriormente. Cuando aplicamos Kruskal para un bosque de componentes conexas $D_1 , D_2 , … , D_k$ solo podrá elegir sobre ejes que conectan nodos de distintas componentes conexas porque los ejes que conectan nodos de la misma componente formarán un ciclo, llamemos al conjunto de estos ejes $L$. Ahora si dividimos la componente conexa en $D_i1$ y $D_i2$, cuando le apliquemos Kruskal además de tener los ejes $L$, vamos a poder elegir entre los ejes que unen $D_i1$ y $D_i2$ que los vamos a llamar $LD$, si algún eje de $LD$ es menor que cualquiera de $L$, el algoritmo elegirá este, pero este nos unirá  $D_i1$ y $D_i2$ formando de vuelta una componente conexa con los mismos nodos que $D_i$, osea que Kruskal después deberá elegir entre los ejes de $L$ y serán los mismos que cuando no hubiésemos dividido la componente, osea que gastaríamos en destruir y construir para llegar a las mismas componentes, y después el costo de los ejes que elige de $L$. Ahora veamos también que empeora si no elige ninguno de los ejes de $LD$, si pasa esto solo le queda elegir entre los de $L$, como sabemos si tenemos k componentes conexas Kruskal eligirá k-1 ejes, osea que en el dividido eligirá un eje más, ahora deberíamos ver que el algoritmo va a elegir los mismos que en el no divido más otro, lo que nos costaría lo mismo que en el no divido más el coste del otro eje más el coste de dividir $D_i$.
+\\
+\par
+Ya vimos que $RD$ va a tener la misma cantidad de componentes conexas que $D$ osea que tenemos que buscar el bosque subgrafo de $D$ tal que no tenga más componentes conexas y además que sea optimo de destruir, y como ya anticipamos este es el bosque generador máximo. Las rutas que nos conviene destruir son las más baratas de destruir, ya que queremos gastar lo menos posible, y como cada componente es un árbol, para optimizar cada componente el árbol que gastara lo menos posible es el árbol generador máximo, ya que es el árbol que se deshace de los ejes más baratos de destruir y que  además no nos divide el en más componentes conexas.
 
 \subsection{Cota temporal}
 

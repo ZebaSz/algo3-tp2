@@ -4,28 +4,50 @@
 El problema plantea una provincia en la cual las ciudades están conectadas por dos tipos de rutas: las comunes y las premium. En ambos casos, las rutas son bidireccionales, conectan dos ciudades y tienen asociada una distancia no negativa.
 \\
 \par
-A través de estas rutas, nuestra empresa busca transportar mercadería desde una ciudad origen a una ciudad destino, de manera que se recorra la menor distancia posible considerando que, por regulaciones provinciales, solo se puede pasar por k rutas premium en este recorrido (es decir, que la suma de distancias de las rutas utilizadas sea la menor posible, utilizando entre 0 y k rutas premium). La complejidad del algoritmo debe ser no peor que O(n2k2) donde n es la cantidad de ciudades y k la máxima cantidad de rutas premium utilizables.
+A través de estas rutas, nuestra empresa busca transportar mercadería desde una ciudad origen a una ciudad destino, de manera que se recorra la menor distancia posible considerando que, por regulaciones provinciales, solo se puede pasar por k rutas premium en este recorrido (es decir, que la suma de distancias de las rutas utilizadas sea la menor posible, utilizando entre 0 y k rutas premium). La complejidad del algoritmo debe ser no peor que \textbf{O($n^2k^2$)} donde n es la cantidad de ciudades y k la máxima cantidad de rutas premium utilizables.
 \\
 \par
 \textbf{Agregar ejemplos}
 \\
 \par
 \subsection{Desarrollo}
-Dado este problema, podemos modelarlo utilizando grafos. Así, cada ciudad se representaría con un nodo, y cada una de las rutas que conecta dos ciudades, con una arista. Del mismo modo, el problema pasaría a ser alcanzar el camino mínimo de un nodo origen a un nodo destino, utilizando como máximo k aristas premium; y dado que las rutas son bidireccionales, podemos utilizar un grafo común no direccionado para esta representación.
+Dado este problema, podemos modelarlo utilizando grafos. Así, cada ciudad se representaría con un nodo, y cada una de las rutas que conecta dos ciudades, con una arista. Del mismo modo, el problema pasaría a ser alcanzar el camino mínimo de un nodo origen a un nodo destino, utilizando como máximo k aristas premium; y dado que las rutas son bidireccionales, podemos utilizar un grafo común no dirigido para esta representación.
 \\
 \par
-A partir de esta representación, podemos poner el foco en las dificultades que trae consigo el problema. Sabemos que utilizando un algoritmo de camino mínimo, obtendríamos el camino más corto desde el nodo origen al nodo destino, pero nada sabríamos sobre cuantas rutas premium se estan utilizando. De este modo, si bien tenemos una aproximación buena del problema, tenemos que buscar la manera de poner en consideración las rutas premium y su uso. 
+A partir de esta representación, podemos poner el foco en las dificultades que trae consigo el problema. Sabemos que utilizando un algoritmo de camino mínimo, obtendríamos el camino más corto desde el nodo origen al nodo destino, pero nada sabríamos sobre cuantas rutas premium se están utilizando. De este modo, si bien tenemos una aproximación buena del problema, tenemos que buscar la manera de poner en consideración las rutas premium y su uso. 
 \\
 \par
+Un buen punto de inicio es considerar que, si bien tenemos un límite de rutas premium, podríamos encontrar un mejor camino que utilice una menor cantidad. Por ende, no alcanza con encontrar el camino mínimo que utilice k rutas premium, sino que debemos encontrar el mínimo de todos aquellos que utilicen hasta k premium. Es decir que, en lugar de plantearlo como un único problema, podríamos ver el ejercicio como la mejor solución de k subproblemas distintos, donde el i-ésimo subproblema nos da el camino mínimo utilizando exactamente $i$ rutas premium.
+\\
+\par
+Por otro lado, aún buscando resolver solo uno de los subproblemas planteados, estaríamos frente a la posibilidad de alcanzar el límite de rutas antes de recorrer todas (y por ende, de estar tomando una decisión errónea). Debemos, entonces, buscar la manera de llegar al último nodo habiendo elegido las mejores rutas premium posibles, siendo que no haya forma de tomar una ruta premium distinta y a través de ella se consiga un camino de menor distancia.
+\\
+\par
+Para enfrentar este problema, podríamos generar un grafo con $k$ níveles, donde cada nivel sea una copia exacta del grafo original, y el nodo J perteneciente al i-ésimo nivel represente que para llegar a ese nodo se utilizaron $i$ rutas premium desde el nodo origen. De este modo, pasamos a tener un grafo de $nk$ nodos, donde cualquiera de los caminos entre el nodo origen y los k nodos destinos pueden representar una respuesta válida.
+\\
+\par
+Sin embargo, modelando el grafo de esta manera tendríamos problemas, puesto que nuestro grafo inicial era no dirigido y nuestra idea es que cada nivel represente la cantidad de rutas premium utilizadas hasta el momento. Por ende, no podría ocurrir que se pase de un nodo perteneciente del nivel $i+1$ a un nodo del nivel $i$, ya que esto implicaría que, al utilizar una ruta premium más, disminuyó el nivel (es decir que disminuyó la cantidad de rutas premium utilizadas, siguiendo la idea de nuestro modelo, lo cual sería absurdo). Por lo tanto, debemos modelar el nuevo grafo de manera que:
+\begin{enumerate}
+\item Debe haber un nivel por cada posible respuesta
+\item Cada vez que se utiliza una ruta premium, se sube de nivel
+\item Cada vez que se utiliza una ruta que no es premium, se mantiene el mismo nivel
+\item Se deben mantener las conexiones del grafo original (debe ser una representación fiel)
+\end{enumerate}
+
+Dadas estas condiciones, tendremos un grafo con $k$ niveles, como habíamos establecido anteriormente, pero dado que hay rutas que solo se pueden recorrer en una dirección, deberemos usar un \underline{\textbf{grafo dirigido}}. En él, estableceremos dos tipos de relaciones, que aplicarán para todos los niveles del grafo.
+\\
+\par
+La primer relación a definir será entre los nodos conectados por una arista común. No es dificil ver que, si en el grafo original había una arista común entre el nodo J y el nodo H, ahora habrá k representaciones de esa misma arista, para los nodos $J_i$ y $H_i$ con i entre 0 y k. Al ser nuestro nuevo grafo un digrafo, y como establecimos que cuando no se usa una ruta premium se mantiene el mismo nivel, bien podría ocurrir que nuestro camino vaya de $J_i$ a $H_i$ o viceversa, por lo que utilizaremos una arista para cada una de estas posibilidades. Es decir que, para cada nivel i, habrá una arista dirigida que conecte $J_i$ con $H_i$ y una que conecte $H_i$ con $J_i$. De este modo, quedan definidas de manera correcta todas las aristas no premium pertenecientes al grafo inicial.
+\\
+\par
+La segunda relación a definir será entre los nodos 
+
+
+Para deshacernos de este problema, lo que se hizo fue generar $k$ copias idéntica del grafo, donde cada copia representará cuantos rutas premium se usaron para llegar a ella, llamemos a cada copia nivel i, con i como la cantidad de caminos premium que se usaron. Todavía este modelo no está terminado, tenemos que conectar los diferentes niveles, para esto conectamos los niveles con las rutas premium. Entonces las rutas normales conectan a las ciudades del mismo nivel, y las rutas premium conectan a las ciudades pero del nivel siguiente, ya que si tomamos esa ruta, la ciudad a la que llegamos tiene que estar en el nivel siguiente.
+Otro problema que surge al usar este modelo es que si usamos grafos no direccionados, podríamos pasar a un nivel inferior usando las rutas premium. Esto lo vamos a evitar usando grafos dirigidos, para una ruta normal de u a v, creamos un eje de u hacia v y de v hacia u, y si es premium la ruta, creamos un eje desde u hasta v del nivel siguiente, y de v hacia u del nivel siguiente. De esta forma, no podemos llegar desde una ciudad hasta otra de un nivel inferior, y tenemos limitada la cantidad de rutas premium que podemos usar, ya que en el nivel k, lo unico que podemos hacer es utilizar rutas normales.
 
 \subsection{Cota temporal}
 
 \subsection{Experimentacion}
 
 \pagebreak
-
-
- 
-
-
-

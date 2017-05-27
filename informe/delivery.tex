@@ -34,19 +34,34 @@ Sin embargo, modelando el grafo de esta manera tendríamos problemas, puesto que
 \item Se deben mantener las conexiones del grafo original (debe ser una representación fiel)
 \end{enumerate}
 
-Dadas estas condiciones, tendremos un grafo con $k$ niveles, como habíamos establecido anteriormente, pero dado que hay rutas que solo se pueden recorrer en una dirección, deberemos usar un \underline{\textbf{grafo dirigido}}. En él, estableceremos dos tipos de relaciones, que aplicarán para todos los niveles del grafo.
+Dadas estas condiciones, tendremos un grafo con $k$ niveles, como habíamos establecido anteriormente, pero debido a que hay rutas que solo se pueden recorrer en una dirección, tendremos que usar un \underline{\textbf{grafo dirigido}}. En él, estableceremos dos tipos de relaciones, que aplicarán para todos los niveles del grafo.
 \\
 \par
-La primer relación a definir será entre los nodos conectados por una arista común. No es dificil ver que, si en el grafo original había una arista común entre el nodo J y el nodo H, ahora habrá k representaciones de esa misma arista, para los nodos $J_i$ y $H_i$ con i entre 0 y k. Al ser nuestro nuevo grafo un digrafo, y como establecimos que cuando no se usa una ruta premium se mantiene el mismo nivel, bien podría ocurrir que nuestro camino vaya de $J_i$ a $H_i$ o viceversa, por lo que utilizaremos una arista para cada una de estas posibilidades. Es decir que, para cada nivel i, habrá una arista dirigida que conecte $J_i$ con $H_i$ y una que conecte $H_i$ con $J_i$. De este modo, quedan definidas de manera correcta todas las aristas no premium pertenecientes al grafo inicial.
+La primer relación a definir será entre los nodos conectados por una arista común. No es dificil ver que, si en el grafo original había una arista común entre el nodo J y el nodo H de peso $P$, ahora habrá $k$ representaciones de esa misma arista, para los nodos $J_i$ y $H_i$ con i entre 0 y k, donde el peso de cada una de ellas será $P$. Al ser nuestro nuevo grafo un digrafo, y como establecimos que cuando no se usa una ruta premium se mantiene el mismo nivel, bien podría ocurrir que nuestro camino vaya de $J_i$ a $H_i$ o viceversa, por lo que utilizaremos una arista para cada una de estas posibilidades. Es decir que, para cada nivel i, habrá una arista dirigida que conecte $J_i$ con $H_i$ y una que conecte $H_i$ con $J_i$. De este modo, quedan definidas de manera correcta todas las aristas no premium pertenecientes al grafo inicial.
 \\
 \par
-La segunda relación a definir será entre los nodos 
-
-
-Para deshacernos de este problema, lo que se hizo fue generar $k$ copias idéntica del grafo, donde cada copia representará cuantos rutas premium se usaron para llegar a ella, llamemos a cada copia nivel i, con i como la cantidad de caminos premium que se usaron. Todavía este modelo no está terminado, tenemos que conectar los diferentes niveles, para esto conectamos los niveles con las rutas premium. Entonces las rutas normales conectan a las ciudades del mismo nivel, y las rutas premium conectan a las ciudades pero del nivel siguiente, ya que si tomamos esa ruta, la ciudad a la que llegamos tiene que estar en el nivel siguiente.
-Otro problema que surge al usar este modelo es que si usamos grafos no direccionados, podríamos pasar a un nivel inferior usando las rutas premium. Esto lo vamos a evitar usando grafos dirigidos, para una ruta normal de u a v, creamos un eje de u hacia v y de v hacia u, y si es premium la ruta, creamos un eje desde u hasta v del nivel siguiente, y de v hacia u del nivel siguiente. De esta forma, no podemos llegar desde una ciudad hasta otra de un nivel inferior, y tenemos limitada la cantidad de rutas premium que podemos usar, ya que en el nivel k, lo unico que podemos hacer es utilizar rutas normales.
+La segunda relación a definir será entre los nodos conectados por una arista premium. Al igual que en el otro caso, por cada arista premium habrá $k$ representaciones de esta arista. Sin embargo, como al tomar una ruta premium debemos aumentar el nivel, hay que establecer una relación entre el i-ésimo y el (i+i)-ésimo nivel. Así, si en el grafo inicial había una arista premium entre los nodos J y K, ahora habrá una arista dirigida de $J_i$ a $K_i+1$ y una de $K_i$ a $J_i+1$. Notemos que, al tener una arista no dirigida en el grafo inicial, debe ser posible recorrer la ruta en ambas direcciones.
+\\
+\par
+De esta manera, definimos nuestro grafo dirigido de $k$ niveles de manera que represente correctamente el grafo inicial y, por consecuente, a nuestro problema. Con esta nueva representación, un grafo asi: quedaría asi: \textbf{INSERTAR IMAGENES PAGANAS}
+\\
+\par
+Dado que ya tenemos un grafo que nos permite identificar la cantidad de rutas premium utilizadas por la manera en la que está caracterizada cada nodo, basta con conocer nuestro nodo origen y buscar el camino más corto hasta las $k$ posibles soluciones, para luego quedarnos con la mejor solución.
+\\
+\par
+Por lo tanto, como sabemos que el nodo origen necesariamente estará situado en el primer nivel (es decir, que es único para nuestros propósitos), podemos utilizar un algoritmo que nos de el camino mínimo de un nodo a todos los demás y luego evaluar solo aquellos que nos den una respuesta válida a nuestro problema (un camino de origen a destino).
+\\
+\par
+En consecuencia, podríamos usar tanto el algoritmo de Bellman-Ford como el de Dijkstra. Sin embargo, considerando que no tenemos aristas con pesos negativos, y que el uso de Dijkstra nos facilita el cumplimiento dela complejidad, nos quedaremos con este algoritmo para realizar la búsqueda.
+\\
+\par
+Por lo tanto, con lo visto anteriormente, acabaríamos teniendo un algoritmo de este estilo:
+\\
+\par
+\textbf{PSEUDOCODIGO}
 
 \subsection{Cota temporal}
+Crear la representación del grafo con niveles cuesta para cada una de las aristas $O(k)$, y como hay m aristas en total es $O(mk)$ y como m está acotado por $n^2$, podemos decir también que es $O(n^2*k)$. Después aplicamos Dijkstra que la implementación que llevamos a cabo es $O(n^2)$ pero nuestro grafo ya ni tiene $n$ nodos, sino que tiene $n*(k+1)$ osea que para nuestro caso la complejidad temporal en peor caso es de es $O((n*(k+1))^2)$ o lo que es lo mismo $O(n^2*k^2)$. Por último nos queda buscar el valor óptimo que lo logramos en $O(k)$ ya que hacemos k iteraciones de conseguir un elemento de un arreglo que es es $O(1)$. Resumiendo la complejidad temporal nos queda en $O( n^2*k + n^2*k^2 + k )$ que es lo mismo que $O(n^2*k^2)$ que se ajusta a lo que pedía el ejercicio.
 
 \subsection{Experimentacion}
 

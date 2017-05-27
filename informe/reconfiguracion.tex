@@ -34,6 +34,20 @@ Como vimos $RD$ tiene que ser un bosque. Veamos por qué el BGM es el bosque óp
 \\
 \par
 Entonces $RD$ tiene que ser un bosque subgrafo de $D$ tal que para cada componente conexa $D_i$ de $D$, existe una componente conexa $RD_i$ perteneciente al $RD$ tal que $RD_i$ es árbol generador de $D_i$. Definimos al costo de $BG$ bosque generador de $D$  como la suma de los pesos de los ejes pertenecientes a $D - BG$ y buscamos que $RD$ sea el bosque generador de costo mínimo. Si $RD$ fuera distinto del BGM de $D$, significaría que el costo de $RD$ es menor que el costo del BGM de $D$ lo cual es absurdo porque el BGM de $D$ es el bosque generador obtenido a partir de la destrucción de las rutas más baratas. Entonces $RD$ tiene que ser el BGM de $D$.
+\\
+\par
+Resumiendo, los pasos a seguir son:
+\begin{enumerate}
+\item Construir dado los datos de entrada crear $D$ y $C$
+\item Dado $D$ construimos $RD$ tal que cada componente
+\item Conseguir el $RC$ óptimo dado $RD$
+\item Calcular los el costo de destrucción y construcción
+\end{enumerate}
+\\
+\par 
+Para construir $RD$ decidimos usar Kruskal ya que también lo vamos a usar para conseguir $RC$. Para este caso tuvimos que modificar un poco el algoritmo de Kruskal, dado que, primero necesitamos que priorice los ejes pesados y además ya que $D$ puede ser que no sea conexo, necesitamos pare cuando no pueda agregar ejes ya que si no es conexo hay componentes que no podemos unir, que las tendremos que unir construyendo. En nuestro caso usamos la implementación de Kruskal que usa internamente Disjoint Set, esta estructura la vamos a pasar por referencia porque la vamos a usar más adelante.
+Después de aplicarle Kruskal a $D$ tenemos el Disjoint Set con el estado de $RD$, ahora como ya dijimos, aplicamos Kruskal con el Disjoint Set de $RD$ pero con los ejes de $C$, como resultante vamos a obtener los ejes de $R$. Finalizando, ya tenemos los ejes que hay no queremos destruir y los ejes que vamos a construir, nos falta calcular el coste total del plan, para eso vamos a buscar sobre los ejes que nos dan como datos, y ver sus respectivos pesos.
+
 
 \subsection{Cota temporal}
 

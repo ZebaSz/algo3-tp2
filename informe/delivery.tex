@@ -61,6 +61,7 @@ Por lo tanto, con lo visto anteriormente, acabaríamos teniendo un algoritmo de 
 \textbf{PSEUDOCODIGO}
 
 \subsection{Cota temporal}
+Crear la representación del grafo con niveles cuesta para cada una de las aristas $O(k)$, y como hay m aristas en total es $O(mk)$ y como m está acotado por $n^2$, podemos decir también que es $O(n^2*k)$. Después aplicamos Dijkstra que la implementación que llevamos a cabo es $O(n^2)$ pero nuestro grafo ya ni tiene $n$ nodos, sino que tiene $n*(k+1)$ osea que para nuestro caso la complejidad temporal en peor caso es de es $O((n*(k+1))^2)$ o lo que es lo mismo $O(n^2*k^2)$. Por último nos queda buscar el valor óptimo que lo logramos en $O(k)$ ya que hacemos k iteraciones de conseguir un elemento de un arreglo que es es $O(1)$. Resumiendo la complejidad temporal nos queda en $O( n^2*k + n^2*k^2 + k )$ que es lo mismo que $O(n^2*k^2)$ que se ajusta a lo que pedía el ejercicio.
 
 \subsection{Experimentacion}
 

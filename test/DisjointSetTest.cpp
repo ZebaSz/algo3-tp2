@@ -1,8 +1,8 @@
- #include <gtest/gtest.h>
+#include <gtest/gtest.h>
 #include "../src/disjointSet.h"
 
 class DisjointSetTest : public ::testing::Test {
-protected:
+    protected:
     disjointSet* ds;
 
     virtual void TearDown() {
@@ -66,16 +66,26 @@ TEST_F(DisjointSetTest, joinTransitive) {
     }
 }
 
+TEST_F(DisjointSetTest, ranks) {
+    ds = new disjointSet(5);
+    ds->join(0, 1);
+    ASSERT_EQ(ds->rank[0], 1);
+    ds->join(2, 3);
+    ASSERT_EQ(ds->rank[2], 1);
+    ds->join(1, 2);
+    ASSERT_EQ(ds->rank[0], 2);
+}
+
 TEST_F(DisjointSetTest, representant) {
     ds = new disjointSet(7);
     ds->join(0, 1);
     ds->join(2, 3);
     ds->join(1, 2);
     ds->join(4,5);
-    std::vector<int> v = {3,5,6};
+    std::vector<int> v = {0,4,6};
     std::vector<int> r = ds->representants();
-    ASSERT_TRUE(r.size() == v.size() );
+    ASSERT_EQ(r.size(), v.size());
     for (size_t i = 0; i < r.size(); ++i) {
-        ASSERT_TRUE(r[i] == v[i]);
+        ASSERT_EQ(r[i], v[i]);
     }
 }

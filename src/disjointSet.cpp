@@ -1,15 +1,17 @@
 #include <cstddef>
 #include "disjointSet.h"
 
-disjointSet::disjointSet(int n) : cardinal(n), count(n), id(NULL) {
-    id = new int[n];
+disjointSet::disjointSet(int n) : cardinal(n), count(n),
+                                  id(new int[n]), rank(new int[n]) {
     for(int i = 0; i < n; ++i) {
         id[i] = i;
+        rank[i] = 0;
     }
 }
 
 disjointSet::~disjointSet() {
     delete[] id;
+    delete[] rank;
 }
 
 int disjointSet::size() const {
@@ -17,12 +19,10 @@ int disjointSet::size() const {
 }
 
 int disjointSet::find(int n) {
-    int root = id[n];
-    if(root != n) {
-        root = find(root);
-        id[n] = root;
+    if(id[n] != n) {
+        id[n] = find(id[n]);
     }
-    return root;
+    return id[n];
 }
 
 int disjointSet::connected(int n, int m) {
@@ -33,7 +33,14 @@ void disjointSet::join(int n, int m) {
     int rootN = find(n);
     int rootM = find(m);
     if(rootN != rootM) {
-        id[rootN] = rootM;
+        if(rank[rootN] < rank[rootM]) {
+            id[rootN] = rootM;
+        } else {
+            id[rootM] = rootN;
+            if(rank[rootN] == rank[rootM]) {
+                ++rank[rootN];
+            }
+        }
         --count;
     }
 }

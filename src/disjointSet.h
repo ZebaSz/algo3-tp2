@@ -53,6 +53,9 @@ private:
     int cardinal;
     int count;
     int* id;
+    int* rank;
+
+    friend class DisjointSetTest_ranks_Test;
 };
 
 #endif //ALGO3_TP2_DISJOINTSET_H

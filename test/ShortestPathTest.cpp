@@ -44,17 +44,17 @@ TEST_F(ShortestPathTest, bellmanFord) {
 TEST_F(ShortestPathTest, coincidence) {
     int n = 10;
     int m = 45;
-    int maxW = 40;
     genConex(n, m, edges, 40);
 
+    int* dijDist = new int[n];
+    int* bellDist = new int[n];
     for (int i = 0; i < n; ++i) { //check every possible source
-        int dijDist[n];
-        int bellDist[n];
         dijkstra(i, n, dijDist, edges, true);
         bellmanFord(i, n, bellDist, edges);
         for (int j = 0; j < n; ++j) { //check every possible destiny
             ASSERT_EQ(dijDist[j], bellDist[j]);
         }
-
     }
+    delete[] dijDist;
+    delete[] bellDist;
 }

@@ -41,7 +41,8 @@ build/
 *.log
 *.aux
 *.pdf
-
+*.toc
+*.synctex.gz
 
 CMakeCache.txt
 CMakeFiles

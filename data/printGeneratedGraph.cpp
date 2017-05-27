@@ -6,7 +6,7 @@
 
 int main(){
     int n = 10;
-    int m = 30;
+    int m = 9;
     edgeList edges;
     edgeList tree;
     int maxW = 20;

@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstddef>
+#include <iostream>
 #include "subsidy.h"
 #include "shortest.h"
 #include "disjointSet.h"

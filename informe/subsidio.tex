@@ -4,7 +4,7 @@
 En este problema, observamos la provincia de Optilandia, cuyas ciudades estan conectadas por rutas de una sola dirección, donde no necesariamente se puede llegar de una ciudad a todas las demás. Sin embargo, sabemos que desde cualquier ciudad se puede llegar, al menos, a otra ciudad. Cada una de estas rutas tiene una cabina de peaje y, por ende, recorrer cada una de ellas tiene un costo. Sin embargo, por decisiones gubernamentales, cada uno de estos peajes se vio reducido por un costo fijo c (si antes la ruta A valía A1, y la ruta B valía B1, ahora valen A1 - c y B1 - c respectivamente), pudiendo generar que una ruta no solo no le cobre a sus usuarios, sino que acabe dándole dinero.
 \\
 \par
-Si bien esto no es un problema para el gobierno, siempre y cuando se evite que un usuario pueda irse desde una ciudad, hacer un recorrido y volver a la misma habiendo ganado plata. Por lo tanto, como el gobierno busca maximizar el subsidio otorgado, debemos buscar el valor c que permita otorgar el mayor subsidio por peaje sin que exista la posibilidad de que un usuario le saque plata al Estado. La complejidad del algoritmo debe ser no peor que \\textbf{O($nm.log(c)$)}, donde n es la cantidad de ciudades, m es la cantidad de rutas y c es el costo del máximo peaje
+Si bien esto no es un problema para el gobierno, siempre y cuando se evite que un usuario pueda irse desde una ciudad, hacer un recorrido y volver a la misma habiendo ganado plata. Por lo tanto, como el gobierno busca maximizar el subsidio otorgado, debemos buscar el valor c que permita otorgar el mayor subsidio por peaje sin que exista la posibilidad de que un usuario le saque plata al Estado. La complejidad del algoritmo debe ser no peor que \textbf{O($nm.log(c)$)}, donde n es la cantidad de ciudades, m es la cantidad de rutas y c es el costo del máximo peaje
 \\
 \par
 
@@ -18,44 +18,6 @@ Dado este problema, podemos modelarlo utilizando digrafos. Así, cada ciudad se 
 El algoritmo propuesto para encontrar ciclos negativos es el algoritmo de Bellman-Ford. Es un algoritmo que encuentra caminos minimos entre un nodo y el resto de los nodos. Su complejidad es peor que la del algoritmo de Dijkstra, pero nos permite trabajar con aristas negativas y también identificar ciclos negativos. 
 \\
 \par
-\begin{algorithm}[H]
-		\NoCaptionOfAlgo
-		\caption{\algoritmo{bellmanFord}{\In{n}{int}, \In{m}{int}, \In{edges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}}{bool}}
-		
-		int i, j
-		
-		\For{i in [0..n)}
-		{
-			distance[i] $\leftarrow$ INF
-		}
-		
-		distance[source] $\leftarrow$ 0
-		
-		\For{i in [0..n)}
-		{
-			\For{(u,v,w) in edges}
-			{
-				\If{distance[u] + w $<$ distance[v]}
-				{
-					distance[v] $\leftarrow$ distance[u] + w
-				}
-				
-			}
-		}
-
-		res $\leftarrow$ false
-		
-		\For{(u,v,w) in edges}
-			{
-				\If{distance[u] + w $<$ distance[v]}
-				{
-					res $\leftarrow$ true
-				}
-				
-			}
-
-	\end{algorithm}
-
 Este algoritmo basa su funcionamiento en el concepto de relajación de caminos. Esto consiste en mirar un eje (u,v) de peso w y evaluar si el peso del mejor camino encontrado desde source hasta u más w es menor que el peso del mejor camino encontrado desde source hasta v. En caso afirmativo el algoritmo ha encontrado una nueva ruta hasta v, utilizando al eje (u,v). Como cualquier camino mínimo no puede ser un ciclo, la cantidad de ejes utilizados en cualquier camino mínimo es a lo sumo la cantidad de nodos del grafo. Es por esto que las soluciones encontradas al terminar la enésima iteracion completa de la lista de ejes, sabemos que hemos hallado los mejores caminos que transitan hasta n nodos. Realizando una iteración extra podremos detectar la presencia de ciclos negativos. En esta iteración se detecta la posibilidad de relajar los caminos que deberían ser óptimos. La contradicción que plantea la mejora de un camino óptimo es la señal de que hay un ciclo negativo que permite "mejorar" la solución indefinidamente sin converger.
 \\
 \par
@@ -81,13 +43,38 @@ Dado que en el problema original queremos detectar la existencia de ciclos negat
 Diremos que c es el peso de la arista mas pesada del grafo original. Vemos que la versión p $=$ 0 es equivalente al grafo original y por ende no puede tener ciclos negativos. Tambien vemos que el grafo original tiene ciclos, la versión p $=$ c + 1 tiene ciclos negativos, porque todas sus aristas tienen peso negativo. Por ende sabemos que nuestra solución esta acotada inferiormente por 0 y superiormente por c. Teniendo en cuenta que para un p cualquiera, si la versión p carece de ciclos negativos entonces para cualquier q $<$ p, la version q carece de ciclos negativos. La intuición aquí reside en notar que aumentar el peso de cada arista de un grafo sin ciclos negativos no puede producir ciclos negativos. También notamos que para un p cualquiera, si la versión p contiene ciclos negativos, entonces para cualquier r $>$ p, la versión r contiene ciclos negativos. Si llamamos t al peso de la suma de los ejes que pertenecen a cualquier ciclo negativo de la versión p, vemos que la suma correspondiente en la versión r será de valor igual a t + (p $-$ r) $\ast$ long(ciclo). como r $>$ p, este resultado sera menor que te y por ende negativo. Encontrar la solución al problema del mínimo subsidio posible será buscar el mínimo p / 0 $\leq$ p $<$ c+1. Sabemos que el valor de p será al menos cero y a lo sumo c, utilizaremos una busqueda binaria entre cero y c para encontrar la solución.
 \\
 \par
-Dado que bellman ford solo puede detectar ciclos negativos para cualquier nodo de partida en digrafos si son fuertemente conexos y que el grafo de entrada no necesariamente cumple tal hipótesis, será necesario realizar un preprocesamiento al grafo de entrada. Diremos que un nodo v es huérfano si y solo si $d_{in} (v) = 0$. Dado que ningún nodo puede llegar a un nodo huérfano, si un digrafo contiene nodos huérfanos, no es fuertemente conexo. Dado que los nodos huérfanos tampoco pueden pertenecer a un ciclo dirigido, no son relevantes en nuestra busqueda de ciclos de peso negativo. Entonces podemos "hacer de cuenta" que no hay nodos huérfanos, simplemente aislándolos del resto del digrafo, eliminando todos sus ejes de salida. Al eliminar los ejes de un nodo huérfano, estaremos reduciendo el grado de entrada de sus hijos. Esto puede producir nuevos nodos huérfanos, que también deben ser aislados. Cuando logramos aislar a todos los nodos huerfanos, nos quedan varias componentes triviales y al menos una componente en la que se cumple que para todo nodo v, $d_{in} (v) > 0 \land d_{out} (v) > 0$. Como vimos, esta hipótesis es necesaria, pero a causa de la siguiente propiedad, no es hipótesis suficiente para que el digrafo sea fuertemente conexo:
+Dado que bellman ford solo puede detectar ciclos negativos para cualquier nodo de partida en digrafos si son fuertemente conexos y que el grafo de entrada no necesariamente cumple tal hipótesis, será necesario realizar un preprocesamiento al grafo de entrada. Diremos que un nodo v es huérfano si y solo si $d_{in} (v) = 0$. Dado que ningún nodo puede llegar a un nodo huérfano, si un digrafo contiene nodos huérfanos, no es fuertemente conexo. Dado que los nodos huérfanos tampoco pueden pertenecer a un ciclo dirigido, no son relevantes en nuestra busqueda de ciclos de peso negativo. Entonces podemos contemplar el grafo donde no hay nodos huérfanos, simplemente aislándolos del resto del digrafo, eliminando todos sus ejes de salida. Al eliminar los ejes de un nodo huérfano, estaremos reduciendo el grado de entrada de sus hijos. Esto puede producir nuevos nodos huérfanos, que también deben ser aislados. Para conseguir esto, utilizamos un algoritmo de este estilo:
+\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{borrarNodosHuerfanos}{\In{n}{nat}, \In{lista[ejes]}{ejesGrafo}}{}}
+		
+		lista[nat]: adyacentes $\leftarrow$ listaDeAdyacencia(ejesGrafo)\\
+		lista[nat]: gradoEntrada $\leftarrow$ gradoDeEntrada(ejesGrafo)\\
+		pila[nat]: nodosHuerfanos $\leftarrow$ vacia()\\
+		\While{j $<$ n}{
+			\eIf{nodosHuerfanos.esVacia()}{
+				\eIf{gradoEntrada[j] $=$ 0}{
+					agregarNodosHuerfanos(nodosHuerfanos, adyacentes, gradoEntrada, j, ejesGrafo)\\
+					gradoEntrada[j] $\leftarrow$ NULL
+					}{j $\leftarrow$ j + 1\\}
+				}{
+					nat: k $\leftarrow$ nodosHuerfanos.dameTope()\\
+					agregarNodosHuerfanos(nodosHuerfanos, adyacentes, gradoEntrada, k, ejesGrafo)\\
+					}
+		}
+
+	\end{algorithm}
+
+
+Cuando logramos aislar a todos los nodos huerfanos del digrafo principal, ya estamos en condiciones de asegurar que para todo nodo v, $d_{in} (v) > 0 \land d_{out} (v) > 0$. Sin embargo, a causa de la siguiente propiedad, no es hipótesis suficiente para que el digrafo sea fuertemente conexo:
 \\
 \par
+\begin{center}
 Orientar un grafo es darle una dirección a cada eje. Un grafo conexo G es orientable de forma tal que se convierta en un digrafo fuertemente conexo si y sólo si cada eje de G pertenece a un circuito simple de G.
-\\
-\par
-Vemos que los ejes que no pertenecen a un ciclo en el grafo subyacente no pueden pertenecer a un ciclo en el digrafo, entonces si el digrafo tiene tales ejes, no es fuertemente conexo. Como esos ejes no pueden pertenecer a un ciclo dirigido, no son importantes en nuestro análisis y por lo tanto eliminarlos no nos quita soluciones. Se utiliza un algoritmo que dada una lista de incidencia, encuentra un árbol generador utilizando Kruskal y separa los ejes en dos listas: la lista de inciertos contiene a los ejes del árbol encontrado y la lista de seleccionados que contiene al resto de los ejes. Como el algoritmo de Kruskal ignora a todos los ejes que conectan a dos nodos que ya estan en la misma componente conexa, sabemos que todos los ejes de la lista de seleccionados pertenecen a al menos un ciclo y conforman una solución parcial. Queremos determinar cuales ejes de la lista de inciertos tambien pertenecen a ciclos y agregarlos a la lista de seleccionados. Un procedimiento que descubre ejes de la lista de inciertos consiste en crear un disjoint set con union find y recorrer los ejes de la lista de seleccionados, conectando partida y llegada del eje cada vez.
+\end{center}
+Vemos que los ejes que no pertenecen a un ciclo en el grafo subyacente no pueden pertenecer a un ciclo en el digrafo, entonces si el digrafo tiene tales ejes, no es fuertemente conexo. Como esos ejes no pueden pertenecer a un ciclo dirigido, no son importantes en nuestro análisis y por lo tanto eliminarlos no nos quita soluciones.
+
+Se utiliza un algoritmo que dada una lista de incidencia, encuentra un árbol generador utilizando Kruskal y separa los ejes en dos listas: la lista de inciertos contiene a los ejes del árbol encontrado y la lista de seleccionados que contiene al resto de los ejes. Como el algoritmo de Kruskal ignora a todos los ejes que conectan a dos nodos que ya estan en la misma componente conexa, sabemos que todos los ejes de la lista de seleccionados pertenecen a al menos un ciclo y conforman una solución parcial. Queremos determinar cuales ejes de la lista de inciertos tambien pertenecen a ciclos y agregarlos a la lista de seleccionados. Un procedimiento que descubre ejes de la lista de inciertos consiste en crear un disjoint set con union find y recorrer los ejes de la lista de seleccionados, conectando partida y llegada del eje cada vez.
 \subsection{Cota temporal}
 
 \subsection{Experimentacion}

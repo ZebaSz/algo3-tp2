@@ -161,16 +161,19 @@ Veamos cual es la complejidad de cada uno de ellos:
 \begin{center}
 \textbf{agregarEjeComun}
 \end{center}
+\par
 Este algoritmo toma un eje, un valor $n$ y un valor $k$, y agrega el mismo eje para cada uno de los niveles desde 0 a k. Por lo tanto, como agregar un eje se compone de tres asignaciones de costo $O(1)$, el costo del algoritmo se reduce al $for$ que se encarga de realizar la misma acción para todos los niveles. Por lo tanto, su costo es $O(k)$, donde k representa el límite de rutas premium que se puede utilizar.
 \\
 \begin{center}
 \textbf{agregarEjePremium}
 \end{center}
+\par
 Este algoritmo realiza las mismas acciones que $agregarEjeComun$, pero reasigna los ejes de manera distinta. Sin embargo, como aún realiza asignaciones de costo $O(1)$, podemos reducir la complejidad otra vez al ciclo que posee. Por lo tanto, como vimos con el algoritmo anterior, el costo es $O(k)$, donde k representa el límite de rutas premium que se puede utilizar.
 \\
 \begin{center}
 \textbf{Dijkstra}
 \end{center}
+\par
 El algoritmo de Dijkstra. Al usar la implementación y las estructuras que vimos en clase, obtenemos un costo de $O(n^2)$, donde n es la cantidad de nodos del grafo que recibimos en la entrada.
 \\
 \par
@@ -192,7 +195,39 @@ En resumen, tenemos tres costos significativos en nuestro algoritmo:
 Es trivial notar que $O(k)$ $\subseteq$ $O(mk)$, por lo que $O(k)$ + $O(mk)$ $\subseteq$ $O(k + mk)$ $\subseteq$ $O(m(k+1)$ $\subseteq$ $O(mk)$. Por otra parte, por propiedades de arbol, sabemos que m $\leq$ $n^2$ para cualquier grafo; por lo tanto, podemos acotar $m$ por $n^2$. Entonces, $O(m)$ $\subseteq$ $O(n^2)$ $\rightarrow$ $O(mk)$ $\subseteq$ $O(kn^2)$ $\subseteq$ $O((nk)^2)$. Por lo tanto, $O(mk + (nk)^2)$ $\subseteq$ $O((nk)^2)$.
 \\
 \par
-Por lo visto en el parrafo anterior, tenemos: $O(mk + k + (nk)^2)$ $\subseteq$ $O((nk)^2)$. Por lo tanto, nuestro algoritmo tiene complejidad $O((nk)^2)$ que es igual a $O(n^2k^2)$
+Por lo visto en el parrafo anterior, tenemos: $O(mk + k + (nk)^2)$ $\subseteq$ $O((nk)^2)$. Por lo tanto, nuestro algoritmo tiene complejidad $O((nk)^2)$ que es igual a $O(n^2k^2)$.
+
 \subsection{Experimentacion}
+
+De cara a la experimentación, nuestra expectativa es que la performance del algoritmo se vea afectada por dos factores: la cantidad de ciudades (n) y la cantidad máxima de rutas premium a utilizar (k). Consideramos que la cantidad de rutas (m) no debería afectar los tiempos por la representación interna escogida al correr Dijkstra (matriz de adyacencia). Por un motivo similar, asumimos que la cantidad de rutas premium existentes tampoco debería influir en el timepo de ejecución, ya que es k quien determina la cantidad de niveles del supergrafo.
+
+La metodología de prueba y medición de tiempo se encuentra detallada en los apéndices. Los siguientes gráficos corresponden a cada una de las variables aisladas, manteniendo todas las otras fijas en un mismo numero en tanto esto es posible.
+
+\begin{center}
+	\includegraphics[scale=0.5]{imagenes/ej1-1.png}
+\end{center}
+
+Como se puede apreciar en este gráfico, el tiempo de ejecución depende fuertemente la cantidad de ciudades. Esto no es una sorpresa, ya que como hemos mencionado nuestra cota de complejidad es $O(n^2k^2)$.
+
+\begin{center}
+	\includegraphics[scale=0.5]{imagenes/ej1-2.png}
+\end{center}
+
+En este gráfico, podemos notar que si bien la cantidad de rutas no define la complejidad del algoritmo (hay otros aspectos que definen la complejidad), en nuestra implementación tienen un impacto lineal. Esto se condice con el costo $O(mk)$ previamente mencionado.
+
+\begin{center}
+	\includegraphics[scale=0.5]{imagenes/ej1-3.png}
+\end{center}
+
+Como esperábamos, la cantidad de rutas premium totales no influye en la complejidad si no modificamos la cantidad total de rutas o los niveles del supergrafo.
+
+\begin{center}
+	\includegraphics[scale=0.5]{imagenes/ej1-4.png}
+\end{center}
+
+Por otro lado, al aumentar la cantidad máxima de rutas premium utilizables, el impacto es nuevamente cuadrático. También se puede ver que la correlación entre tiempo de ejecución y k es más fuerte, ya que los 3 costos mencionados dependen de k.
+
+A su vez, en este gráfico no se limitó el total de rutas premium existentes, y se puede ver nuevamente que dicho valor no influye en la complejidad.
+
 
 \pagebreak

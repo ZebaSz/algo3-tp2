@@ -7,9 +7,41 @@ Este problema plantea otra provincia de Optilandia, cuyas ciudades están conect
 Nos piden un algoritmo que, dadas las rutas y los costos de construcción y destrucción, nos diga que rutas hay que destruir y construir para satisfacer el problema de forma que gastemos lo menor posible. Como requisito, la complejidad de este algoritmo no puede ser peor que \textbf{O($n^2log(n)$)}, donde n es la cantidad de ciudades de la provincia.
 \\
 \par
-\textbf{Agregar ejemplos}
+Veamos un ejemplo del problema. Supongamos que tuvieramos 6 ciudades, con las siguientes rutas iniciales y con los siguientes costos de destrucción expresados en pesos:
+\begin{itemize}
+\item Ruta de 1 a 2. Costo de destrucción: 100 pesos.
+\item Ruta de 1 a 4. Costo de destrucción: 230 pesos.
+\item Ruta de 1 a 6. Costo de destrucción: 65 pesos.
+\item Ruta de 2 a 4. Costo de destrucción: 190 pesos.
+\item Ruta de 2 a 6. Costo de destrucción: 300 pesos.
+\item Ruta de 3 a 5. Costo de destrucción: 150 pesos.
+\end{itemize}
+
+Por otro lado, tendríamos las siguientes rutas a disposición para construir, con el siguiente costo:
+
+\begin{itemize}
+\item Ruta de 1 a 3. Costo de construcción: 150 pesos.
+\item Ruta de 1 a 5. Costo de construcción: 130 pesos.
+\item Ruta de 2 a 3. Costo de construcción: 190 pesos.
+\item Ruta de 2 a 5. Costo de construcción: 50 pesos.
+\item Ruta de 2 a 6. Costo de construcción: 80 pesos.
+\item Ruta de 3 a 4. Costo de construcción: 300 pesos.
+\item Ruta de 3 a 6. Costo de construcción: 170 pesos.
+\item Ruta de 4 a 5. Costo de construcción: 200 pesos.
+\item Ruta de 4 a 6. Costo de construcción: 150 pesos.
+\item Ruta de 5 a 6. Costo de construcción: 140 pesos.
+\end{itemize}
+
+Por lo tanto, la solución más eficiente para dejar un único camino entre todas las ciudades sería:
+
+\begin{enumerate}
+\item Destruir la ruta de 1 a 6, a un costo de 65 pesos
+\item Destruir la ruta de 1 a 2, a un costo de 100 pesos
+\item Construir la ruta de 2 a 5, a un costo de 50 pesos
+\end{enumerate}
+
+Lo cual nos daría un costo total de 215 pesos, siendo esta la forma más barata de dejar todas las ciudades conectadas.
 \\
-\par
 \subsection{Desarrollo}
 Como es usual, podemos representar a las ciudades como nodos de un grafo y a las rutas como los ejes, como no se especifica si las rutas son de una o dos manos vamos a asumir que las rutas son bidireccionales. Pero en este caso tenemos rutas existentes que se pueden destruir y rutas que se pueden crear, vamos a dividir estos ejes en dos conjuntos $C$ y $D$, el primero va a tener los ejes con los costos de construcción de rutas y el segundo va a tener los costos de destrucción, los costos de las rutas se representan como el peso del eje que representa esa ruta. Notemos que $C \cup D$ contiene las aristas de un grafo completo. %ejes
 \\

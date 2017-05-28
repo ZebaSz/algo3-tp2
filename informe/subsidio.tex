@@ -72,6 +72,47 @@ Cuando logramos aislar a todos los nodos huerfanos del digrafo principal, ya est
 Orientar un grafo es darle una dirección a cada eje. Un grafo conexo G es orientable de forma tal que se convierta en un digrafo fuertemente conexo si y sólo si cada eje de G pertenece a un circuito simple de G.
 \end{center}
 Vemos que los ejes que no pertenecen a un ciclo en el grafo subyacente no pueden pertenecer a un ciclo en el digrafo, entonces si el digrafo tiene tales ejes, no es fuertemente conexo. Como esos ejes no pueden pertenecer a un ciclo dirigido, no son importantes en nuestro análisis y por lo tanto eliminarlos no nos quita soluciones. Se utiliza un algoritmo que dada una lista de incidencia, encuentra un árbol generador utilizando Kruskal y separa los ejes en dos listas: la lista de inciertos contiene a los ejes del árbol encontrado y la lista de seleccionados que contiene al resto de los ejes. Como el algoritmo de Kruskal ignora a todos los ejes que conectan a dos nodos que ya estan en la misma componente conexa, sabemos que todos los ejes de la lista de seleccionados pertenecen a al menos un ciclo y conforman una solución parcial. Queremos determinar cuales ejes de la lista de inciertos tambien pertenecen a ciclos y agregarlos a la lista de seleccionados. Un procedimiento que descubre ejes de la lista de inciertos consiste en crear un disjoint set con union find y recorrer los ejes de la lista de seleccionados, conectando partida y llegada del eje cada vez. Cuando se termina de recorrer seleccionados, el disjoint set tiene componentes de nodos que pertenecen a ciclos. Ahora iteramos la lista de inciertos y para cada eje averiguamos si sus nodos incididos pertenecen a la misma componente. En caso afirmativo, este eje pertenece a un ciclo, lo borramos de inciertos y lo pusheamos a seleccionados. En caso contrario no podemos determinar asi que lo dejamos en inciertos y conectamos ambos nodos incididos en el disjoint set. Cuando se termina de recorrer inciertos, puede pasar que ninguno de los recorridos haya sido agregado a seleccionados. En tal caso significa que ninguno de los ejes pertenecientes a inciertos pertenece a ciclos. Si al menos uno de los recorridos fue agregado a seleccionados, hay que volver a empezar el proceso creando un nuevo disjoint set. Esta incertudumbre reside en observar que al agregar un nuevo eje a la lista de seleccionados, crece nuestro conjunto de ejes pertenecientes a ciclos, lo cual posibilita la identificacion de nuevos ejes.
+
+\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{deleteEdgesThatDontBelongToCicles}{\In{n}{int}, \Inout{inputEdges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}, \In{p}{int}}{bool}}
+		
+		changesMade $\leftarrow$ true
+		
+		edgesToUse $\leftarrow$ spanningTree(inputEdges)
+
+		inputEdges $\leftarrow$ inputEdges - edgesToUse
+
+		\While{changesMade} 
+		{
+			changesMade $\leftarrow$ false
+
+			ds $\leftarrow$ {}
+
+			\For{(u,v) in inputEdges}
+			{
+				ds.join(u, v)
+			}
+
+			\For{(u,v) in inputEdges}
+			{
+				\eIf{ds.connected(u,v)}
+					{
+						inputEdges.add((u,v))
+						edgesToUse.erase((u,v))
+						changesMade $\leftarrow$ true
+					}
+					{
+						ds.join(u, v)
+					}
+			}
+
+
+
+		}
+
+	\end{algorithm}
+
 \subsection{Cota temporal}
 
 \subsection{Experimentacion}

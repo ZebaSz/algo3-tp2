@@ -7,8 +7,17 @@ En este problema, observamos la provincia de Optilandia, cuyas ciudades estan co
 Si bien esto no es un problema para el gobierno, siempre y cuando se evite que un usuario pueda irse desde una ciudad, hacer un recorrido y volver a la misma habiendo ganado plata. Por lo tanto, como el gobierno busca maximizar el subsidio otorgado, debemos buscar el valor c que permita otorgar el mayor subsidio por peaje sin que exista la posibilidad de que un usuario le saque plata al Estado. La complejidad del algoritmo debe ser no peor que \textbf{O($nm.log(c)$)}, donde n es la cantidad de ciudades, m es la cantidad de rutas y c es el costo del máximo peaje
 \\
 \par
+Veamos un ejemplo del problema. Supongamos que tuvieramos 6 ciudades, con las siguientes rutas iniciales y con los siguientes costos de peaje1 expresados en pesos:
+\begin{itemize}
+\item Ruta de 1 a 2. Costo de peaje: 40 pesos.
+\item Ruta de 2 a 3. Costo de peaje: 20 pesos.
+\item Ruta de 3 a 4. Costo de peaje: 10 pesos.
+\item Ruta de 4 a 1. Costo de peaje: 15 pesos.
+\item Ruta de 5 a 2. Costo de peaje: 5 pesos.
+\item Ruta de 6 a 3. Costo de peaje: 10 pesos.
+\end{itemize}
 
-\textbf{Agregar ejemplos}
+Como vemos, la única manera de salir de una ciudad y volver a la misma es que arranquemos en las ciudades 1, 2, 3 ó 4, y recorramos las cuatro rutas que las conectan. Por ende, debemos asegurar que al recorrerlas no se le saca plata al estado; es decir, que al aplicarle el subsidio fijo, se descuenta menos de (40+20+10+15) $=$ 85 pesos. Considerando que las cuatro rutas tienen el mismo descuento, el mayor subsidio que se podría realizar es la cuarta parte de 85, que si lo redondeamos es 21 pesos. Por lo tanto, el mayor descuento que se podría realizar a las rutas de esta provincia es de 21 pesos.
 \\
 \par
 \subsection{Desarrollo}
@@ -67,11 +76,15 @@ Dado que bellman ford solo puede detectar ciclos negativos para cualquier nodo d
 
 
 Cuando logramos aislar a todos los nodos huerfanos del digrafo principal, ya estamos en condiciones de asegurar que para todo nodo v, $d_{in} (v) > 0 \land d_{out} (v) > 0$. Sin embargo, a causa de la siguiente propiedad, no es hipótesis suficiente para que el digrafo sea fuertemente conexo:
-
+\\
+\par
 \begin{center}
 Orientar un grafo es darle una dirección a cada eje. Un grafo conexo G es orientable de forma tal que se convierta en un digrafo fuertemente conexo si y sólo si cada eje de G pertenece a un circuito simple de G.
 \end{center}
-Vemos que los ejes que no pertenecen a un ciclo en el grafo subyacente no pueden pertenecer a un ciclo en el digrafo, entonces si el digrafo tiene tales ejes, no es fuertemente conexo. Como esos ejes no pueden pertenecer a un ciclo dirigido, no son importantes en nuestro análisis y por lo tanto eliminarlos no nos quita soluciones. Se utiliza un algoritmo que dada una lista de incidencia, encuentra un árbol generador utilizando Kruskal y separa los ejes en dos listas: la lista de inciertos contiene a los ejes del árbol encontrado y la lista de seleccionados que contiene al resto de los ejes. Como el algoritmo de Kruskal ignora a todos los ejes que conectan a dos nodos que ya estan en la misma componente conexa, sabemos que todos los ejes de la lista de seleccionados pertenecen a al menos un ciclo y conforman una solución parcial. Queremos determinar cuales ejes de la lista de inciertos tambien pertenecen a ciclos y agregarlos a la lista de seleccionados. Un procedimiento que descubre ejes de la lista de inciertos consiste en crear un disjoint set con union find y recorrer los ejes de la lista de seleccionados, conectando partida y llegada del eje cada vez. Cuando se termina de recorrer seleccionados, el disjoint set tiene componentes de nodos que pertenecen a ciclos. Ahora iteramos la lista de inciertos y para cada eje averiguamos si sus nodos incididos pertenecen a la misma componente. En caso afirmativo, este eje pertenece a un ciclo, lo borramos de inciertos y lo pusheamos a seleccionados. En caso contrario no podemos determinar asi que lo dejamos en inciertos y conectamos ambos nodos incididos en el disjoint set. Cuando se termina de recorrer inciertos, puede pasar que ninguno de los recorridos haya sido agregado a seleccionados. En tal caso significa que ninguno de los ejes pertenecientes a inciertos pertenece a ciclos. Si al menos uno de los recorridos fue agregado a seleccionados, hay que volver a empezar el proceso creando un nuevo disjoint set. Esta incertudumbre reside en observar que al agregar un nuevo eje a la lista de seleccionados, crece nuestro conjunto de ejes pertenecientes a ciclos, lo cual posibilita la identificacion de nuevos ejes.
+
+Vemos que los ejes que no pertenecen a un ciclo en el grafo subyacente no pueden pertenecer a un ciclo en el digrafo, entonces si el digrafo tiene tales ejes, no es fuertemente conexo. Como esos ejes no pueden pertenecer a un ciclo dirigido, no son importantes en nuestro análisis y por lo tanto eliminarlos no nos quita soluciones.
+
+Se utiliza un algoritmo que dada una lista de incidencia, encuentra un árbol generador utilizando Kruskal y separa los ejes en dos listas: la lista de inciertos contiene a los ejes del árbol encontrado y la lista de seleccionados que contiene al resto de los ejes. Como el algoritmo de Kruskal ignora a todos los ejes que conectan a dos nodos que ya estan en la misma componente conexa, sabemos que todos los ejes de la lista de seleccionados pertenecen a al menos un ciclo y conforman una solución parcial. Queremos determinar cuales ejes de la lista de inciertos tambien pertenecen a ciclos y agregarlos a la lista de seleccionados. Un procedimiento que descubre ejes de la lista de inciertos consiste en crear un disjoint set con union find y recorrer los ejes de la lista de seleccionados, conectando partida y llegada del eje cada vez.
 \subsection{Cota temporal}
 
 \subsection{Experimentacion}

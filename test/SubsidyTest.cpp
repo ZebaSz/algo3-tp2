@@ -129,9 +129,8 @@ TEST_F(SubsidyTest, deleteOrphanEdge) {
     edges.push_back({0,1,20});
     edges.push_back({1,2,7});
     edges.push_back({2,1,3});
-    edges.push_back({3,0,3});
-    deleteIsolatedNodes(4, edges);
-    ASSERT_EQ(edges.size(),2);
+    deleteIsolatedNodes(3, edges);
+    ASSERT_EQ(edges.size(),(size_t)2);
 }
 
 TEST_F(SubsidyTest, isolatedNodes){

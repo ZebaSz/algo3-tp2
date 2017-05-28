@@ -6,8 +6,8 @@
 #define INF INT_MAX
 
 struct edge {
-    int start;
-    int end;
+    unsigned int start;
+    unsigned int end;
     int weight;
 };
 

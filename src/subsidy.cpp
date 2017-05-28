@@ -6,6 +6,7 @@
 #include "disjointSet.h"
 
 int binarySearchTax(int n, int m, edgeList &edges) {
+    deleteIsolatedNodes(n, edges);
     deleteEdgesThatDontBelongToCicles(n, edges);
     int low = 0;
     int high = edges[0].weight;
@@ -45,7 +46,6 @@ bool adjustedBellmanFordToEachComponent(int n, int c, int *distance, const edgeL
 }
 
 void deleteEdgesThatDontBelongToCicles(int n, edgeList &inputEdges) {
-    deleteIsolatedNodes(n, inputEdges);
     bool changesMade = true;
     edgeList edgesToUse;
     generateSpanningTree(n, inputEdges, edgesToUse);

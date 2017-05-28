@@ -17,13 +17,6 @@ TEST_F(SubsidyTest, testCarlos) {
     ASSERT_EQ(testEdgesChanges, edges);
 }
 
-TEST_F(SubsidyTest, testCarlos2) {
-    edges.push_back({0,1,20});
-    edges.push_back({1,2,7});
-    edges.push_back({2,0,3}); // FIXME: este test esta mal, no se admiten pesos negativos
-    ASSERT_EQ(binarySearchTax(3, 3, edges), 8);
-}
-
 TEST_F(SubsidyTest, equalWeightEdges) {
     edges.push_back({2,0,20});
     edges.push_back({0,1,20});
@@ -132,6 +125,14 @@ TEST_F(SubsidyTest, noUniversalParents) {
     edges.push_back({9,7,15});
     ASSERT_EQ(binarySearchTax(10, 12, edges), 5);
 
+}
+
+TEST_F(SubsidyTest, deleteOrphanEdge) {
+    edges.push_back({0,1,20});
+    edges.push_back({1,2,7});
+    edges.push_back({2,1,3});
+    binarySearchTax(3, 3, edges);
+    ASSERT_EQ(edges.size(), 2);
 }
 
 TEST_F(SubsidyTest, isolatedNodes){

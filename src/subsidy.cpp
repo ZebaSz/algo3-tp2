@@ -95,7 +95,7 @@ void deleteIsolatedNodes(int n, edgeList &inputEdges) {
     edgeList withoutIsolatedNodes;
     edgeList::iterator itEdges;
     for (itEdges = inputEdges.begin(); itEdges != inputEdges.end(); ++itEdges) {
-        if (din[it->start - 1] > 0 && din[it->end - 1] > 0){
+        if (din[itEdges->start] > 0 && din[itEdges->end] > 0){
             withoutIsolatedNodes.push_back(*itEdges);
         }
     }

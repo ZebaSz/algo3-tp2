@@ -20,7 +20,7 @@ TEST_F(SubsidyTest, testCarlos) {
 TEST_F(SubsidyTest, testCarlos2) {
     edges.push_back({0,1,20});
     edges.push_back({1,2,7});
-    edges.push_back({2,1,3}); // FIXME: este test esta mal, no se admiten pesos negativos
+    edges.push_back({2,0,3}); // FIXME: este test esta mal, no se admiten pesos negativos
     ASSERT_EQ(binarySearchTax(3, 3, edges), 8);
 }
 

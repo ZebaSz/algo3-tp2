@@ -7,8 +7,8 @@ struct input {
     int origin;
     int destination;
     int k;
-    int countPremium;
     edgeList edges;
+    edgeList premiumEdges;
 };
 
 int main() {
@@ -27,21 +27,24 @@ int main() {
             in.origin = origin;
             in.destination = destiny;
             in.k = k;
-            in.countPremium = 0;
             for(int i = 0; i < m; ++i) {
                 int c1, c2, p, d;
                 std::cin >> c1 >> c2 >> p >> d;
                 --c1;
                 --c2;
-                if (p == 1) in.countPremium++;
-                addEdgeToPremiumGraph(c1, c2, p, d, k, n, in.edges);
+                edge e = {c1, c2, d};
+                if(p) {
+                    in.premiumEdges.push_back(e);
+                } else {
+                    in.edges.push_back(e);
+                }
             }
             inputs.push_back(in);
         }
     }
     std::vector<input>::const_iterator it;
     for(it = inputs.begin(); it != inputs.end(); ++it) {
-        std::cout << optimumDelivery(it->origin, it->destination, it->n, it->k, it->edges) << std::endl;
+        std::cout << optimumDelivery(it->origin, it->destination, it->n, it->k, it->edges, it->premiumEdges) << std::endl;
     }
     return 0;
 }

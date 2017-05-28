@@ -3,7 +3,6 @@
 
 #include "graph.h"
 
-void addEdgeToPremiumGraph(int start, int end, int p, int d, int k, int n, edgeList& edges);
-int optimumDelivery(int origin, int destiny, int n, int k, const edgeList &edges);
+int optimumDelivery(int origin, int destination, int n, int k, const edgeList &edges, const edgeList &premiumEdges);
 
 #endif //ALGO3_TP2_DELIVERY_H

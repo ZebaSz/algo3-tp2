@@ -3,37 +3,48 @@
 #include <climits>
 #include "Utils.h"
 
-
-void addEdgeToPremiumGraph(int start, int end, int p, int d, int k, int n, edgeList& edges){
-    //Vamos a agregar el eje a todos los niveles y si es premium lo conectamos con el nivel de arriba
-    if (p == 1) {
-        for (int c = 0; c < k; c++) {
-            //c representa el nivel y c*n es el offset del nivel
-            int c1 = start + c*n;
-            int c2 = end + c*n;
-            edges.push_back({c1, c2 + n, d});//Sumamos + n para conectar al nivel siguiente mediante esta ruta premium
-            edges.push_back({c2, c1 + n, d});//Como las rutas son doblemano y nosotros estamos representandolo con un digrafo hay que hacer ambos sentidos
-        }
-    } else{
-        for (int c = 0; c < k+1; c++) {
-            int c1 = start + c*n;
-            int c2 = end + c*n;
-            edges.push_back({c1, c2, d});//Si la ruta no es premium conectamos ida y vuelta los del mismo nivel
-            edges.push_back({c2, c1, d});
-        }
+void addRegularEdge(const edge &e, int n, int k, edgeList &superGraph) {
+    for (int c = 0; c <= k; ++c) {
+        int c1 = e.start + c * n;
+        int c2 = e.end + c * n;
+        //Si la ruta no es premium conectamos ida y vuelta los del mismo nivel
+        superGraph.push_back({c1, c2, e.weight});
+        superGraph.push_back({c2, c1, e.weight});
     }
 }
 
+void addPremiumEdge(const edge &e, int n, int k, edgeList &superGraph) {
+    for (int c = 0; c < k; ++c) {
+        //c representa el nivel y c*n es el offset del nivel
+        int c1 = e.start + c * n;
+        int c2 = e.end + c * n;
+        //Sumamos + n para conectar al nivel siguiente mediante esta ruta premium
+        superGraph.push_back({c1, c2 + n, e.weight});
+        //Como las rutas son doblemano y nosotros estamos representandolo con un digrafo hay que hacer ambos sentidos
+        superGraph.push_back({c2, c1 + n, e.weight});
+    }
+}
 
-int optimumDelivery(int origin, int destiny, int n, int k, const edgeList &edges) {
+int optimumDelivery(int origin, int destination, int n, int k,
+                    const edgeList &edges, const edgeList &premiumEdges) {
     int premiumGraphNodes = (k + 1) * n;
     int* distance = new int[(k + 1) * n];
-    dijkstra(origin, premiumGraphNodes, distance, edges, true);
+
+    edgeList superGraph;
+    edgeList::const_iterator it;
+    for (it = edges.begin(); it != edges.end(); ++it) {
+        addRegularEdge(*it, n, k, superGraph);
+    }
+    for (it = premiumEdges.begin(); it != premiumEdges.end(); ++it) {
+        addPremiumEdge(*it, n, k, superGraph);
+    }
+    
+    dijkstra(origin, premiumGraphNodes, distance, superGraph, true);
     int answer = INF;
     for (int i = 0; i <= k; i++) {
-        Utils::log(DEBUG, "Resultado posible %d", distance[destiny + i * n]);
-        if (distance[destiny + i * n] < answer) {
-            answer = distance[destiny + i * n];
+        Utils::log(DEBUG, "Resultado posible %d", distance[destination + i * n]);
+        if (distance[destination + i * n] < answer) {
+            answer = distance[destination + i * n];
         }
     }
     delete[] distance;

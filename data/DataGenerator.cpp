@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include "grafGen.h"
 #include "../src/delivery.h"
 #include "../src/reconfiguration.h"
@@ -15,7 +16,7 @@ void getDataDelivery(FILE *data) {
     fprintf(data, "Ciudades,Rutas,TotalPremium,LimitePremium,Nanosegundos\n");
     for (unsigned int i = 2; i <= MAX_N; ++i) {
         printf("Running with %d cities for Delivery problem\n", i);
-        for (unsigned int j = 1; j <= std::min(MAX_M, (i*(i-1)) >> 1); ++j) {
+        for (unsigned int j = i-1; j <= std::min(MAX_M, (i*(i-1)) >> 1); ++j) {
             printf("Running with %d routes for Delivery problem\n", j);
             for (unsigned int k = 0; k <= std::min(j, MAX_P); ++k) {
                 printf("Running with %d premium routes for Delivery problem\n", k);

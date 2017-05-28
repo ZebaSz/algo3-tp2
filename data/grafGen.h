@@ -1,8 +1,6 @@
 #ifndef ALGO3_TP2_GRAFGEN_H
 #define ALGO3_TP2_GRAFGEN_H
 
-#include <chrono>
-#include <random>
 #include "../src/graph.h"
 #include "../src/spanning.h"
 

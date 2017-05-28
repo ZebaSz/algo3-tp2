@@ -1,6 +1,7 @@
+#include <chrono>
+#include <random>
 #include <utility>
 #include "grafGen.h"
-#include "../src/spanning.h"
 
 /**
  * Generates a complete graph

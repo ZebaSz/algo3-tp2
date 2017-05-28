@@ -1,23 +1,23 @@
 #include <cmath>
 #include <cstddef>
+#include <list>
 #include "subsidy.h"
 #include "shortest.h"
 #include "disjointSet.h"
 
-int binarySearchTax(int n, int m, const edgeList &edges) {
-    edgeList cicles(edges.begin(), edges.end());
-    deleteEdgesThatDontBelongToCicles(n, cicles);
+int binarySearchTax(int n, int m, edgeList &edges) {
+    deleteEdgesThatDontBelongToCicles(n, edges);
     int low = 0;
-    int high = cicles[0].weight;
+    int high = edges[0].weight;
     for(int e = 0; e < m; e++) {
-        if(cicles[e].weight > high) {
-            high = cicles[e].weight;
+        if(edges[e].weight > high) {
+            high = edges[e].weight;
         }
     }
     int* distance = new int[n];
     while(low < high) {
         int c = (int)std::ceil((float)(low + high)/2);
-        bool detected = adjustedBellmanFordToEachComponent(n, c, distance, cicles);
+        bool detected = adjustedBellmanFordToEachComponent(n, c, distance, edges);
         if(detected) {
             high = c - 1;
         } else {
@@ -45,6 +45,7 @@ bool adjustedBellmanFordToEachComponent(int n, int c, int *distance, const edgeL
 }
 
 void deleteEdgesThatDontBelongToCicles(int n, edgeList &inputEdges) {
+    deleteIsolatedNodes(n, inputEdges);
     bool changesMade = true;
     edgeList edgesToUse;
     generateSpanningTree(n, inputEdges, edgesToUse);
@@ -68,5 +69,36 @@ void deleteEdgesThatDontBelongToCicles(int n, edgeList &inputEdges) {
             }
         }
     }
+}
+
+void deleteIsolatedNodes(int n, edgeList &inputEdges) {
+    std::list<int> *adj = new std::list<int>[n];
+    int din[n] = {0};
+    edgeList::iterator it;
+    for (it = inputEdges.begin(); it != inputEdges.end(); ++it) {
+        adj[it->start].push_back(it->end);
+        din[it->end] = din[it->end] + 1;
+    }
+    int j = 0;
+    while (j < n){
+        if (din[j] == 0){
+            std::list<int>::iterator listIt;
+            for (listIt = adj[j].begin(); listIt != adj[j].end(); ++listIt) {
+                din[*listIt] = din[*listIt] - 1;
+            }
+            din[j] = -1;
+            j = 0;
+        } else {
+            j++;
+        }
+    }
+    edgeList withoutIsolatedNodes;
+    edgeList::iterator itEdges;
+    for (itEdges = inputEdges.begin(); itEdges != inputEdges.end(); ++itEdges) {
+        if (din[it->start - 1] > 0 && din[it->end - 1] > 0){
+            withoutIsolatedNodes.push_back(*itEdges);
+        }
+    }
+    inputEdges = withoutIsolatedNodes;
 }
 

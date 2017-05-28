@@ -5,8 +5,9 @@
 #include "graph.h"
 #include "spanning.h"
 
-int binarySearchTax(int n, int m, const edgeList &edges);
+int binarySearchTax(int n, int m, edgeList &edges);
 bool adjustedBellmanFordToEachComponent(int n, int c, int *distance, const edgeList &edges);
 void deleteEdgesThatDontBelongToCicles(int n, edgeList &inputEdges);
+void deleteIsolatedNodes(int n, edgeList& inputEdges);
 
 #endif //ALGO3_TP2_SUBSIDY_H

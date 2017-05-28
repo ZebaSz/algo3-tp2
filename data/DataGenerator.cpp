@@ -60,7 +60,7 @@ void getDataSubsidy() {
             printf("Running with %d routes for Subsidy problem\n", j);
             long best = -1;
             for (unsigned int k = 0; k < MAX_W; ++k) {
-                printf("Running with %d max weight for Subsidy problem\n", j);
+                printf("Running with %d max weight for Subsidy problem\n", k);
                 edgeList baseGraph;
                 genRandomSemiconnectedDigraph(i, j, baseGraph, k);
                 for (unsigned int l = 0; l < REPETITIONS; ++l) {

@@ -1,4 +1,6 @@
+#include <utility>
 #include "grafGen.h"
+#include "../src/spanning.h"
 
 /**
  * Generates a complete graph
@@ -61,7 +63,7 @@ void genRandomGraph(int n, int m, edgeList &edges, int maxW, bool digraph) {
 void genRandomTree(int n, edgeList &edges, edgeList &tree, int maxW) {
     genKGraph(n, edges, maxW, false);
     shuffleEdgeList(edges);
-    kruskaLists(n, edges, tree);
+    generateSpanningTree(n, edges, tree);
 }
 
 /**
@@ -75,7 +77,7 @@ void genRandomTree(int n, edgeList &edges, edgeList &tree, int maxW) {
 void genConex(int n, int m, edgeList &tree, int maxW) {
     edgeList edges;
     genRandomTree(n, edges, tree, maxW);
-    edgeList::const_iterator it = edges.begin();
+    edgeList::iterator it = edges.begin();
     int edgesToAdd = m -(n-1);
     for (int i = 0; i < edgesToAdd; ++i) {
         tree.push_back(*it);
@@ -85,7 +87,7 @@ void genConex(int n, int m, edgeList &tree, int maxW) {
 
 void getSubgraph(int m, edgeList &base, edgeList &subgraph) {
     shuffleEdgeList(base);
-    edgeList::const_iterator it = base.begin();
+    edgeList::iterator it = base.begin();
     for (int i = 0; i < m; ++i) {
         subgraph.push_back(*it);
         it = base.erase(it);

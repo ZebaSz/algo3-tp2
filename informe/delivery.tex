@@ -149,8 +149,50 @@ Por lo tanto, con lo visto anteriormente, acabaríamos teniendo un algoritmo de 
 
 
 \subsection{Cota temporal}
-Crear la representación del grafo con niveles cuesta para cada una de las aristas $O(k)$, y como hay m aristas en total es $O(mk)$ y como m está acotado por $n^2$, podemos decir también que es $O(n^2*k)$. Después aplicamos Dijkstra que la implementación que llevamos a cabo es $O(n^2)$ pero nuestro grafo ya ni tiene $n$ nodos, sino que tiene $n*(k+1)$ osea que para nuestro caso la complejidad temporal en peor caso es de es $O((n*(k+1))^2)$ o lo que es lo mismo $O(n^2*k^2)$. Por último nos queda buscar el valor óptimo que lo logramos en $O(k)$ ya que hacemos k iteraciones de conseguir un elemento de un arreglo que es es $O(1)$. Resumiendo la complejidad temporal nos queda en $O( n^2*k + n^2*k^2 + k )$ que es lo mismo que $O(n^2*k^2)$ que se ajusta a lo que pedía el ejercicio.
+La cota temporal de este problema se puede reducir, como vemos en el algoritmo de deliveryOptimo que aparece en la sección \textbf{Desarrollo}, a conocer las complejidades de tres algoritmos:
+\begin{itemize}
+\item agregarEjeComun
+\item agregarEjePremium
+\item Dijkstra
+\end{itemize}
 
+Veamos cual es la complejidad de cada uno de ellos:
+\\
+\begin{center}
+\textbf{agregarEjeComun}
+\end{center}
+Este algoritmo toma un eje, un valor $n$ y un valor $k$, y agrega el mismo eje para cada uno de los niveles desde 0 a k. Por lo tanto, como agregar un eje se compone de tres asignaciones de costo $O(1)$, el costo del algoritmo se reduce al $for$ que se encarga de realizar la misma acción para todos los niveles. Por lo tanto, su costo es $O(k)$, donde k representa el límite de rutas premium que se puede utilizar.
+\\
+\begin{center}
+\textbf{agregarEjePremium}
+\end{center}
+Este algoritmo realiza las mismas acciones que $agregarEjeComun$, pero reasigna los ejes de manera distinta. Sin embargo, como aún realiza asignaciones de costo $O(1)$, podemos reducir la complejidad otra vez al ciclo que posee. Por lo tanto, como vimos con el algoritmo anterior, el costo es $O(k)$, donde k representa el límite de rutas premium que se puede utilizar.
+\\
+\begin{center}
+\textbf{Dijkstra}
+\end{center}
+El algoritmo de Dijkstra. Al usar la implementación y las estructuras que vimos en clase, obtenemos un costo de $O(n^2)$, donde n es la cantidad de nodos del grafo que recibimos en la entrada.
+\\
+\par
+Ahora, queda ver como nos afectan estas complejidades al algoritmo de deliveryOptimo. En este algoritmo, usamos dos ciclos: uno para los ejes comunes, y uno para los ejes premium. Como sabemos que la cantidad total de ejes es $m$, y que el costo de agregarEjePremium y de agregarEjeComun es $O(k)$, al aplicarle uno de estos dos algoritmos a todos los ejes tenemos una complejidad de $O(mk)$.
+\\
+\par
+Luego, generamos el vector de distancias aplicandole Dijkstra al grafo con $k+1$ niveles que generamos. Sin embargo, como nuestro grafo tiene $k+1$ repeticiones del grafo inicial, acaba teniendo $k$ veces $n$ nodos; es decir, $nk$ nodos en total. Por lo tanto, al aplicarle Dijkstra, como la complejidad depende de la cantidad de nodos en el grafo, tendrá un costo de $O((n(k+1))^2)$, que se puede acotar por $O((nk)^2)$
+\\
+\par
+Finalmente, recorremos todos los niveles para buscar el camino mínimo que va de origen a destino y utiliza entre 0 y k rutas premium. Esto implica un último ciclo, donde se recorren las $k$ posibles soluciones, lo que nos da un costo de $O(k)$.
+\\
+\par
+En resumen, tenemos tres costos significativos en nuestro algoritmo:
+\begin{itemize}
+\item $O(mk)$
+\item $O((nk)^2)$
+\item $O(k)$
+\end{itemize}
+Es trivial notar que $O(k)$ $\subseteq$ $O(mk)$, por lo que $O(k)$ + $O(mk)$ $\subseteq$ $O(k + mk)$ $\subseteq$ $O(m(k+1)$ $\subseteq$ $O(mk)$. Por otra parte, por propiedades de arbol, sabemos que m $\leq$ $n^2$ para cualquier grafo; por lo tanto, podemos acotar $m$ por $n^2$. Entonces, $O(m)$ $\subseteq$ $O(n^2)$ $\rightarrow$ $O(mk)$ $\subseteq$ $O(kn^2)$ $\subseteq$ $O((nk)^2)$. Por lo tanto, $O(mk + (nk)^2)$ $\subseteq$ $O((nk)^2)$.
+\\
+\par
+Por lo visto en el parrafo anterior, tenemos: $O(mk + k + (nk)^2)$ $\subseteq$ $O((nk)^2)$. Por lo tanto, nuestro algoritmo tiene complejidad $O((nk)^2)$ que es igual a $O(n^2k^2)$
 \subsection{Experimentacion}
 
 \pagebreak

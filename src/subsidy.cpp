@@ -1,9 +1,7 @@
 #include <cmath>
 #include <cstddef>
-#include <list>
 #include "subsidy.h"
 #include "shortest.h"
-#include <stack>
 #include "disjointSet.h"
 
 int binarySearchTax(int n, int m, const edgeList &edges) {
@@ -87,12 +85,7 @@ void deleteIsolatedNodes(int n, edgeList &inputEdges) {
         if (isolatedNodes.empty()){
             if (din[j] == 0){
                 std::list<int>::iterator listIt;
-                for (listIt = adj[j].begin(); listIt != adj[j].end(); ++listIt) {
-                    din[*listIt] = din[*listIt] - 1;
-                    if (din[*listIt] == 0){
-                        isolatedNodes.push(*listIt);
-                    }
-                }
+                addIsolatedNodesToStack(isolatedNodes, adj, din, j);
                 din[j] = -1;
             } else {
                 j++;
@@ -101,12 +94,7 @@ void deleteIsolatedNodes(int n, edgeList &inputEdges) {
             int k = isolatedNodes.top();
             isolatedNodes.pop();
             std::list<int>::iterator listIt;
-            for (listIt = adj[k].begin(); listIt != adj[k].end(); ++listIt) {
-                din[*listIt] = din[*listIt] - 1;
-                if (din[*listIt] == 0){
-                    isolatedNodes.push(*listIt);
-                }
-            }
+            addIsolatedNodesToStack(isolatedNodes, adj, din, k);
         }
     }
     edgeList withoutIsolatedNodes;
@@ -117,5 +105,16 @@ void deleteIsolatedNodes(int n, edgeList &inputEdges) {
         }
     }
     inputEdges = withoutIsolatedNodes;
+    delete[] adj;
+}
+
+void addIsolatedNodesToStack(std::stack<int> &stack, std::list<int> *adj, int *din, int j){
+    std::list<int>::iterator listIt;
+    for (listIt = adj[j].begin(); listIt != adj[j].end(); ++listIt) {
+        din[*listIt] = din[*listIt] - 1;
+        if (din[*listIt] == 0){
+            stack.push(*listIt);
+        }
+    }
 }
 

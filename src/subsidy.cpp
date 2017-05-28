@@ -1,24 +1,24 @@
 #include <cmath>
 #include <cstddef>
-#include <list>
 #include "subsidy.h"
 #include "shortest.h"
 #include "disjointSet.h"
 
-int binarySearchTax(int n, int m, edgeList &edges) {
-    deleteIsolatedNodes(n, edges);
-    deleteEdgesThatDontBelongToCicles(n, edges);
+int binarySearchTax(int n, int m, const edgeList &edges) {
+    edgeList usefulEdges = edges;
+    deleteIsolatedNodes(n, usefulEdges);
+    deleteEdgesThatDontBelongToCicles(n, usefulEdges);
     int low = 0;
-    int high = edges[0].weight;
+    int high = usefulEdges[0].weight;
     for(int e = 0; e < m; e++) {
-        if(edges[e].weight > high) {
-            high = edges[e].weight;
+        if(usefulEdges[e].weight > high) {
+            high = usefulEdges[e].weight;
         }
     }
     int* distance = new int[n];
     while(low < high) {
         int c = (int)std::ceil((float)(low + high)/2);
-        bool detected = adjustedBellmanFordToEachComponent(n, c, distance, edges);
+        bool detected = adjustedBellmanFordToEachComponent(n, c, distance, usefulEdges);
         if(detected) {
             high = c - 1;
         } else {
@@ -80,16 +80,21 @@ void deleteIsolatedNodes(int n, edgeList &inputEdges) {
         din[it->end] = din[it->end] + 1;
     }
     int j = 0;
+    std::stack<int> isolatedNodes;
     while (j < n){
-        if (din[j] == 0){
-            std::list<int>::iterator listIt;
-            for (listIt = adj[j].begin(); listIt != adj[j].end(); ++listIt) {
-                din[*listIt] = din[*listIt] - 1;
+        if (isolatedNodes.empty()){
+            if (din[j] == 0){
+                std::list<int>::iterator listIt;
+                addIsolatedNodesToStack(isolatedNodes, adj, din, j);
+                din[j] = -1;
+            } else {
+                j++;
             }
-            din[j] = -1;
-            j = 0;
         } else {
-            j++;
+            int k = isolatedNodes.top();
+            isolatedNodes.pop();
+            std::list<int>::iterator listIt;
+            addIsolatedNodesToStack(isolatedNodes, adj, din, k);
         }
     }
     edgeList withoutIsolatedNodes;
@@ -100,5 +105,16 @@ void deleteIsolatedNodes(int n, edgeList &inputEdges) {
         }
     }
     inputEdges = withoutIsolatedNodes;
+    delete[] adj;
+}
+
+void addIsolatedNodesToStack(std::stack<int> &stack, std::list<int> *adj, int *din, int j){
+    std::list<int>::iterator listIt;
+    for (listIt = adj[j].begin(); listIt != adj[j].end(); ++listIt) {
+        din[*listIt] = din[*listIt] - 1;
+        if (din[*listIt] == 0){
+            stack.push(*listIt);
+        }
+    }
 }
 

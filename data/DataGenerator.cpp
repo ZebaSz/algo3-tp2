@@ -51,7 +51,7 @@ void getDataReconfiguration(FILE *data) {
         genKGraph(i, baseGraph, MAX_W, false);
         unsigned int m = (i*(i-1)) >> 1;
         for (unsigned int j = 0; j <= m; ++j) {
-            printf("Running with %d pre-existing routes for Delivery problem\n", j);
+            printf("Running with %d pre-existing routes for Reconfiguration problem\n", j);
             edgeList existing(baseGraph.begin(), baseGraph.end());
             edgeList potential;
             getSubgraph(m - j, existing, potential);
@@ -75,10 +75,10 @@ void getDataReconfiguration(FILE *data) {
 
 int main() {
     FILE* data;
-    /*remove("delivery.csv");
+    remove("delivery.csv");
     data = fopen("delivery.csv", "a");
     getDataDelivery(data);
-    fclose(data);*/
+    fclose(data);
     remove("reconfiguration.csv");
     data = fopen("reconfiguration.csv", "a");
     getDataReconfiguration(data);

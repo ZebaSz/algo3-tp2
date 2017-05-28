@@ -161,16 +161,19 @@ Veamos cual es la complejidad de cada uno de ellos:
 \begin{center}
 \textbf{agregarEjeComun}
 \end{center}
+\par
 Este algoritmo toma un eje, un valor $n$ y un valor $k$, y agrega el mismo eje para cada uno de los niveles desde 0 a k. Por lo tanto, como agregar un eje se compone de tres asignaciones de costo $O(1)$, el costo del algoritmo se reduce al $for$ que se encarga de realizar la misma acción para todos los niveles. Por lo tanto, su costo es $O(k)$, donde k representa el límite de rutas premium que se puede utilizar.
 \\
 \begin{center}
 \textbf{agregarEjePremium}
 \end{center}
+\par
 Este algoritmo realiza las mismas acciones que $agregarEjeComun$, pero reasigna los ejes de manera distinta. Sin embargo, como aún realiza asignaciones de costo $O(1)$, podemos reducir la complejidad otra vez al ciclo que posee. Por lo tanto, como vimos con el algoritmo anterior, el costo es $O(k)$, donde k representa el límite de rutas premium que se puede utilizar.
 \\
 \begin{center}
 \textbf{Dijkstra}
 \end{center}
+\par
 El algoritmo de Dijkstra. Al usar la implementación y las estructuras que vimos en clase, obtenemos un costo de $O(n^2)$, donde n es la cantidad de nodos del grafo que recibimos en la entrada.
 \\
 \par

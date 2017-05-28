@@ -77,7 +77,7 @@ TEST_F(SubsidyTest, findCicles) {
     edges.push_back({9, 7, 15});
 
     deleteEdgesThatDontBelongToCicles(10, edges);
-    ASSERT_EQ(edges.size(), 9);
+    ASSERT_EQ(edges.size(), (size_t)9);
     for (size_t i = 0; i < edges.size(); ++i) {
         ASSERT_NE(edges[i].weight, 20);
     }

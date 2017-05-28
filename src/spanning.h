@@ -40,12 +40,12 @@ std::set<edge> kruskal(int n, int& p, const edgeList& edges, bool min);
 std::set<edge> kruskal(disjointSet& ds, int& p, const edgeList& edges, bool min);
 
 /**
- * A generic implementation of Kruskal's minimum spanning tree algorithm
- * works with edgeLists, not sets
- * @param n  amount of nodes both in the graph and the tree
- * @param eges input graph, it will lose edges that end up in the tree
- * @param tree list of edges that conform the tree
+ * Generates a (non-minimum) spanning tree using Kruskal's MST method
+ *
+ * @param n the number of nodes
+ * @param edges the list of edges; the spanning tree will be removed from it
+ * @param tree the spanning tree as output
  */
-void kruskaLists(int n, edgeList &edges, edgeList &tree);
+void generateSpanningTree(int n, edgeList &edges, edgeList &tree);
 
 #endif //ALGO3_TP2_SPANNING_H

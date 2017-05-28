@@ -34,9 +34,9 @@ std::set<edge> kruskal(disjointSet &ds, int& p, const edgeList& edges, bool min)
     return tree;
 }
 
-void kruskaLists(int n, edgeList &edges, edgeList &tree) {
+void generateSpanningTree(int n, edgeList &edges, edgeList &tree) {
     disjointSet ds(n);
-    edgeList::const_iterator it;
+    edgeList::iterator it;
     for(it = edges.begin(); it != edges.end(); ){
         int u = it->start;
         int v = it->end;

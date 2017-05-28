@@ -4,19 +4,20 @@
 #include "shortest.h"
 #include "disjointSet.h"
 
-int binarySearchTax(int n, int m, edgeList &edges) {
-    deleteEdgesThatDontBelongToCicles(n, edges);
+int binarySearchTax(int n, int m, const edgeList &edges) {
+    edgeList cicles(edges.begin(), edges.end());
+    deleteEdgesThatDontBelongToCicles(n, cicles);
     int low = 0;
-    int high = edges[0].weight;
+    int high = cicles[0].weight;
     for(int e = 0; e < m; e++) {
-        if(edges[e].weight > high) {
-            high = edges[e].weight;
+        if(cicles[e].weight > high) {
+            high = cicles[e].weight;
         }
     }
     int* distance = new int[n];
     while(low < high) {
         int c = (int)std::ceil((float)(low + high)/2);
-        bool detected = adjustedBellmanFordToEachComponent(n, c, distance, edges);
+        bool detected = adjustedBellmanFordToEachComponent(n, c, distance, cicles);
         if(detected) {
             high = c - 1;
         } else {
@@ -46,14 +47,14 @@ bool adjustedBellmanFordToEachComponent(int n, int c, int *distance, const edgeL
 void deleteEdgesThatDontBelongToCicles(int n, edgeList &inputEdges) {
     bool changesMade = true;
     edgeList edgesToUse;
-    kruskaLists(n, inputEdges, edgesToUse);
+    generateSpanningTree(n, inputEdges, edgesToUse);
     while(changesMade){
         changesMade = false;
         disjointSet ds(n);
         for (size_t i = 0; i < inputEdges.size() ; ++i) {
             ds.join(inputEdges[i].start, inputEdges[i].end);
         }
-        edgeList::const_iterator it;
+        edgeList::iterator it;
         for (it = edgesToUse.begin(); it != edgesToUse.end(); ) {
             int u = it->start;
             int v = it->end;

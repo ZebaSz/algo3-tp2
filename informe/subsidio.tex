@@ -12,31 +12,24 @@ Si bien esto no es un problema para el gobierno, siempre y cuando se evite que u
 \\
 \par
 \subsection{Desarrollo}
-Dado este problema, podemos modelarlo utilizando digrafos. Así, cada ciudad se representaría con un nodo, y cada una de las rutas que conecta dos ciudades, con una arista dirigida. Consideraremos que un recorrido abusivo es representado por un ciclo negativo en el digrafo.
+Dado este problema, y considerando que hay que tener en cuenta la mano en la cual corren las rutas, la mejor manera de modelarlo sería utilizando digrafos. Así, cada ciudad se representaría con un nodo, y cada una de las rutas que conecta dos ciudades, con una arista dirigida. Consideraremos que un recorrido abusivo es representado por un ciclo negativo en el digrafo.
 \\
 \par
-El algoritmo propuesto para encontrar ciclos negativos es el algoritmo de Bellman-Ford. Es un algoritmo que encuentra caminos minimos entre un nodo y el resto de los nodos. Su complejidad es peor que la del algoritmo de Dijkstra, pero nos permite trabajar con aristas negativas y también identificar ciclos negativos. 
+Como nuestro problema principal es averiguar cual es el mayor subsidio que se le puede otorgar a todas las rutas sin que se generen ciclos de rutas negativos, no es dificil que rápidamente encontremos una visión certera de lo que debemos hacer en el problema. Como primer aproximamiento, podemos asegurar que nuestro objetivo será reducir el costo de las rutas de manera que vayamos obteniendo mejores valores hasta que, superado el valor máximo, encontremos ciclos negativos en nuestro grafo.
 \\
 \par
-Este algoritmo basa su funcionamiento en el concepto de relajación de caminos. Esto consiste en mirar un eje (u,v) de peso w y evaluar si el peso del mejor camino encontrado desde source hasta u más w es menor que el peso del mejor camino encontrado desde source hasta v. En caso afirmativo el algoritmo ha encontrado una nueva ruta hasta v, utilizando al eje (u,v). Como cualquier camino mínimo no puede ser un ciclo, la cantidad de ejes utilizados en cualquier camino mínimo es a lo sumo la cantidad de nodos del grafo. Es por esto que las soluciones encontradas al terminar la enésima iteracion completa de la lista de ejes, sabemos que hemos hallado los mejores caminos que transitan hasta n nodos. Realizando una iteración extra podremos detectar la presencia de ciclos negativos. En esta iteración se detecta la posibilidad de relajar los caminos que deberían ser óptimos. La contradicción que plantea la mejora de un camino óptimo es la señal de que hay un ciclo negativo que permite "mejorar" la solución indefinidamente sin converger.
+Por ende, sabemos de entrada que necesitaremos un algoritmo capaz de reconocer ciclos negativos; y considerando los límites de complejidad brindados, podemos asegurarnos que Bellman-Ford cumple nuestros propositos. Esto nos permitirá utilizar aristas negativas, y averiguar en cada uno de los nodos si en sus componentes hay o no ciclos negativas.
 \\
 \par
-Dado que en el problema original queremos detectar la existencia de ciclos negativos para distintas "versiones" del mismo grafo, usamos una función que permite crear una nueva versión del grafo a partir de la original. Diremos que una p versión nueva del grafo contiene la misma cantidad de nodos y representa al mismo conjunto de adyacencias. La diferencia radicará en que para todo eje (u,v,w) perteneciente al grafo original, hay un eje (u,v,w-p) perteneciente a la p versión.
-
+Dado que en el problema original queremos detectar la existencia de ciclos negativos para distintas versiones del mismo grafo, usamos una función que permite crear una nueva versión del grafo a partir del original. Diremos que una p-versión nueva del grafo contiene la misma cantidad de nodos y representa al mismo conjunto de adyacencias, y su diferencia radica en que para todo eje de u a v con peso w perteneciente al grafo original, hay un eje de u a v con peso (w-p) perteneciente a la p-versión. Así, utilizaremos un algoritmo que, para cada versión, nos diga si efectivamente al aplicarle Bellman Ford se encuentran o no ciclos negativos (para esto, suponemos que Bellman-Ford nos devuelve $true$ si encuentra ciclos negativos, y $false$ si no lo hace)
+\\
+\par
 \begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{bellmanFordWithAdjustment}{\In{n}{int}, \In{m}{int}, \In{edges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}, \In{p}{int}}{bool}}
+		\caption{\algoritmo{ajusteParaBellmanFord}{\In{p}{int}, \In{ejesGrafo}{lista[ejes]}, \In{origen}{int}}{bool}}
 		
-		int i
-		
-		tuple(int, int, int) adjustedEdges[m] 
-		
-		\For{i in [0..m)}
-		{
-			adjustedEdges[i] $\leftarrow$ edges[i] - p	
-		}
-
-		res $\leftarrow$ bellmanFord(n, m, adjustedEdges, source, distance)		
+		lista[ejes] ejesPVersion $\leftarrow$ ajustarEjes(ejesGrafo, p)
+		res $\leftarrow$ bellmanFord(ejesPVersion, origen)		
 
 	\end{algorithm}
 

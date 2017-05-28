@@ -41,3 +41,30 @@ bool adjustedBellmanFordToEachComponent(int n, int c, int *distance, const edgeL
     }
     return detected;
 }
+
+void deleteEdgesThatDontBelongToCicles(int n, edgeList &inputEdges) {
+    bool changesMade = true;
+    edgeList edgesToUse;
+    kruskaLists(n, inputEdges, edgesToUse);
+    while(changesMade){
+        changesMade = false;
+        disjointSet ds(n);
+        for (size_t i = 0; i < inputEdges.size() ; ++i) {
+            ds.join(inputEdges[i].start, inputEdges[i].end);
+        }
+        edgeList::const_iterator it;
+        for (it = edgesToUse.begin(); it != edgesToUse.end(); ) {
+            int u = it->start;
+            int v = it->end;
+            if(ds.connected(u, v)){
+                inputEdges.push_back(*it);
+                edgesToUse.erase(it);
+                changesMade = true;
+            } else {
+                ds.join(u,v);
+                it++;
+            }
+        }
+    }
+}
+

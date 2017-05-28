@@ -59,19 +59,3 @@ TEST_F(ShortestPathTest, coincidence) {
     delete[] bellDist;
 }
 
-TEST_F(ShortestPathTest, notStronglyConex) {
-    edges.push_back({0,1,-1});
-    edges.push_back({1,2,-1});
-    edges.push_back({2,0,-1});
-    edges.push_back({2,3,1});
-    edges.push_back({3,4,1});
-    edges.push_back({4,5,1});
-    edges.push_back({5,3,1});
-
-    int distance[6];
-
-
-
-    ASSERT_TRUE(bellmanFord(5, 6, distance, edges));
-
-}

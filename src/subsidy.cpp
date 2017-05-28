@@ -4,7 +4,8 @@
 #include "shortest.h"
 #include "disjointSet.h"
 
-int binarySearchTax(int n, int m, const edgeList &edges) {
+int binarySearchTax(int n, int m, edgeList &edges) {
+    deleteEdgesThatDontBelongToCicles(n, edges);
     int low = 0;
     int high = edges[0].weight;
     for(int e = 0; e < m; e++) {

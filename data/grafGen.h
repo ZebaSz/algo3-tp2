@@ -11,5 +11,6 @@ void shuffleEdgeList(edgeList &edges);
 void genRandomGraph(int n, int m, edgeList &edges, int maxW, bool digraph);
 void genRandomTree(int n, edgeList &edges, edgeList &tree, int maxW);
 void genConex(int n, int m, edgeList &edges, int maxW);
+void getSubgraph(int m, edgeList &base, edgeList &subgraph);
 
 #endif //ALGO3_TP2_GRAFGEN_H

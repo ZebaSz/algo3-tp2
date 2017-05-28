@@ -12,9 +12,7 @@ TEST_F(SubsidyTest, testCarlos) {
     edges.push_back({1,3,8});
     edges.push_back({3,2,-3}); // FIXME: este test esta mal, no se admiten pesos negativos
     edges.push_back({0,3,7});
-    edgeList testEdgesChanges = edges;
-    //ASSERT_EQ(binarySearchTax(4, 5, edges), 7);
-    ASSERT_EQ(testEdgesChanges, edges);
+    ASSERT_EQ(binarySearchTax(4, 5, edges), 7);
 }
 
 TEST_F(SubsidyTest, equalWeightEdges) {
@@ -131,8 +129,8 @@ TEST_F(SubsidyTest, deleteOrphanEdge) {
     edges.push_back({0,1,20});
     edges.push_back({1,2,7});
     edges.push_back({2,1,3});
-    binarySearchTax(3, 3, edges);
-    ASSERT_EQ(edges.size(), 2);
+    deleteIsolatedNodes(3, edges);
+    ASSERT_EQ(edges.size(),2);
 }
 
 TEST_F(SubsidyTest, isolatedNodes){
@@ -144,7 +142,23 @@ TEST_F(SubsidyTest, isolatedNodes){
     edges.push_back({4,6,5});
     edges.push_back({0,2,5});
     edges.push_back({1,2,5});
-    binarySearchTax(7,8,edges);
+    deleteIsolatedNodes(7,edges);
     edgeList empty;
     ASSERT_EQ(edges, empty);
+}
+
+TEST_F(SubsidyTest, testWithCyclesAndIsolatedNodes){
+    edges.push_back({0,1,10});
+    edges.push_back({1,2,10});
+    edges.push_back({2,0,1});
+    edges.push_back({2,3,9});
+    edges.push_back({4,5,4});
+    edges.push_back({5,6,3});
+    edges.push_back({6,4,11});
+    edges.push_back({6,3,9});
+    edges.push_back({3,7,7});
+    edges.push_back({7,8,2});
+    edges.push_back({8,9,4});
+    edges.push_back({9,7,6});
+    ASSERT_EQ(binarySearchTax(10, 12, edges), 4);
 }

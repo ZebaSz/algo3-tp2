@@ -5,8 +5,8 @@
 
 void addRegularEdge(const edge &e, int n, int k, edgeList &superGraph) {
     for (int c = 0; c <= k; ++c) {
-        int c1 = e.start + c * n;
-        int c2 = e.end + c * n;
+        unsigned int c1 = e.start + c * n;
+        unsigned int c2 = e.end + c * n;
         //Si la ruta no es premium conectamos ida y vuelta los del mismo nivel
         superGraph.push_back({c1, c2, e.weight});
         superGraph.push_back({c2, c1, e.weight});
@@ -16,8 +16,8 @@ void addRegularEdge(const edge &e, int n, int k, edgeList &superGraph) {
 void addPremiumEdge(const edge &e, int n, int k, edgeList &superGraph) {
     for (int c = 0; c < k; ++c) {
         //c representa el nivel y c*n es el offset del nivel
-        int c1 = e.start + c * n;
-        int c2 = e.end + c * n;
+        unsigned int c1 = e.start + c * n;
+        unsigned int c2 = e.end + c * n;
         //Sumamos + n para conectar al nivel siguiente mediante esta ruta premium
         superGraph.push_back({c1, c2 + n, e.weight});
         //Como las rutas son doblemano y nosotros estamos representandolo con un digrafo hay que hacer ambos sentidos

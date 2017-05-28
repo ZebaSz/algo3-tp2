@@ -2,6 +2,7 @@
 #include <chrono>
 #include "grafGen.h"
 #include "../src/delivery.h"
+#include "../src/subsidy.h"
 #include "../src/reconfiguration.h"
 
 #define REPETITIONS (unsigned int)100
@@ -12,7 +13,10 @@
 #define MAX_P (unsigned int)20
 #define MAX_K (unsigned int)20
 
-void getDataDelivery(FILE *data) {
+void getDataDelivery() {
+    remove("delivery.csv");
+    FILE* data = fopen("delivery.csv", "a");
+
     fprintf(data, "Ciudades,Rutas,TotalPremium,LimitePremium,Nanosegundos\n");
     for (unsigned int i = 2; i <= MAX_N; ++i) {
         printf("Running with %d cities for Delivery problem\n", i);
@@ -42,9 +46,45 @@ void getDataDelivery(FILE *data) {
             }
         }
     }
+    fclose(data);
 }
 
-void getDataReconfiguration(FILE *data) {
+void getDataSubsidy() {
+    remove("subsidy.csv");
+    FILE* data = fopen("subsidy.csv", "a");
+
+    fprintf(data, "Ciudades,Rutas,PesoMaximo,Nanosegundos\n");
+    for (unsigned int i = 2; i <= MAX_N; ++i) {
+        printf("Running with %d cities for Subsidy problem\n", i);
+        for (unsigned int j = i; j <= std::min(MAX_M, (i*(i-1)) >> 1); ++j) {
+            printf("Running with %d routes for Subsidy problem\n", j);
+            long best = -1;
+            for (unsigned int k = 0; k < MAX_W; ++k) {
+                printf("Running with %d max weight for Subsidy problem\n", j);
+                edgeList baseGraph;
+                genRandomSemiconnectedDigraph(i, j, baseGraph, k);
+                for (unsigned int l = 0; l < REPETITIONS; ++l) {
+                    auto begin = std::chrono::high_resolution_clock::now();
+
+                    binarySearchTax(i, j, baseGraph);
+
+                    auto end = std::chrono::high_resolution_clock::now();
+                    if (best == -1 ||
+                        best > std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count()) {
+                        best = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
+                    }
+                }
+                fprintf(data, "%d,%d,%d,%ld\n", i, j, k, best);
+            }
+        }
+    }
+    fclose(data);
+}
+
+void getDataReconfiguration() {
+    remove("reconfiguration.csv");
+    FILE* data = fopen("reconfiguration.csv", "a");
+
     fprintf(data, "Ciudades,RutasExistentes,Nanosegundos\n");
     for (unsigned int i = 2; i <= MAX_N; ++i) {
         printf("Running with %d cities for Reconfiguration problem\n", i);
@@ -72,17 +112,12 @@ void getDataReconfiguration(FILE *data) {
             fprintf(data, "%d,%d,%ld\n", i, j, best);
         }
     }
+    fclose(data);
 }
 
 int main() {
-    FILE* data;
-    remove("delivery.csv");
-    data = fopen("delivery.csv", "a");
-    getDataDelivery(data);
-    fclose(data);
-    remove("reconfiguration.csv");
-    data = fopen("reconfiguration.csv", "a");
-    getDataReconfiguration(data);
-    fclose(data);
+    getDataDelivery();
+    getDataSubsidy();
+    getDataReconfiguration();
     return 0;
 }

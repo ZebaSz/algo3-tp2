@@ -72,19 +72,18 @@ void deleteEdgesThatDontBelongToCicles(int n, edgeList &inputEdges) {
 }
 
 void deleteIsolatedNodes(int n, edgeList &inputEdges) {
-    std::list<int> *adj = new std::list<int>[n];
-    int din[n] = {0};
+    std::list<unsigned int> *adj = new std::list<unsigned int>[n];
+    std::vector<int> din((unsigned int)n, 0);
     edgeList::iterator it;
     for (it = inputEdges.begin(); it != inputEdges.end(); ++it) {
         adj[it->start].push_back(it->end);
         din[it->end] = din[it->end] + 1;
     }
     int j = 0;
-    std::stack<int> isolatedNodes;
+    std::stack<unsigned int> isolatedNodes;
     while (j < n){
         if (isolatedNodes.empty()){
             if (din[j] == 0){
-                std::list<int>::iterator listIt;
                 addIsolatedNodesToStack(isolatedNodes, adj, din, j);
                 din[j] = -1;
             } else {
@@ -93,7 +92,6 @@ void deleteIsolatedNodes(int n, edgeList &inputEdges) {
         } else {
             int k = isolatedNodes.top();
             isolatedNodes.pop();
-            std::list<int>::iterator listIt;
             addIsolatedNodesToStack(isolatedNodes, adj, din, k);
         }
     }
@@ -108,8 +106,8 @@ void deleteIsolatedNodes(int n, edgeList &inputEdges) {
     delete[] adj;
 }
 
-void addIsolatedNodesToStack(std::stack<int> &stack, std::list<int> *adj, int *din, int j){
-    std::list<int>::iterator listIt;
+void addIsolatedNodesToStack(std::stack<unsigned int> &stack, std::list<unsigned int> *adj, std::vector<int> &din, int j){
+    std::list<unsigned int>::iterator listIt;
     for (listIt = adj[j].begin(); listIt != adj[j].end(); ++listIt) {
         din[*listIt] = din[*listIt] - 1;
         if (din[*listIt] == 0){

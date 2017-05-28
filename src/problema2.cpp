@@ -20,7 +20,8 @@ int main() {
             in.n = n;
             in.m = m;
             for(int i = 0; i < m; ++i) {
-                int c1, c2, p;
+                unsigned int c1, c2;
+                int p;
                 std::cin >> c1 >> c2 >> p;
                 --c1;
                 --c2;

@@ -80,6 +80,13 @@ En síntesis, lo que deberíamos hacer es tomar el grafo actual, y quitar todos 
 	\end{algorithm}
 
 
+\par
+Este algoritmo, como vemos, utiliza una pila en la cual se van agregando los nodos huerfanos que encontramos. Esta se construye mediante el algoritmo mencionado en el pseudocódigo, \textbf{agregarNodosHuerfanos}. Este algoritmo, si bien no es explicado en profundidad, básicamente recorre la lista de adyacencia del nodo que ya sabemos huérfano (porque bien vimos que su grado de entrada era 0 aumentando $j$, o bien porque lo insertamos en la pila) y, a medida que recorre sus adyacentes, les descuenta en uno el grado de entrada, puesto que el nodo huerfano que antes llegaba hacia él no lo hará mas. Así, al descontarle en uno, le preguntamos si efectivamente él, al perder esa adyacencia, se volvió huerfano. En caso de serlo, lo agregamos a la pila; de otro modo, continuamos viendo la lista.
+\\
+\par
+Esto nos permite que, en caso de que hayamos ya pasado por el valor $j$ que abarcaba a ese nodo, no tengamos que reiniciar el conteo. Y del mismo modo, no podría ocurrir que no veamos que un nodo tiene grado 0 de entrada, puesto que por el ciclo pasamos necesariamente una vez por todos los nodos.
+\\
+\par
 Cuando logramos aislar a todos los nodos huerfanos del digrafo principal, ya estamos en condiciones de asegurar que para todo nodo v, $d_{in} (v) > 0 \land d_{out} (v) > 0$. Sin embargo, a causa de la siguiente propiedad, no es hipótesis suficiente para que el digrafo sea fuertemente conexo:
 \\
 \par
@@ -109,7 +116,7 @@ Es importante resaltar que, luego de agregar una arista a las seleccionadas, deb
 		
 		lista[ejes]: edgesToUse $\leftarrow$ kruskalParaBosque(inputEdges)
 
-		lista[ejes]: inputEdges $\leftarrow$ inputEdges - edgesToUse
+		inputEdges $\leftarrow$ inputEdges - edgesToUse
 
 		\While{changesMade} 
 		{
@@ -173,8 +180,16 @@ Por lo tanto, luego de borrar los nodos huérfanos y asegurarnos que todas las a
 \textbf{borrarNodosHuerfanos}
 \end{center}
 \par
-Este algoritmo toma un eje, un valor $n$ y un valor $k$, y agrega el mismo eje para cada uno de los niveles desde 0 a k. Por lo tanto, como agregar un eje se compone de tres asignaciones de costo $O(1)$, el costo del algoritmo se reduce al $for$ que se encarga de realizar la misma acción para todos los niveles. Por lo tanto, su costo es $O(k)$, donde k representa el límite de rutas premium que se puede utilizar.
+Este algoritmo genera, inicialmente, una lista de adyacencia para cada nodo, un vector de n lugares donde el i-ésimo espacio nos dice el grado de entrada del i-ésimo nodo y una pila vacía. Como nos dan la lista de ejes, al recorrerla podemos generar la lista de adyacencia de cada uno de los ejes y, a su vez, ir contando para cada nodo cuantos nodos tienen ejes apuntando hacia él; y puesto que la entrada a ambos vectores es $O(1)$, y agregar un elemento a una lista también, el costo relevante es el de recorres todas las aristas: $O(m)$, donde m son las aristas del grafo.
 \\
+\par
+Por otra parte, tenemos el ciclo que se encarga de recorrer los $n$ nodos y averiguar si efectivamente es un nodo huerfano o no. Como vemos en el algoritmo expuesto arriba, hay un ciclo que se recorre $n$ veces, lo cual nos da una complejidad de $O(n)$. Sin embargo, no es cierto que el valor $j$ aumenta cada vez que corre el ciclo, sino que depende tambien del hecho de que la pila de nodos huerfanos esté vacía.
+\\
+\par
+Como vimos en el desarrollo, esta pila se encarga de recorrer la lista de adyacencia del nodo huerfano que estamos evaluando, con un costo de $O(n)$, donde n son todos los nodos del grafo (el mayor tamaño posible de la lista de adyacencia). Este proceso se puede producir, como mucho, para los $n$ nodos, en caso de que a través de este algoritmo fueramos descubriendo que cada uno de ellos es huérfano. Por lo tanto, la complejidad de esta porción del algoritmo sería $O(n^2)$.
+\\
+\par
+Pero entonces, al repasar el ciclo, nos encontramos que en el peor caso puede llegar a recorrer dos veces la lista. Suponiendo que, efectivamente, terminaramos apilando los $n$ nodos, tendríamos una complejidad de $O(n^2)$; pero por otro lado, de manera ajena a lo que ocurriera en la pila, el valor de $j$ iría aumentando y, en el peor caso, corriendo n veces la función agregarNodosHuerfanos, dándonos una complejidad de $O(n^2)$. Por ende, aún considerando los dos peores casos en simultáneo (es decir, que los $n$ nodos fueran encontrados recorriendo el vector, y a su vez, agregados a la pila) tendríamos $O(n^2 + n^2)$ $\subseteq$ $O(n^2)$
 
 \subsection{Experimentacion}
 

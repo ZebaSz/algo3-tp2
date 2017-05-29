@@ -8,7 +8,7 @@
 #define REPETITIONS (unsigned int)100
 #define MAX_N (unsigned int)20
 #define MAX_M (unsigned int)30
-#define MAX_W (unsigned int)100
+#define MAX_W (unsigned int)20
 
 #define MAX_P (unsigned int)20
 #define MAX_K (unsigned int)20
@@ -61,7 +61,8 @@ void getDataSubsidy() {
             for (unsigned int k = 0; k <= MAX_W; ++k) {
                 printf("Running with %d max weight for Subsidy problem\n", k);
                 edgeList baseGraph;
-                genRandomSemiconnectedDigraph(i, j, baseGraph, k);
+                genRandomSemiconnectedGraph(i, j, baseGraph, k);
+                convertToDigraph(baseGraph, k);
                 long best = -1;
                 for (unsigned int l = 0; l < REPETITIONS; ++l) {
                     auto begin = std::chrono::high_resolution_clock::now();

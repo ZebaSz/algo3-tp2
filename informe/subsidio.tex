@@ -12,24 +12,31 @@ Si bien esto no es un problema para el gobierno, siempre y cuando se evite que u
 \\
 \par
 \subsection{Desarrollo}
-Dado este problema, y considerando que hay que tener en cuenta la mano en la cual corren las rutas, la mejor manera de modelarlo sería utilizando digrafos. Así, cada ciudad se representaría con un nodo, y cada una de las rutas que conecta dos ciudades, con una arista dirigida. Consideraremos que un recorrido abusivo es representado por un ciclo negativo en el digrafo.
+Dado este problema, podemos modelarlo utilizando digrafos. Así, cada ciudad se representaría con un nodo, y cada una de las rutas que conecta dos ciudades, con una arista dirigida. Consideraremos que un recorrido abusivo es representado por un ciclo negativo en el digrafo.
 \\
 \par
-Como nuestro problema principal es averiguar cual es el mayor subsidio que se le puede otorgar a todas las rutas sin que se generen ciclos de rutas negativos, no es dificil que rápidamente encontremos una visión certera de lo que debemos hacer en el problema. Como primer aproximamiento, podemos asegurar que nuestro objetivo será reducir el costo de las rutas de manera que vayamos obteniendo mejores valores hasta que, superado el valor máximo, encontremos ciclos negativos en nuestro grafo.
+El algoritmo propuesto para encontrar ciclos negativos es el algoritmo de Bellman-Ford. Es un algoritmo que encuentra caminos minimos entre un nodo y el resto de los nodos. Su complejidad es peor que la del algoritmo de Dijkstra, pero nos permite trabajar con aristas negativas y también identificar ciclos negativos. 
 \\
 \par
-Por ende, sabemos de entrada que necesitaremos un algoritmo capaz de reconocer ciclos negativos; y considerando los límites de complejidad brindados, podemos asegurarnos que Bellman-Ford cumple nuestros propositos. Esto nos permitirá utilizar aristas negativas, y averiguar en cada uno de los nodos si en sus componentes hay o no ciclos negativas.
+Este algoritmo basa su funcionamiento en el concepto de relajación de caminos. Esto consiste en mirar un eje (u,v) de peso w y evaluar si el peso del mejor camino encontrado desde source hasta u más w es menor que el peso del mejor camino encontrado desde source hasta v. En caso afirmativo el algoritmo ha encontrado una nueva ruta hasta v, utilizando al eje (u,v). Como cualquier camino mínimo no puede ser un ciclo, la cantidad de ejes utilizados en cualquier camino mínimo es a lo sumo la cantidad de nodos del grafo. Es por esto que las soluciones encontradas al terminar la enésima iteracion completa de la lista de ejes, sabemos que hemos hallado los mejores caminos que transitan hasta n nodos. Realizando una iteración extra podremos detectar la presencia de ciclos negativos. En esta iteración se detecta la posibilidad de relajar los caminos que deberían ser óptimos. La contradicción que plantea la mejora de un camino óptimo es la señal de que hay un ciclo negativo que permite "mejorar" la solución indefinidamente sin converger.
 \\
 \par
-Dado que en el problema original queremos detectar la existencia de ciclos negativos para distintas versiones del mismo grafo, usamos una función que permite crear una nueva versión del grafo a partir del original. Diremos que una p-versión nueva del grafo contiene la misma cantidad de nodos y representa al mismo conjunto de adyacencias, y su diferencia radica en que para todo eje de u a v con peso w perteneciente al grafo original, hay un eje de u a v con peso (w-p) perteneciente a la p-versión. Así, utilizaremos un algoritmo que, para cada versión, nos diga si efectivamente al aplicarle Bellman Ford se encuentran o no ciclos negativos (para esto, suponemos que Bellman-Ford nos devuelve $true$ si encuentra ciclos negativos, y $false$ si no lo hace)
-\\
-\par
+Dado que en el problema original queremos detectar la existencia de ciclos negativos para distintas "versiones" del mismo grafo, usamos una función que permite crear una nueva versión del grafo a partir de la original. Diremos que una p versión nueva del grafo contiene la misma cantidad de nodos y representa al mismo conjunto de adyacencias. La diferencia radicará en que para todo eje (u,v,w) perteneciente al grafo original, hay un eje (u,v,w-p) perteneciente a la p versión.
+
 \begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{ajusteParaBellmanFord}{\In{p}{int}, \In{ejesGrafo}{lista[ejes]}, \In{origen}{int}}{bool}}
+		\caption{\algoritmo{bellmanFordWithAdjustment}{\In{n}{int}, \In{m}{int}, \In{edges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}, \In{p}{int}}{bool}}
 		
-		lista[ejes] ejesPVersion $\leftarrow$ ajustarEjes(ejesGrafo, p)
-		res $\leftarrow$ bellmanFord(ejesPVersion, origen)		
+		int i
+		
+		tuple(int, int, int) adjustedEdges[m] 
+		
+		\For{i in [0..m)}
+		{
+			adjustedEdges[i] $\leftarrow$ edges[i] - p	
+		}
+
+		res $\leftarrow$ bellmanFord(n, m, adjustedEdges, source, distance)		
 
 	\end{algorithm}
 
@@ -64,7 +71,9 @@ Cuando logramos aislar a todos los nodos huerfanos del digrafo principal, ya est
 \begin{center}
 Orientar un grafo es darle una dirección a cada eje. Un grafo conexo G es orientable de forma tal que se convierta en un digrafo fuertemente conexo si y sólo si cada eje de G pertenece a un circuito simple de G.
 \end{center}
-Vemos que los ejes que no pertenecen a un ciclo en el grafo subyacente no pueden pertenecer a un ciclo en el digrafo, entonces si el digrafo tiene tales ejes, no es fuertemente conexo. Como esos ejes no pueden pertenecer a un ciclo dirigido, no son importantes en nuestro análisis y por lo tanto eliminarlos no nos quita soluciones. Se utiliza un algoritmo que dada una lista de incidencia, encuentra un bosque generador utilizando Kruskal (encuentra un árbol generador para cada componente del grafo de entrada) y separa los ejes en dos listas: la lista de inciertos contiene a los ejes del bosque encontrado y la lista de seleccionados que contiene al resto de los ejes. Como el algoritmo de Kruskal ignora a todos los ejes que conectan a dos nodos que ya estan en la misma componente conexa, sabemos que todos los ejes de la lista de seleccionados pertenecen a al menos un ciclo y conforman una solución parcial. Queremos determinar cuales ejes de la lista de inciertos tambien pertenecen a ciclos y agregarlos a la lista de seleccionados. Un procedimiento que descubre ejes de la lista de inciertos consiste en crear un disjoint set con union find y recorrer los ejes de la lista de seleccionados, conectando partida y llegada del eje cada vez. Cuando se termina de recorrer seleccionados, el disjoint set tiene componentes de nodos que pertenecen a ciclos. Ahora iteramos la lista de inciertos y para cada eje averiguamos si sus nodos incididos pertenecen a la misma componente. En caso afirmativo, este eje pertenece a un ciclo, lo borramos de inciertos y lo pusheamos a seleccionados. En caso contrario no podemos determinar asi que lo dejamos en inciertos y conectamos ambos nodos incididos en el disjoint set. Cuando se termina de recorrer inciertos, puede pasar que ninguno de los recorridos haya sido agregado a seleccionados. En tal caso significa que ninguno de los ejes pertenecientes a inciertos pertenece a ciclos. Si al menos uno de los recorridos fue agregado a seleccionados, hay que volver a empezar el proceso creando un nuevo disjoint set. Esta incertudumbre reside en observar que al agregar un nuevo eje a la lista de seleccionados, crece nuestro conjunto de ejes pertenecientes a ciclos, lo cual posibilita la identificacion de nuevos ejes.
+Vemos que los ejes que no pertenecen a un ciclo en el grafo subyacente no pueden pertenecer a un ciclo en el digrafo, entonces si el digrafo tiene tales ejes, no es fuertemente conexo. Como esos ejes no pueden pertenecer a un ciclo dirigido, no son importantes en nuestro análisis y por lo tanto eliminarlos no nos quita soluciones. Se utiliza un algoritmo que dada una lista de incidencia, encuentra un bosque generador utilizando Kruskal (encuentra un árbol generador para cada componente del grafo de entrada) y separa los ejes en dos listas: la lista de inciertos contiene a los ejes del bosque encontrado y la lista de seleccionados que contiene al resto de los ejes. Como el algoritmo de Kruskal ignora a todos los ejes que conectan a dos nodos que ya estan en la misma componente conexa, sabemos que todos los ejes de la lista de seleccionados pertenecen a al menos un ciclo y conforman una solución parcial. Queremos determinar cuales ejes de la lista de inciertos tambien pertenecen a ciclos y agregarlos a la lista de seleccionados. Un procedimiento que descubre ejes de la lista de inciertos consiste en crear un disjoint set con union find y recorrer los ejes de la lista de seleccionados, conectando partida y llegada del eje cada vez. Cuando se termina de recorrer seleccionados, el disjoint set tiene componentes de nodos que pertenecen a ciclos. Ahora iteramos la lista de inciertos y para cada eje averiguamos si sus nodos incididos pertenecen a la misma componente. En caso afirmativo, este eje pertenece a un ciclo, lo borramos de inciertos y lo pusheamos a seleccionados. En caso contrario no podemos determinar asi que lo dejamos en inciertos y conectamos ambos nodos incididos en el disjoint set. Cuando se termina de recorrer inciertos, puede pasar que ninguno de los recorridos haya sido agregado a seleccionados. En tal caso significa que ninguno de los ejes pertenecientes a inciertos pertenece a ciclos. Si al menos uno de los recorridos fue agregado a seleccionados, hay que volver a empezar el proceso creando un nuevo disjoint set. Esta incertudumbre reside en observar que al agregar un nuevo eje a la lista de seleccionados, crece nuestro conjunto de ejes pertenecientes a ciclos, lo cual posibilita la identificacion de nuevos ejes. 
+\par
+Como cada iteración en la que se añaden ejes a seleccionados conecta al menos a dos componentes de esa lista de incidencia y hay a lo sumo n componentes distintas, el ciclo itera a lo sumo n veces a todos los ejes, realizando en cada eje operaciones de find y unión, que gracias a las optimizaciones de la estructura disjoint set pertenecen a O($\alpha$(n)) $\subset$ O($\log$(n)) donde $\alpha$ representa a la inversa de la función de Ackerman.
 
 \begin{algorithm}[H]
 		\NoCaptionOfAlgo

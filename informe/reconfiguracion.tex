@@ -86,6 +86,9 @@ A medida que nos informan las rutas, vamos agregando las rutas en dos listas de 
 
 \subsection{Cota temporal}
 
+Para tener una cota de complejidad temporal sobre nuestro algoritmo, debemos hablar sobre nuestra implementación de Kruskal, ya que es basicamente lo unico que hacemos.
+La complejidad de Kruskal está fuertemente atada a la estructura de datos interna utilizada para representar los conjuntos disjuntos. Esta estructura tiene tres funciones en la interfaz, \textit{Init} que inicia el conjunto, \textit{ind} que nos devuelve el representante del conjunto, y \textit{Union} que une los conjuntos. Nosotros lo implementamos con un par de heurísticas \textbf{Union by Rank} y \textbf{Path Compression}, tal que se puede probar que una secuencia de $k$ operaciones de las cuales n son \textit{Init} de estas tres funciones se ejecutan en tiempo $O(k\alpha (n))$ donde $\alpha$ es la inversa de la función de Ackermann. Resumiendo, creamos la estructura, hacemos el sort de la std que tiene una complejidad de $O(nlog(n))$ y en nuestro caso n está acotado por $n^2$ que son la cantidad de aristas máximas que puede haber en un grafo, y por propiedades que exceden el informe(que fueron vistas en clase) nos queda $O(n + m*log(n))$ y como ya vimos que m está acotado $n^2$ podemos también decir que es $O(n^2log(n))$ .Por último, este algoritmo lo corremos dos veces, y para recolectar los costos recorremos las aristas, así que en peor caso es $O(n^2)$, quedando una complejidad temporal del algoritmo de $O(n^2log(n))$ que se ajusta a lo pedido.
+
 \subsection{Experimentacion}
 
 \pagebreak

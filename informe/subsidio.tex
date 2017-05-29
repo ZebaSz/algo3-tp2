@@ -62,8 +62,8 @@ En síntesis, lo que deberíamos hacer es tomar el grafo actual, y quitar todos 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{borrarNodosHuerfanos}{\In{n}{nat}, \In{lista[ejes]}{ejesGrafo}}{}}
 		
-		lista[nat]: adyacentes $\leftarrow$ listaDeAdyacencia(ejesGrafo)\\
-		lista[nat]: gradoEntrada $\leftarrow$ gradoDeEntrada(ejesGrafo)\\
+		vector[lista[nat]]: adyacentes $\leftarrow$ listaDeAdyacencia(ejesGrafo)\\
+		vector[nat]: gradoEntrada $\leftarrow$ gradoDeEntrada(ejesGrafo)\\
 		pila[nat]: nodosHuerfanos $\leftarrow$ vacia()\\
 		\While{j $<$ n}{
 			\eIf{nodosHuerfanos.esVacia()}{
@@ -150,46 +150,31 @@ Por lo tanto, luego de borrar los nodos huérfanos y asegurarnos que todas las a
 
 \begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{subsidioDeRutas}{\Inout{inputEdges}{lista[ejes]}}{}}
+		\caption{\algoritmo{subsidioDeRutas}{\In{n}{nat}, \In{ejesGrafo}{lista[ejes]}}{nat}}
 		
-		bool: changesMade $\leftarrow$ true
-		
-		lista[ejes]: edgesToUse $\leftarrow$ kruskalParaBosque(inputEdges)
-
-		lista[ejes]: inputEdges $\leftarrow$ inputEdges - edgesToUse
-
-		\While{changesMade} 
-		{
-			changesMade $\leftarrow$ false
-
-			set: ds $\leftarrow$ $\emptyset$
-
-			\For{(u,v) $\in$ inputEdges}
-			{
-				ds.join(u, v)
+		borrarNodosHuerfanos(n, ejesGrafo)\\
+		borrarEjesQueNoFormanCiclo(ejesGrafo)\\
+		nat: cotaInferior $\leftarrow$ 0\\
+		nat: cotaSuperior $\leftarrow$ pesoMax(ejesGrafo)\\
+		\While{cotaInferior $<$ cotaSuperior}{
+		nat: nuevaCota $\leftarrow$ (cotaInferior + cotaSuperior) / 2 \\
+		bool: tieneCiclos $\leftarrow$ ajusteBellmanFord(ejesGrafo, nuevaCota)\\
+		\eIf{tieneCiclos}{
+			cotaSuperior $\leftarrow$ nuevaCota
+			}{
+			cotaInferior $\leftarrow$ nuevaCota
 			}
-
-			\For{(u,v) $\in$ edgesToUse}
-			{
-				\eIf{ds.connected(u,v)}
-					{
-						inputEdges.add((u,v))
-
-						edgesToUse.erase((u,v))
-
-						changesMade $\leftarrow$ true
-					}
-					{
-						ds.join(u, v)
-					}
-			}
-
-
-
 		}
+		res $\leftarrow$ cotaInferior
 	\end{algorithm}
 
 \subsection{Cota temporal}
+\begin{center}
+\textbf{borrarNodosHuerfanos}
+\end{center}
+\par
+Este algoritmo toma un eje, un valor $n$ y un valor $k$, y agrega el mismo eje para cada uno de los niveles desde 0 a k. Por lo tanto, como agregar un eje se compone de tres asignaciones de costo $O(1)$, el costo del algoritmo se reduce al $for$ que se encarga de realizar la misma acción para todos los niveles. Por lo tanto, su costo es $O(k)$, donde k representa el límite de rutas premium que se puede utilizar.
+\\
 
 \subsection{Experimentacion}
 

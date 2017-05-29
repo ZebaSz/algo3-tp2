@@ -91,4 +91,13 @@ La complejidad de Kruskal está fuertemente atada a la estructura de datos inter
 
 \subsection{Experimentacion}
 
+Al experimentar con este problema, nos esperabamos encontrar que el problema solo estuviese definido por la cantidad de ciudades, ya que la cantidad de rutas dependía de la misma (si unimos las rutas existentes con las potenciales, obtenemos un grafo completo). Supusimos que la proporción de rutas existentes y a construir no causaría ninguna diferencia de complejidad, ya que el algoritmo requiere que se recorran todas y la suma siempre da igual para un n dado.
+
+\begin{center}
+	\includegraphics[scale=0.5]{imagenes/ej3-1.png}
+	\includegraphics[scale=0.5]{imagenes/ej3-2.png}
+\end{center}
+
+Efectivamente, la experimentación confirmó que el algorítmo no se ve afectado por la proporción entre las rutas ya existentes y aquellas a construir. Por otro lado, la cantidad de ciudades tiene un impacto aproximadamente cuadrático. Esto es de esperarse, ya que la complejidad efectiva es $O(n^2log(n))$, pero el aspecto cuadrático es más visible que el logarítmo.
+
 \pagebreak

@@ -193,11 +193,18 @@ Pero entonces, al repasar el ciclo, nos encontramos que en el peor caso puede ll
 
 \subsection{Experimentacion}
 
+La experimentación de este ejercicio representó un desafío, ya que en la generación de grafos resultó difícil garantizar condiciones que diesen resultados homogéneos debido a nuestra implementación. Esto requeriría crear grafos fuertemente conexos, de modo que ningún eje estuviese fuera de un ciclo. Sin embargo, sí pudimos observar fácilmente los casos de grafos completos.
+
+\begin{center}
+	\includegraphics[scale=0.5]{imagenes/ej2-1.png}
+\end{center}
+
+En este gráfico se puede observar que, en grafos completos, el algorítmo tiene complejidad cúbica con respecto a la cantidad de ciudades. Esto se ajusta a la complejidad pedida, ya que $m = \frac{n \times (n-1)}{2} \approx n^2$, es decir, $O(n m) \subseteq O(n^3)$.
+
+\begin{center}
+	\includegraphics[scale=0.5]{imagenes/ej2-2.png}
+\end{center}
+
+Por otro lado, podemos ver que el máximo peaje tiene impacto logarítmico sobre el tiempo de ejecución, lo que condice con nuestras expectativas y con la cota de complejidad pedida. 
+
 \pagebreak
-
-
-
- 
-
-
-

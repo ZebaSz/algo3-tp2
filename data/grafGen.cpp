@@ -11,12 +11,12 @@
  * @param maxW the maximum weight
  * @param digraph true if the graph to be generated is a digraph
  */
-void genKGraph(int n, edgeList &edges, int maxW, bool digraph){
+void genKGraph(unsigned int n, edgeList &edges, int maxW, bool digraph) {
     long seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
     std::uniform_int_distribution<int> distribution(0, maxW);
-    for (int i = 0; i < n-1; ++i) {
-        for (int j = i+1; j < n; ++j) {
+    for (unsigned int i = 0; i < n-1; ++i) {
+        for (unsigned int j = i+1; j < n; ++j) {
             edges.push_back({i, j, distribution(generator)});
             if(digraph) {
                 edges.push_back({j, i, distribution(generator)});
@@ -36,19 +36,28 @@ void shuffleEdgeList(edgeList &edges) {
 
 /**
  * Generates a random graph which may or may not be connected
+ * All nodes have at least an out degree of 1
  *
  * @param n
  * @param m
  * @param edges
  * @param maxW
- * @param digraph
  */
-void genRandomGraph(int n, int m, edgeList &edges, int maxW, bool digraph) {
-    genKGraph(n, edges, maxW, digraph);
+void genRandomSemiconnectedDigraph(unsigned int n, unsigned int m, edgeList &edges, int maxW) {
+    genKGraph(n, edges, maxW, true);
     shuffleEdgeList(edges);
-    int amountOfEdgesToErase = n*(n-1) - m;
-    for (int i = 0; i < amountOfEdgesToErase; ++i) {
-        edges.pop_back();
+    size_t amountOfEdgesToErase = edges.size() - m;
+    std::vector<int> dout(n, n-1);
+
+    edgeList::iterator it = edges.begin();
+    for (size_t i = 0; i < amountOfEdgesToErase; ) {
+        if(dout[it->start] > 1) {
+            --dout[it->start];
+            it = edges.erase(it);
+            ++i;
+        } else {
+            ++it;
+        }
     }
 
 }
@@ -61,7 +70,7 @@ void genRandomGraph(int n, int m, edgeList &edges, int maxW, bool digraph) {
  * @param tree
  * @param maxW
  */
-void genRandomTree(int n, edgeList &edges, edgeList &tree, int maxW) {
+void genRandomTree(unsigned int n, edgeList &edges, edgeList &tree, int maxW) {
     genKGraph(n, edges, maxW, false);
     shuffleEdgeList(edges);
     generateSpanningTree(n, edges, tree);
@@ -75,7 +84,7 @@ void genRandomTree(int n, edgeList &edges, edgeList &tree, int maxW) {
  * @param tree
  * @param maxW
  */
-void genConex(int n, int m, edgeList &tree, int maxW) {
+void genConex(unsigned int n, unsigned int m, edgeList &tree, int maxW) {
     edgeList edges;
     genRandomTree(n, edges, tree, maxW);
     edgeList::iterator it = edges.begin();
@@ -86,10 +95,10 @@ void genConex(int n, int m, edgeList &tree, int maxW) {
     }
 }
 
-void getSubgraph(int m, edgeList &base, edgeList &subgraph) {
+void getSubgraph(unsigned int m, edgeList &base, edgeList &subgraph) {
     shuffleEdgeList(base);
     edgeList::iterator it = base.begin();
-    for (int i = 0; i < m; ++i) {
+    for (unsigned int i = 0; i < m; ++i) {
         subgraph.push_back(*it);
         it = base.erase(it);
     }

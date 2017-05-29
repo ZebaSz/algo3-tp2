@@ -15,20 +15,21 @@ int main() {
     bool hasInput = true;
     std::vector<input> inputs;
     while(hasInput) {
-        int n, m, origin, destiny, k;
+        int n, m, origin, destination, k;
 
         std::cin >> n >> m;
-        std::cin >> origin >> destiny >> k;
-        hasInput = (n != -1 || m != -1 || origin != -1 || destiny != -1 || k != -1);
+        std::cin >> origin >> destination >> k;
+        hasInput = (n != -1 || m != -1 || origin != -1 || destination != -1 || k != -1);
         if(hasInput) {
             input in;
             in.n = n;
             in.m = m;
             in.origin = origin;
-            in.destination = destiny;
+            in.destination = destination;
             in.k = k;
             for(int i = 0; i < m; ++i) {
-                int c1, c2, p, d;
+                unsigned int c1, c2;
+                int p, d;
                 std::cin >> c1 >> c2 >> p >> d;
                 --c1;
                 --c2;

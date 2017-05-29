@@ -19,7 +19,8 @@ int main() {
             input in;
             in.n = n;
             for(int i = 0; i < ((n * (n-1)) / 2); ++i) {
-                int c1, c2, e, p;
+                unsigned int c1, c2;
+                int e, p;
                 std::cin >> c1 >> c2 >> e >> p;
                 --c1;
                 --c2;

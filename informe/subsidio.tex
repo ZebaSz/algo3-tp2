@@ -62,8 +62,8 @@ En síntesis, lo que deberíamos hacer es tomar el grafo actual, y quitar todos 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{borrarNodosHuerfanos}{\In{n}{nat}, \In{lista[ejes]}{ejesGrafo}}{}}
 		
-		lista[nat]: adyacentes $\leftarrow$ listaDeAdyacencia(ejesGrafo)\\
-		lista[nat]: gradoEntrada $\leftarrow$ gradoDeEntrada(ejesGrafo)\\
+		vector[lista[nat]]: adyacentes $\leftarrow$ listaDeAdyacencia(ejesGrafo)\\
+		vector[nat]: gradoEntrada $\leftarrow$ gradoDeEntrada(ejesGrafo)\\
 		pila[nat]: nodosHuerfanos $\leftarrow$ vacia()\\
 		\While{j $<$ n}{
 			\eIf{nodosHuerfanos.esVacia()}{
@@ -80,6 +80,13 @@ En síntesis, lo que deberíamos hacer es tomar el grafo actual, y quitar todos 
 	\end{algorithm}
 
 
+\par
+Este algoritmo, como vemos, utiliza una pila en la cual se van agregando los nodos huerfanos que encontramos. Esta se construye mediante el algoritmo mencionado en el pseudocódigo, \textbf{agregarNodosHuerfanos}. Este algoritmo, si bien no es explicado en profundidad, básicamente recorre la lista de adyacencia del nodo que ya sabemos huérfano (porque bien vimos que su grado de entrada era 0 aumentando $j$, o bien porque lo insertamos en la pila) y, a medida que recorre sus adyacentes, les descuenta en uno el grado de entrada, puesto que el nodo huerfano que antes llegaba hacia él no lo hará mas. Así, al descontarle en uno, le preguntamos si efectivamente él, al perder esa adyacencia, se volvió huerfano. En caso de serlo, lo agregamos a la pila; de otro modo, continuamos viendo la lista.
+\\
+\par
+Esto nos permite que, en caso de que hayamos ya pasado por el valor $j$ que abarcaba a ese nodo, no tengamos que reiniciar el conteo. Y del mismo modo, no podría ocurrir que no veamos que un nodo tiene grado 0 de entrada, puesto que por el ciclo pasamos necesariamente una vez por todos los nodos.
+\\
+\par
 Cuando logramos aislar a todos los nodos huerfanos del digrafo principal, ya estamos en condiciones de asegurar que para todo nodo v, $d_{in} (v) > 0 \land d_{out} (v) > 0$. Sin embargo, a causa de la siguiente propiedad, no es hipótesis suficiente para que el digrafo sea fuertemente conexo:
 \\
 \par
@@ -109,7 +116,7 @@ Es importante resaltar que, luego de agregar una arista a las seleccionadas, deb
 		
 		lista[ejes]: edgesToUse $\leftarrow$ kruskalParaBosque(inputEdges)
 
-		lista[ejes]: inputEdges $\leftarrow$ inputEdges - edgesToUse
+		inputEdges $\leftarrow$ inputEdges - edgesToUse
 
 		\While{changesMade} 
 		{
@@ -146,59 +153,58 @@ Es importante resaltar que, luego de agregar una arista a las seleccionadas, deb
 Como cada iteración en la que se añaden ejes a los seleccionados conecta al menos a dos componentes de nuestra lista de incidencia, y hay a lo sumo $n$ componentes distintas, el ciclo itera a lo sumo $n$ veces a todos los ejes, realizando para cada eje operaciones de find y unión. Por otra parte, gracias a las optimizaciones de la estructura disjoint set, estas operaciones pertenecen a O($\alpha$(n)) $\subset$ O($\log$(n)) , donde $\alpha$ representa la inversa de la función de Ackerman.
 \\
 \par
-Por lo tanto, luego de borrar los nodos huérfanos y asegurarnos que todas las aristas de la última versión del grafo pertenecen a un ciclo, contamos con las siguientes hipotesis: para todo nodo v del grafo, $d_{in} (v) > 0 \land d_{out} (v) > 0 $ y en el grafo subyacente, v pertenece a al menos un ciclo. Esto alcanza para decir que toda componente conexa es fuertemente conexa. tomemos dos nodos u, v del grafo, como ambos pertenecen a la misma componente conexa existe un camino entre ellos. por hipotesis todos los ejes del camino pertenecen a un ciclo. si estos ejes estuvieran orientados de manera que no se puede llegar de u a v o de v a u, significaría que hay al menos un nodo w en el camino por el que no se puede pasar, en otras palarbas o bien $d_in(w) = 0$ o bien $d_out(w) = 0$. Esto contradice a las hipótesis, absurdo.
- Podemos utilizar el algoritmo con ajuste de Bellman-Ford que expusimos anteriormente. Sin embargo, como solo podemos asegurarnos que cada una de las componentes conexas de nuestro grafo es fuertemente conexa, deberemos correr este algoritmo para un representante de cada componente. Por otra parte, como sabemos que cada componente, efectivamente, es fuertemente conexa, bastará con que un representante de la componente nos asegure si hay o no ciclos negativos. Por lo tanto, nuestro algoritmo sería algo así:
+Por lo tanto, luego de borrar los nodos huérfanos y asegurarnos que todas las aristas de la última versión del grafo pertenecen a un ciclo, podemos utilizar el algoritmo con ajuste de Bellman-Ford que expusimos anteriormente. Sin embargo, como solo podemos asegurarnos que cada una de las componentes conexas de nuestro grafo es fuertemente conexa, deberemos correr este algoritmo para un representante de cada componente. Por otra parte, como sabemos que cada componente, efectivamente, es fuertemente conexa, bastará con que un representante de la componente nos asegure si hay o no ciclos negativos. Por lo tanto, nuestro algoritmo sería algo así:
 
 \begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{subsidioDeRutas}{\Inout{inputEdges}{lista[ejes]}}{}}
+		\caption{\algoritmo{subsidioDeRutas}{\In{n}{nat}, \In{ejesGrafo}{lista[ejes]}}{nat}}
 		
-		bool: changesMade $\leftarrow$ true
-		
-		lista[ejes]: edgesToUse $\leftarrow$ kruskalParaBosque(inputEdges)
-
-		lista[ejes]: inputEdges $\leftarrow$ inputEdges - edgesToUse
-
-		\While{changesMade} 
-		{
-			changesMade $\leftarrow$ false
-
-			set: ds $\leftarrow$ $\emptyset$
-
-			\For{(u,v) $\in$ inputEdges}
-			{
-				ds.join(u, v)
+		borrarNodosHuerfanos(n, ejesGrafo)\\
+		borrarEjesQueNoFormanCiclo(ejesGrafo)\\
+		nat: cotaInferior $\leftarrow$ 0\\
+		nat: cotaSuperior $\leftarrow$ pesoMax(ejesGrafo)\\
+		\While{cotaInferior $<$ cotaSuperior}{
+		nat: nuevaCota $\leftarrow$ (cotaInferior + cotaSuperior) / 2 \\
+		bool: tieneCiclos $\leftarrow$ ajusteBellmanFord(ejesGrafo, nuevaCota)\\
+		\eIf{tieneCiclos}{
+			cotaSuperior $\leftarrow$ nuevaCota
+			}{
+			cotaInferior $\leftarrow$ nuevaCota
 			}
-
-			\For{(u,v) $\in$ edgesToUse}
-			{
-				\eIf{ds.connected(u,v)}
-					{
-						inputEdges.add((u,v))
-
-						edgesToUse.erase((u,v))
-
-						changesMade $\leftarrow$ true
-					}
-					{
-						ds.join(u, v)
-					}
-			}
-
-
-
 		}
+		res $\leftarrow$ cotaInferior
 	\end{algorithm}
 
 \subsection{Cota temporal}
+\begin{center}
+\textbf{borrarNodosHuerfanos}
+\end{center}
+\par
+Este algoritmo genera, inicialmente, una lista de adyacencia para cada nodo, un vector de n lugares donde el i-ésimo espacio nos dice el grado de entrada del i-ésimo nodo y una pila vacía. Como nos dan la lista de ejes, al recorrerla podemos generar la lista de adyacencia de cada uno de los ejes y, a su vez, ir contando para cada nodo cuantos nodos tienen ejes apuntando hacia él; y puesto que la entrada a ambos vectores es $O(1)$, y agregar un elemento a una lista también, el costo relevante es el de recorres todas las aristas: $O(m)$, donde m son las aristas del grafo.
+\\
+\par
+Por otra parte, tenemos el ciclo que se encarga de recorrer los $n$ nodos y averiguar si efectivamente es un nodo huerfano o no. Como vemos en el algoritmo expuesto arriba, hay un ciclo que se recorre $n$ veces, lo cual nos da una complejidad de $O(n)$. Sin embargo, no es cierto que el valor $j$ aumenta cada vez que corre el ciclo, sino que depende tambien del hecho de que la pila de nodos huerfanos esté vacía.
+\\
+\par
+Como vimos en el desarrollo, esta pila se encarga de recorrer la lista de adyacencia del nodo huerfano que estamos evaluando, con un costo de $O(n)$, donde n son todos los nodos del grafo (el mayor tamaño posible de la lista de adyacencia). Este proceso se puede producir, como mucho, para los $n$ nodos, en caso de que a través de este algoritmo fueramos descubriendo que cada uno de ellos es huérfano. Por lo tanto, la complejidad de esta porción del algoritmo sería $O(n^2)$.
+\\
+\par
+Pero entonces, al repasar el ciclo, nos encontramos que en el peor caso puede llegar a recorrer dos veces la lista. Suponiendo que, efectivamente, terminaramos apilando los $n$ nodos, tendríamos una complejidad de $O(n^2)$; pero por otro lado, de manera ajena a lo que ocurriera en la pila, el valor de $j$ iría aumentando y, en el peor caso, corriendo n veces la función agregarNodosHuerfanos, dándonos una complejidad de $O(n^2)$. Por ende, aún considerando los dos peores casos en simultáneo (es decir, que los $n$ nodos fueran encontrados recorriendo el vector, y a su vez, agregados a la pila) tendríamos $O(n^2 + n^2)$ $\subseteq$ $O(n^2)$
 
 \subsection{Experimentacion}
 
+La experimentación de este ejercicio representó un desafío, ya que en la generación de grafos resultó difícil garantizar condiciones que diesen resultados homogéneos debido a nuestra implementación. Esto requeriría crear grafos fuertemente conexos, de modo que ningún eje estuviese fuera de un ciclo. Sin embargo, sí pudimos observar fácilmente los casos de grafos completos.
+
+\begin{center}
+	\includegraphics[scale=0.5]{imagenes/ej2-1.png}
+\end{center}
+
+En este gráfico se puede observar que, en grafos completos, el algorítmo tiene complejidad cúbica con respecto a la cantidad de ciudades. Esto se ajusta a la complejidad pedida, ya que $m = \frac{n \times (n-1)}{2} \approx n^2$, es decir, $O(n m) \subseteq O(n^3)$.
+
+\begin{center}
+	\includegraphics[scale=0.5]{imagenes/ej2-2.png}
+\end{center}
+
+Por otro lado, podemos ver que el máximo peaje tiene impacto logarítmico sobre el tiempo de ejecución, lo que condice con nuestras expectativas y con la cota de complejidad pedida. 
+
 \pagebreak
-
-
-
- 
-
-
-

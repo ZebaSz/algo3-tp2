@@ -37,8 +37,8 @@ Dado que en el problema original queremos detectar la existencia de ciclos negat
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{ajusteParaBellmanFord}{\In{p}{int}, \In{ejesGrafo}{lista[ejes]}, \In{origen}{int}}{bool}}
 		
-		lista[ejes] ejesPVersion $\leftarrow$ ajustarEjes(ejesGrafo, p)
-		res $\leftarrow$ bellmanFord(ejesPVersion, origen)		
+		lista[ejes] ejesPVersion $\leftarrow$ ajustarEjes(ejesGrafo, p)\\
+		res $\leftarrow$ bellmanFord(ejesPVersion, origen)\\
 
 	\end{algorithm}
 
@@ -62,8 +62,8 @@ En síntesis, lo que deberíamos hacer es tomar el grafo actual, y quitar todos 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{borrarNodosHuerfanos}{\In{n}{nat}, \In{lista[ejes]}{ejesGrafo}}{}}
 		
-		vector[lista[nat]]: adyacentes $\leftarrow$ listaDeAdyacencia(ejesGrafo)\\
-		vector[nat]: gradoEntrada $\leftarrow$ gradoDeEntrada(ejesGrafo)\\
+		lista[nat]: adyacentes $\leftarrow$ listaDeAdyacencia(ejesGrafo)\\
+		lista[nat]: gradoEntrada $\leftarrow$ gradoDeEntrada(ejesGrafo)\\
 		pila[nat]: nodosHuerfanos $\leftarrow$ vacia()\\
 		\While{j $<$ n}{
 			\eIf{nodosHuerfanos.esVacia()}{
@@ -80,13 +80,6 @@ En síntesis, lo que deberíamos hacer es tomar el grafo actual, y quitar todos 
 	\end{algorithm}
 
 
-\par
-Este algoritmo, como vemos, utiliza una pila en la cual se van agregando los nodos huerfanos que encontramos. Esta se construye mediante el algoritmo mencionado en el pseudocódigo, \textbf{agregarNodosHuerfanos}. Este algoritmo, si bien no es explicado en profundidad, básicamente recorre la lista de adyacencia del nodo que ya sabemos huérfano (porque bien vimos que su grado de entrada era 0 aumentando $j$, o bien porque lo insertamos en la pila) y, a medida que recorre sus adyacentes, les descuenta en uno el grado de entrada, puesto que el nodo huerfano que antes llegaba hacia él no lo hará mas. Así, al descontarle en uno, le preguntamos si efectivamente él, al perder esa adyacencia, se volvió huerfano. En caso de serlo, lo agregamos a la pila; de otro modo, continuamos viendo la lista.
-\\
-\par
-Esto nos permite que, en caso de que hayamos ya pasado por el valor $j$ que abarcaba a ese nodo, no tengamos que reiniciar el conteo. Y del mismo modo, no podría ocurrir que no veamos que un nodo tiene grado 0 de entrada, puesto que por el ciclo pasamos necesariamente una vez por todos los nodos.
-\\
-\par
 Cuando logramos aislar a todos los nodos huerfanos del digrafo principal, ya estamos en condiciones de asegurar que para todo nodo v, $d_{in} (v) > 0 \land d_{out} (v) > 0$. Sin embargo, a causa de la siguiente propiedad, no es hipótesis suficiente para que el digrafo sea fuertemente conexo:
 \\
 \par
@@ -110,13 +103,13 @@ Es importante resaltar que, luego de agregar una arista a las seleccionadas, deb
 
 \begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{borrarEjesQueNoFormanCiclo}{\Inout{inputEdges}{lista[ejes]}}{}}
+		\caption{\algoritmo{subsidioDeRutas}{\Inout{inputEdges}{lista[ejes]}}{}}
 		
 		bool: changesMade $\leftarrow$ true
 		
 		lista[ejes]: edgesToUse $\leftarrow$ kruskalParaBosque(inputEdges)
 
-		inputEdges $\leftarrow$ inputEdges - edgesToUse
+		lista[ejes]: inputEdges $\leftarrow$ inputEdges - edgesToUse
 
 		\While{changesMade} 
 		{
@@ -148,32 +141,30 @@ Es importante resaltar que, luego de agregar una arista a las seleccionadas, deb
 
 		}
 	\end{algorithm}
-	
-\par
-Como cada iteración en la que se añaden ejes a los seleccionados conecta al menos a dos componentes de nuestra lista de incidencia, y hay a lo sumo $n$ componentes distintas, el ciclo itera a lo sumo $n$ veces a todos los ejes, realizando para cada eje operaciones de find y unión. Por otra parte, gracias a las optimizaciones de la estructura disjoint set, estas operaciones pertenecen a O($\alpha$(n)) $\subset$ O($\log$(n)) , donde $\alpha$ representa la inversa de la función de Ackerman.
-\\
-\par
-Por lo tanto, luego de borrar los nodos huérfanos y asegurarnos que todas las aristas de la última versión del grafo pertenecen a un ciclo, podemos utilizar el algoritmo con ajuste de Bellman-Ford que expusimos anteriormente. Sin embargo, como solo podemos asegurarnos que cada una de las componentes conexas de nuestro grafo es fuertemente conexa, deberemos correr este algoritmo para un representante de cada componente. Por otra parte, como sabemos que cada componente, efectivamente, es fuertemente conexa, bastará con que un representante de la componente nos asegure si hay o no ciclos negativos. Por lo tanto, nuestro algoritmo sería algo así:
+
+Por lo tanto, luego de borrar los nodos huérfanos y asegurarnos que todas las aristas de la última versión del grafo pertenecen a un ciclo, contamos con las siguientes hipotesis: para todo nodo v del grafo, $d_{in} (v) > 0 \land d_{out} (v) > 0 \land$ en el grafo subyacente, v pertenece a al menos un ciclo. Esto alcanza para decir que toda componente conexa es fuertemente conexa. Tomemos dos nodos u, v del grafo. Como ambos pertenecen a la misma componente conexa existe un camino entre ellos. Por hipotesis todos los ejes del camino pertenecen a un ciclo. Si estos ejes estuvieran orientados de manera que no se puede llegar de u a v o de v a u, significaría que hay al menos un nodo w en el camino por el que no se puede pasar, en otras palarbas o bien $d_in(w)$ = 0 o bien $d_out(w)$ = 0. Esto contradice a las hipótesis, absurdo.
+
+Por lo tanto, con lo ya expuesto, podemos utilizar el algoritmo con ajuste de Bellman-Ford que expusimos anteriormente. Sin embargo, como solo podemos asegurarnos que cada una de las componentes conexas de nuestro grafo es fuertemente conexa, deberemos correr este algoritmo para un representante de cada componente. Por otra parte, como sabemos que cada componente, efectivamente, es fuertemente conexa, bastará con que un representante de la componente nos asegure si hay o no ciclos negativos. Por lo tanto, nuestro algoritmo sería algo así:
 
 \begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{subsidioDeRutas}{\In{n}{nat}, \In{ejesGrafo}{lista[ejes]}}{nat}}
 		
-		borrarNodosHuerfanos(n, ejesGrafo)\\
-		borrarEjesQueNoFormanCiclo(ejesGrafo)\\
-		nat: cotaInferior $\leftarrow$ 0\\
-		nat: cotaSuperior $\leftarrow$ pesoMax(ejesGrafo)\\
-		\While{cotaInferior $<$ cotaSuperior}{
-		nat: nuevaCota $\leftarrow$ (cotaInferior + cotaSuperior) / 2 \\
-		bool: tieneCiclos $\leftarrow$ ajusteBellmanFord(ejesGrafo, nuevaCota)\\
-		\eIf{tieneCiclos}{
-			cotaSuperior $\leftarrow$ nuevaCota
-			}{
-			cotaInferior $\leftarrow$ nuevaCota
-			}
-		}
-		res $\leftarrow$ cotaInferior
-	\end{algorithm}
+		borrarNodosHuerfanos(n, ejesGrafo)\\	borrarEjesQueNoFormanCiclo(ejesGrafo)\\
+ 		nat: cotaInferior $\leftarrow$ 0\\
+ 		nat: cotaSuperior $\leftarrow$ pesoMax(ejesGrafo)\\
+ 		\While{cotaInferior $<$ cotaSuperior}{
+ 		nat: nuevaCota $\leftarrow$ (cotaInferior + cotaSuperior) / 2 \\
+ 		bool: tieneCiclos $\leftarrow$ ajusteBellmanFord(ejesGrafo, nuevaCota)\\
+ 		\eIf{tieneCiclos}{
+ 			cotaSuperior $\leftarrow$ nuevaCota
+ 			}{
+ 			cotaInferior $\leftarrow$ nuevaCota
+  			}
+ 	res $\leftarrow$ cotaInferior
+ 	}
+  	\end{algorithm}
+
 
 \subsection{Cota temporal}
 \begin{center}
@@ -190,6 +181,17 @@ Como vimos en el desarrollo, esta pila se encarga de recorrer la lista de adyace
 \\
 \par
 Pero entonces, al repasar el ciclo, nos encontramos que en el peor caso puede llegar a recorrer dos veces la lista. Suponiendo que, efectivamente, terminaramos apilando los $n$ nodos, tendríamos una complejidad de $O(n^2)$; pero por otro lado, de manera ajena a lo que ocurriera en la pila, el valor de $j$ iría aumentando y, en el peor caso, corriendo n veces la función agregarNodosHuerfanos, dándonos una complejidad de $O(n^2)$. Por ende, aún considerando los dos peores casos en simultáneo (es decir, que los $n$ nodos fueran encontrados recorriendo el vector, y a su vez, agregados a la pila) tendríamos $O(n^2 + n^2)$ $\subseteq$ $O(n^2)$
+
+\begin{center}
+\textbf{borrarEjesQueNoFormanCiclo}
+\end{center}
+Este algoritmo utiliza, para empezar, una versión de Kruskal adaptada para bosques, que mantiene el costo original de Kruskal y, por lo tanto, nos cuesta $O(m.log(n))$, donde m es la cantidad de ejes y n la cantidad de aristas, y lo cual resultará despreciable para la complejidad que tiene el algoritmo.
+\\
+\par
+Luego, realiza la iteración de los ejes. Como cada iteración en la que se añaden ejes a los seleccionados conecta al menos a dos componentes de nuestra lista de incidencia, y hay a lo sumo $n$ componentes distintas, el ciclo itera a lo sumo $n$ veces a todos los ejes, realizando para cada eje operaciones de find y unión, lo que nos da una complejidad de $O(n.m)$. Por otra parte, gracias a las optimizaciones de la estructura disjoint set, podemos despreciar el valor de sus operaciones, considerandolas $O(1)$.
+\\
+\par
+Finalmente, nuestro algoritmo definitivo itera de manera binaria, lo cual nos da un ciclo que se recorre $O(log(c))$ veces para la complejidad $O(n.m)$, dándonos, en definitiva, una cota temporal de $O(n.m.log(c))$
 
 \subsection{Experimentacion}
 

@@ -15,18 +15,17 @@ int main() {
     bool hasInput = true;
     std::vector<input> inputs;
     while(hasInput) {
-        int n, m, origin, destination, k;
+        int n, m;
 
         std::cin >> n >> m;
-        std::cin >> origin >> destination >> k;
-        hasInput = (n != -1 || m != -1 || origin != -1 || destination != -1 || k != -1);
+        hasInput = (n != -1 || m != -1);
         if(hasInput) {
             input in;
             in.n = n;
             in.m = m;
-            in.origin = origin;
-            in.destination = destination;
-            in.k = k;
+            std::cin >> in.origin >> in.destination >> in.k;
+            --in.origin;
+            --in.destination;
             for(int i = 0; i < m; ++i) {
                 unsigned int c1, c2;
                 int p, d;

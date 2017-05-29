@@ -43,8 +43,8 @@ void shuffleEdgeList(edgeList &edges) {
  * @param edges
  * @param maxW
  */
-void genRandomSemiconnectedDigraph(unsigned int n, unsigned int m, edgeList &edges, int maxW) {
-    genKGraph(n, edges, maxW, true);
+void genRandomSemiconnectedGraph(unsigned int n, unsigned int m, edgeList &edges, int maxW) {
+    genKGraph(n, edges, maxW, false);
     shuffleEdgeList(edges);
     size_t amountOfEdgesToErase = edges.size() - m;
     std::vector<int> dout(n, n-1);
@@ -104,3 +104,12 @@ void getSubgraph(unsigned int m, edgeList &base, edgeList &subgraph) {
     }
 }
 
+void convertToDigraph(edgeList& graph, int maxW) {
+    long seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator(seed);
+    std::uniform_int_distribution<int> distribution(0, maxW);
+    size_t origSize = graph.size();
+    for (size_t i = 0; i < origSize; ++i) {
+        graph.push_back({graph[i].end, graph[i].start, distribution(generator)});
+    }
+}

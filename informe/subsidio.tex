@@ -87,32 +87,42 @@ Cuando logramos aislar a todos los nodos huerfanos del digrafo principal, ya est
 Orientar un grafo es darle una dirección a cada eje. Un grafo conexo G es orientable de forma tal que se convierta en un digrafo fuertemente conexo si y sólo si cada eje de G pertenece a un circuito simple de G.
 \end{center}
 
-Vemos que los ejes que no pertenecen a un ciclo en el grafo subyacente no pueden pertenecer a un ciclo en el digrafo, entonces si el digrafo tiene tales ejes, no es fuertemente conexo. Como esos ejes no pueden pertenecer a un ciclo dirigido, no son importantes en nuestro análisis y por lo tanto eliminarlos no nos quita soluciones. Se utiliza un algoritmo que dada una lista de incidencia, encuentra un bosque generador utilizando Kruskal (encuentra un árbol generador para cada componente del grafo de entrada) y separa los ejes en dos listas: la lista de inciertos contiene a los ejes del bosque encontrado y la lista de seleccionados que contiene al resto de los ejes. Como el algoritmo de Kruskal ignora a todos los ejes que conectan a dos nodos que ya estan en la misma componente conexa, sabemos que todos los ejes de la lista de seleccionados pertenecen a al menos un ciclo y conforman una solución parcial. Queremos determinar cuales ejes de la lista de inciertos tambien pertenecen a ciclos y agregarlos a la lista de seleccionados. Un procedimiento que descubre ejes de la lista de inciertos consiste en crear un disjoint set con union find y recorrer los ejes de la lista de seleccionados, conectando partida y llegada del eje cada vez. Cuando se termina de recorrer seleccionados, el disjoint set tiene componentes de nodos que pertenecen a ciclos. Ahora iteramos la lista de inciertos y para cada eje averiguamos si sus nodos incididos pertenecen a la misma componente. En caso afirmativo, este eje pertenece a un ciclo, lo borramos de inciertos y lo pusheamos a seleccionados. En caso contrario no podemos determinar asi que lo dejamos en inciertos y conectamos ambos nodos incididos en el disjoint set. Cuando se termina de recorrer inciertos, puede pasar que ninguno de los recorridos haya sido agregado a seleccionados. En tal caso significa que ninguno de los ejes pertenecientes a inciertos pertenece a ciclos. Si al menos uno de los recorridos fue agregado a seleccionados, hay que volver a empezar el proceso creando un nuevo disjoint set. Esta incertudumbre reside en observar que al agregar un nuevo eje a la lista de seleccionados, crece nuestro conjunto de ejes pertenecientes a ciclos, lo cual posibilita la identificacion de nuevos ejes. 
+Veamos que los ejes que no pertenecen a un ciclo en el grafo subyacente no pueden pertenecer a un ciclo en el digrafo. Entonces, si el digrafo tiene tales ejes, no es fuertemente conexo. Como esos ejes no pueden pertenecer a un ciclo dirigido, no son importantes en nuestro análisis, y por lo tanto eliminarlos no nos quita soluciones. Por lo tanto, deberemos buscar la manera de quitar estos ejes, para así obtener, finalmente un grafo compuesto por componentes fuertemente conexas.
+\\
 \par
-Como cada iteración en la que se añaden ejes a seleccionados conecta al menos a dos componentes de esa lista de incidencia y hay a lo sumo n componentes distintas, el ciclo itera a lo sumo n veces a todos los ejes, realizando en cada eje operaciones de find y unión, que gracias a las optimizaciones de la estructura disjoint set pertenecen a O($\alpha$(n)) $\subset$ O($\log$(n)) donde $\alpha$ representa a la inversa de la función de Ackerman.
+Para esto, tomaremos nuestro grafo actual (al cual ya le hemos eliminado los nodos huérfanos correspondientes) y consideraremos un bosque generador particular (como bien sabemos, es posible que haya ciclos en el grafo, por lo que es importante marcar que no cambiará el resultado cual es el bosque generador que tomemos). A partir de aquí, tenemos dos tipos de ejes: los que pertenecen al bosque generador, a los cuales llamaremos \textbf{inciertos}, y los cuales no pertenecen.
+\\
+\par
+Como tenemos un bosque generador, si agregamos cualquier arista que conecte dos ejes formaremos un ciclo. Por lo tanto, podemos asegurar que todos los ejes que no pertenezcan al bosque generador son partes de un ciclo de nuestro grafo, y por ende conforman una solución parcial. Sin embargo, aún debemos determinar cuales de las aristas inciertas son las que forman ciclos. Para esto, empezaremos por considerar el grafo que conecta a todas las aristas que ya sabemos útiles (las seleccionadas) y considerar a cada una de ellas como parte de una componente conexa. Es decir que si una arista seleccionada incide al nodo 2 y 3, y otra al nodo 3 y 4, necesariamente serán parte de la misma componente conexa.
+\\
+\par
+Luego, viendo cada una de las aristas inciertas, deberemos recorrer estas componentes; y al encontrar una arista que incide sobre dos nodos de la misma componente, aseguraremos que esta arista es parte de un ciclo (puesto que ya había un camino entre estos dos nodos, por ser parte de la misma componente, y ahora hay un camino nuevo), y por ende, de las aristas que influyen sobre nuestro problema.
+\\
+\par
+Es importante resaltar que, luego de agregar una arista a las seleccionadas, deberemos repasar las aristas inciertas ya recorridas, pues contaremos con un nuevo conjunto de componentes conexas y, por lo tanto, de ciclos. En términos de pseudocódigo, tendríamos algo así:
 
 \begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{deleteEdgesThatDontBelongToCicles}{\In{n}{int}, \Inout{inputEdges}{(int, int, int)}, \In{source}{int}, \Inout{distance}{int[]}, \In{p}{int}}{bool}}
+		\caption{\algoritmo{deleteEdgesThatDontBelongToCicles}{\In{n}{int}, \Inout{inputEdges}{lista[ejes]}}, \In{p}{int}}{bool}}
 		
-		changesMade $\leftarrow$ true
+		bool: changesMade $\leftarrow$ true
 		
-		edgesToUse $\leftarrow$ spanningForest(inputEdges)
+		lista[ejes]: edgesToUse $\leftarrow$ kruskalParaBosque(inputEdges)
 
-		inputEdges $\leftarrow$ inputEdges - edgesToUse
+		lista[ejes]: inputEdges $\leftarrow$ inputEdges - edgesToUse
 
 		\While{changesMade} 
 		{
 			changesMade $\leftarrow$ false
 
-			ds $\leftarrow$ $\emptyset$
+			set: ds $\leftarrow$ $\emptyset$
 
-			\For{(u,v) in inputEdges}
+			\For{(u,v) $\in$ inputEdges}
 			{
 				ds.join(u, v)
 			}
 
-			\For{(u,v) in edgesToUse}
+			\For{(u,v) $\in$ edgesToUse}
 			{
 				\eIf{ds.connected(u,v)}
 					{
@@ -132,6 +142,9 @@ Como cada iteración en la que se añaden ejes a seleccionados conecta al menos 
 		}
 
 	\end{algorithm}
+	
+\par
+Como cada iteración en la que se añaden ejes a los seleccionados conecta al menos a dos componentes de nuestra lista de incidencia, y hay a lo sumo $n$ componentes distintas, el ciclo itera a lo sumo $n$ veces a todos los ejes, realizando para cada eje operaciones de find y unión. Por otra parte, gracias a las optimizaciones de la estructura disjoint set, estas operaciones pertenecen a O($\alpha$(n)) $\subset$ O($\log$(n)) , donde $\alpha$ representa la inversa de la función de Ackerman.
 
 \subsection{Cota temporal}
 

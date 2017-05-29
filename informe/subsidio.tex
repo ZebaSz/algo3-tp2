@@ -148,45 +148,24 @@ Como cada iteración en la que se añaden ejes a los seleccionados conecta al me
 \par
 Por lo tanto, luego de borrar los nodos huérfanos y asegurarnos que todas las aristas de la última versión del grafo pertenecen a un ciclo, podemos utilizar el algoritmo con ajuste de Bellman-Ford que expusimos anteriormente. Sin embargo, como solo podemos asegurarnos que cada una de las componentes conexas de nuestro grafo es fuertemente conexa, deberemos correr este algoritmo para un representante de cada componente. Por otra parte, como sabemos que cada componente, efectivamente, es fuertemente conexa, bastará con que un representante de la componente nos asegure si hay o no ciclos negativos. Por lo tanto, nuestro algoritmo sería algo así:
 
-begin{algorithm}[H]
+\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{subsidioDeRutas}{\Inout{inputEdges}{lista[ejes]}}{}}
+		\caption{\algoritmo{subsidioDeRutas}{\In{n}{nat}, \In{ejesGrafo}{lista[ejes]}}{nat}}
 		
-		bool: changesMade $\leftarrow$ true
-		
-		lista[ejes]: edgesToUse $\leftarrow$ kruskalParaBosque(inputEdges)
-
-		lista[ejes]: inputEdges $\leftarrow$ inputEdges - edgesToUse
-
-		\While{changesMade} 
-		{
-			changesMade $\leftarrow$ false
-
-			set: ds $\leftarrow$ $\emptyset$
-
-			\For{(u,v) $\in$ inputEdges}
-			{
-				ds.join(u, v)
+		borrarNodosHuerfanos(n, ejesGrafo)\\
+		borrarEjesQueNoFormanCiclo(ejesGrafo)\\
+		nat: cotaInferior $\leftarrow$ 0\\
+		nat: cotaSuperior $\leftarrow$ pesoMax(ejesGrafo)\\
+		\While{cotaInferior $<$ cotaSuperior}{
+		nat: nuevaCota $\leftarrow$ (cotaInferior + cotaSuperior) / 2 \\
+		bool: tieneCiclos $\leftarrow$ ajusteBellmanFord(ejesGrafo, nuevaCota)\\
+		\eIf{tieneCiclos}{
+			cotaSuperior $\leftarrow$ nuevaCota
+			}{
+			cotaInferior $\leftarrow$ nuevaCota
 			}
-
-			\For{(u,v) $\in$ edgesToUse}
-			{
-				\eIf{ds.connected(u,v)}
-					{
-						inputEdges.add((u,v))
-
-						edgesToUse.erase((u,v))
-
-						changesMade $\leftarrow$ true
-					}
-					{
-						ds.join(u, v)
-					}
-			}
-
-
-
 		}
+		res $\leftarrow$ cotaInferior
 	\end{algorithm}
 
 \subsection{Cota temporal}

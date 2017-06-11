@@ -81,13 +81,17 @@ bool bellmanFord(int source, int n, int *distance, const edgeList &edges) {
  *
  * @return true if a negative cycle has been found; minimum distances otherwise
  */
-bool bellmanFordWithAdjustment(int source, int n, int c, int *distance, const edgeList &edges) {
+bool bellmanFordWithAdjustment(int n, int c, int *distance, const edgeList &edges) {
     edgeList adjustedEdges(edges.begin(), edges.end());
     edgeList::iterator it;
     for(it = adjustedEdges.begin(); it != adjustedEdges.end(); ++it){
         it->weight -= c;
     }
-    bool res = bellmanFord(source, n, distance, adjustedEdges);
+
+    for (unsigned int i = 0; i < (unsigned int)n; i++){
+        adjustedEdges.push_back({(unsigned int)n, i, 0});
+    }
+    bool res = bellmanFord(n, n+1, distance, adjustedEdges);
     return res;
 }
 

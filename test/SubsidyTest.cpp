@@ -55,34 +55,6 @@ TEST_F(SubsidyTest, twoComps) {
     ASSERT_EQ(binarySearchTax(9, 10, edges), 5);
  }
 
-TEST_F(SubsidyTest, findCicles) {
-
-    //las aristas de peso = 5 pertenecen al k3 formado por 0,1,2
-    //las aristas de peso = 10 pertenecen al k3 formado por 4,5,6
-    //las aristas de peso = 15 pertenecen al k3 formado por 7,8,9
-    //las aristas de peso = 20 no pertenecen a ciclos
-    edges.push_back({0, 1, 5});
-    edges.push_back({1, 2, 5});
-    edges.push_back({2, 0, 5});
-    edges.push_back({2, 3, 20});
-    edges.push_back({4, 5, 10});
-    edges.push_back({5, 6, 10});
-    edges.push_back({6, 4, 10});
-    edges.push_back({6, 3, 20});
-    edges.push_back({3, 7, 20});
-    edges.push_back({7, 8, 15});
-    edges.push_back({8, 9, 15});
-    edges.push_back({9, 7, 15});
-
-    deleteEdgesThatDontBelongToCicles(10, edges);
-    size_t sizeGraph = 9;
-    ASSERT_EQ(edges.size(), sizeGraph);
-    for (size_t i = 0; i < edges.size(); ++i) {
-        ASSERT_NE(edges[i].weight, 20);
-    }
-
-}
-
 TEST_F(SubsidyTest, noUniversalParents) {
 
     //las aristas de peso = 5 pertenecen al k3 formado por 0,1,2
@@ -123,28 +95,6 @@ TEST_F(SubsidyTest, noUniversalParents) {
     edges.push_back({9,7,15});
     ASSERT_EQ(binarySearchTax(10, 12, edges), 5);
 
-}
-
-TEST_F(SubsidyTest, deleteOrphanEdge) {
-    edges.push_back({0,1,20});
-    edges.push_back({1,2,7});
-    edges.push_back({2,1,3});
-    deleteIsolatedNodes(3, edges);
-    ASSERT_EQ(edges.size(),(size_t)2);
-}
-
-TEST_F(SubsidyTest, isolatedNodes){
-    edges.push_back({0,1,5});
-    edges.push_back({1,3,5});
-    edges.push_back({3,4,5});
-    edges.push_back({4,5,5});
-    edges.push_back({5,6,5});
-    edges.push_back({4,6,5});
-    edges.push_back({0,2,5});
-    edges.push_back({1,2,5});
-    deleteIsolatedNodes(7,edges);
-    edgeList empty;
-    ASSERT_EQ(edges, empty);
 }
 
 TEST_F(SubsidyTest, testWithCyclesAndIsolatedNodes){

@@ -16,6 +16,11 @@ Veamos un ejemplo del problema. Supongamos que tuvieramos 6 ciudades, con las si
 \item Ruta de 5 a 2. Costo de peaje: 5 pesos.
 \item Ruta de 6 a 3. Costo de peaje: 10 pesos.
 \end{itemize}
+Utilizando una representación de grafos, donde el peso de cada arista es el costo del peaje, se vería de este modo
+\\
+\\
+\includegraphics[scale=0.25]{imagenes/ejemplo2.png}
+\\
 
 Como vemos, la única manera de salir de una ciudad y volver a la misma es que arranquemos en las ciudades 1, 2, 3 ó 4, y recorramos las cuatro rutas que las conectan. Por ende, debemos asegurar que al recorrerlas no se le saca plata al estado; es decir, que al aplicarle el subsidio fijo, se descuenta menos de (40+20+10+15) $=$ 85 pesos. Considerando que las cuatro rutas tienen el mismo descuento, el mayor subsidio que se podría realizar es la cuarta parte de 85, que si lo redondeamos es 21 pesos. Por lo tanto, el mayor descuento que se podría realizar a las rutas de esta provincia es de 21 pesos.
 \\

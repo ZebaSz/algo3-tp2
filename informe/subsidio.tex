@@ -79,7 +79,7 @@ A partir de esto, el algoritmo de Bellman-Ford puede utilizar a \textit{s} como 
 	res $\leftarrow$ bellmanFord(ejesPVersion, tamaño+1)
 \end{algorithm}
 
-Es importante aclarar que, al pasarle como parámetro el \textit{(tamaño+1)} a Bellman-Ford, estamos enviando el nodo de origen desde el cual se correrá el algoritmo (el cual es, justamente, el último nodo que colocamos nosotros)
+Es importante aclarar que, al pasarle como parámetro \textit{(tamaño+1)} a Bellman-Ford, estamos enviando el nodo de origen desde el cual se correrá el algoritmo (el cual es, justamente, el último nodo que colocamos nosotros)
 
 Diremos que c es el peso de la arista mas pesada del grafo original. Veamos que la versión p $=$ 0 es equivalente al grafo original, y por ende no puede tener ciclos negativos. Por otro lado, veamos que si el grafo original tiene ciclos, la versión p $=$ c + 1 tendrá ciclos negativos, porque todas sus aristas serán negativas. Por ende, sabemos que nuestra solución esta acotada inferiormente por 0 y superiormente por c.
 
@@ -111,7 +111,19 @@ Por lo tanto, con lo ya expuesto, podemos utilizar el algoritmo con ajuste de Be
 \end{algorithm}
 
 \subsection{Cota temporal}
-TODO
+Luego del análisis realizado, y viendo el algoritmo subsidioDeRutas dado para el problema, el conjunto de operaciones significativas para deducir la complejidad se reduce al \textit{while} en el cual, con la ayuda del Bellman-Ford con ajuste, acabamos obteniendo el mayor subsidio posible.
+
+Analicemos, entonces, esta porción del algoritmo. Buscamos un valor entre 0 y c, como habíamos dicho inicialmente, y cada vez que se corre el ciclo reducimos esta búsqueda a la mitad de los valores (0 y Q, o bien Q y c). Por ende, tenemos un \textit{while} que corre en $O(log(c))$, dándonos como resultado final $O(log(c).BF))$ donde BF es la complejidad del Bellman-Ford con ajuste.
+
+Pasemos a analizar este otro algoritmo. El Bellman-Ford con ajuste realiza 3 operaciones: reajusta el valor de todos los ejes, agrega un nodo con \textit{n} ejes de peso nulo y finalmente corre Bellman-Ford desde este nodo agregado. Es facil ver que las primeras dos operaciones se reducen a recorrer todos los ejes y todos los nodos, respectivamente, y por ende corren en $O(m)$ y $O(n)$; mientras que el algoritmo de Bellman-Ford, si bien tiene complejidad $O(n.m)$ conocida, se puede ver afectada al agregar un nodo de grado \textit{n} a nuestro grafo, por lo que se requiere un análisis más exhaustivo.
+
+Veamos lo que ocurre con nodos y aristas respectivamente. Al tener \textit{n} nodos y \textit{m} aristas, y agregar un nuevo nodo con \textit{n} aristas nuevas, pasamos a tener \textit{n+1} nodos y \textit{m+n} aristas. Por ende, si repasamos las complejidades obtenidas con estos valores, el Bellman-Ford con ajuste tendrá una cota temporal de $O(m) + O(n) + O((n+1)(m+n))$ $\subseteq$ $O(n(m+n))$ $\subseteq$ $O(n^2 + n.m)$.
+
+Sin embargo, tenemos como premisa que todo nodo perteneciente al grafo debe tener grado de salida mayor o igual a 1 ($d_{out}$ $\geq$ $1$). Por lo tanto, por cada nodo del grafo original tenemos al menos una arista, y podemos acotar $m \geq n$. De este modo, podemos asegurar las siguientes relaciones: $O(n)$ $\subseteq$ $O(m)$ $\rightarrow$ $O(n^2)$ $\subseteq$ $O(n.m)$.
+
+Por lo tanto, si $O(n^2)$ $\subseteq$ $O(n.m)$, podemos reducir la complejidad del Bellman-Ford con ajuste de $O(n^2 + n.m)$ a $O(n.m + n.m)$ que es exactamente $O(n.m)$. De este modo, demostramos que agregar el nodo con n aristas en el contexto de este problema no afecta la complejidad del algoritmo de Bellman-Ford.
+
+Entonces, como habíamos dicho anteriormente, la complejidad de nuestro problema se reduce a $O(log(c).BF))$ donde BF es la complejidad del Bellman-Ford con ajuste. Y como vimos, la complejidad de este último algoritmo es de $O(n.m)$, por lo que nuestra cota temporal es finalmente $O(log(c).n.m)$, que cumple las condiciones de cota temporal exigidas por el ejercicio.
 
 \subsection{Experimentacion}
 

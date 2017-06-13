@@ -14,6 +14,7 @@ Para ver mejor el problema, pongamos un ejemplo. Supongamos que tenemos las ciud
 % Hola. Si me estás leyendo (a) no tenés instalado tikz o (b) sos roni y te ofendiste porque saqué tu dibujo
 % Si es por (a), sudo apt-get install texlive-full
 % Si es por (b), perdón, podés ponerlo de vuelta si querés
+
 \noindent
 \begin{minipage}{0.5\textwidth}
 	\begin{itemize}
@@ -208,6 +209,7 @@ Por lo tanto, con lo visto anteriormente, acabaríamos teniendo un algoritmo de 
 	}
 
 	vector[nat]: distancias $\leftarrow$ dijkstra(grafoConNiveles, origen)
+	
 	\For{i $\leq$ k}{
 		\If{distancias[destino + i $\times$ n] $<$ res}{
 			res $\leftarrow$ distancias[destino + i $\times$ n]	

@@ -148,8 +148,7 @@ void dijkstra(int source, int n, int *distance, const edgeList &edges, bool digr
         visiteNodes[nextVisitedNode] = true;
         int myNode = nextVisitedNode;
         nextVisitedNode = INF;
-        // The first vertex in pair is the minimum distance
-        // vertex, extract it from priority queue.
+        // The next node to visit is the one with the shortest distance
         for (int v = 0; v < n; v++){
             if (!visiteNodes[v]){
                 relax(distance, myNode, v, adjacencyMatrix[myNode][v]);

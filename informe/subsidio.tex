@@ -60,28 +60,58 @@ Dado este problema, y considerando que hay que tener en cuenta la mano en la cua
 
 Como nuestro problema principal es averiguar cual es el mayor subsidio que se le puede otorgar a todas las rutas sin que se generen ciclos de rutas negativos, no es dificil que rápidamente encontremos una visión certera de lo que debemos hacer en el problema. Como primer aproximamiento, podemos asegurar que nuestro objetivo será reducir el costo de las rutas de manera que vayamos obteniendo mejores valores hasta que, superado el valor máximo, encontremos ciclos negativos en nuestro grafo.
 
-Por ende, sabemos de entrada que necesitaremos un algoritmo capaz de reconocer ciclos negativos; y considerando los límites de complejidad brindados, podemos asegurarnos que Bellman-Ford cumple nuestros propositos. Esto nos permitirá utilizar aristas negativas, y averiguar en cada uno de los nodos si en sus componentes hay o no ciclos negativos.
+Por ende, sabemos de entrada que necesitaremos un algoritmo capaz de reconocer ciclos negativos; y considerando los límites de complejidad brindados, concluímos que Bellman-Ford cumple nuestros propositos. Este algoritmo nos permitirá utilizar aristas negativas, y averiguar en cada uno de los nodos si en sus componentes hay o no ciclos negativos.
 
-Dado que en el problema original queremos detectar la existencia de ciclos negativos para distintas versiones del mismo grafo, usamos una función que permite crear una nueva versión del grafo a partir del original. Diremos que una p-versión nueva del grafo contiene la misma cantidad de nodos y representa al mismo conjunto de adyacencias, y su diferencia radica en que para todo eje de u a v con peso w perteneciente al grafo original, hay un eje de u a v con peso (w-p) perteneciente a la p-versión. Así, utilizaremos un algoritmo que, para cada versión, nos diga si efectivamente al aplicarle Bellman Ford se encuentran o no ciclos negativos (para esto, suponemos que Bellman-Ford nos devuelve $true$ si encuentra ciclos negativos, y $false$ si no lo hace)
+Dado que en el problema original queremos detectar la existencia de ciclos negativos para distintas versiones del mismo grafo, usamos una función que permite crear una nueva versión del grafo a partir del original. Diremos que una p-versión nueva del grafo contiene la misma cantidad de nodos y representa al mismo conjunto de adyacencias, y su diferencia radica en que para todo eje de u a v con peso w perteneciente al grafo original, hay un eje de u a v con peso (w-p) perteneciente a la p-versión. Así, utilizaremos un algoritmo que, para cada versión, nos diga si efectivamente al aplicarle Bellman-Ford se encuentran o no ciclos negativos (para esto, utilizamos una versión del algoritmo que nos devuelve $true$ si encuentra ciclos negativos, y $false$ si no lo hace)
+
+Del mismo modo, dado que Bellman-Ford parte de un nodo \textit{s} y actualiza las distancias entre \textit{s} y el resto de los nodos, solo puede detectar ciclos negativos si estos pertenecen a la misma componente conexa que \textit{s}. Si el grafo G de entrada no es conexo, no existe nodo de partida que sirva para reconocer a todas las componentes de G. Por ende, proponemos la creación de un nodo con $d_{out} = n \land d_{in} = 0$. En otras palabras, para todo nodo \textit{v} perteneciente a G, existe un eje que va de \textit{s} a \textit{v}. Sin embargo, para que el mismo no afecte el resultado final, deberemos agregarlo luego de realizar la p-versión del grafo original (es decir que, sea cual sea la p-versión, las aristas que conecten a \textit{s} con cualquier otro nodo tendrán peso nulo)
+
+A partir de esto, el algoritmo de Bellman-Ford puede utilizar a \textit{s} como nodo de partida y tendremos garantizado que reconoceremos todos los ciclos negativos del grafo. De este modo, en un grafo con \textit{n} nodos y \textit{m} aristas, pasaríamos a tener \textit{n+1} y \textit{m+n} aristas.
 
 \begin{algorithm}[H]
 	\NoCaptionOfAlgo
-	\caption{\algoritmo{ajusteParaBellmanFord}{\In{p}{int}, \In{ejesGrafo}{lista[ejes]}, \In{origen}{int}}{bool}}
+	\caption{\algoritmo{ajusteParaBellmanFord}{\In{p}{int}, \In{ejesGrafo}{lista[ejes]}, \In{tamano}{int}}{bool}}
 	
 	lista[ejes] ejesPVersion $\leftarrow$ ajustarEjes(ejesGrafo, p)
+	
+	lista[ejes] ejesPVersion $\leftarrow$ agregarEjeGeneral(ejesPVersion, tamaño)
 
-	res $\leftarrow$ bellmanFord(ejesPVersion, origen)
+	res $\leftarrow$ bellmanFord(ejesPVersion, tamaño+1)
 \end{algorithm}
+
+Es importante aclarar que, al pasarle como parámetro el \textit{(tamaño+1)} a Bellman-Ford, estamos enviando el nodo de origen desde el cual se correrá el algoritmo (el cual es, justamente, el último nodo que colocamos nosotros)
 
 Diremos que c es el peso de la arista mas pesada del grafo original. Veamos que la versión p $=$ 0 es equivalente al grafo original, y por ende no puede tener ciclos negativos. Por otro lado, veamos que si el grafo original tiene ciclos, la versión p $=$ c + 1 tendrá ciclos negativos, porque todas sus aristas serán negativas. Por ende, sabemos que nuestra solución esta acotada inferiormente por 0 y superiormente por c.
 
-Por otro lado, teniendo en cuenta un Q cualquiera, sabemos que si la versión Q carece de ciclos negativos entonces toda versión con un valor de subsidio menor a Q también carecerá de ellos. La intuición aquí reside en notar que aumentar el peso de cada arista de un grafo sin ciclos negativos producirá el aumento del peso del ciclo, y por lo tanto, que se mantenga por arriba de 0. Y del mismo modo, podemos notar lo inverso: si la versión Q posee ciclos negativos, toda versión con un valor de subsidio mayor a Q los contendrá.
+Por otro lado, teniendo en cuenta un Q cualquiera, sabemos que si la versión Q carece de ciclos negativos entonces toda versión con un valor de subsidio menor a Q también carecerá de ellos. La intuición aquí reside en notar que aumentar los pesos de un grafo sin ciclos negativos producirá el aumento del peso de todos sus ciclos, y por lo tanto, que todos ellos continuen sin ser negativos. Del mismo modo, podemos notar lo inverso: si la versión Q posee ciclos negativos, toda versión con un valor de subsidio mayor a Q los contendrá.
 
 Entonces, sabiendo que un valor Q bien nos habla de todos los mayores o menores a él; y considerando que nuestra solución se encuentra entre 0 y c, podemos realizar una búsqueda binaria tal que para cada versión Q, si la misma posee ciclos negativos, nuestra solución se acotará entre 0 y Q. En cambio, si no los posee, su solución se encontrará entre Q y c.
 
-Dado que Bellman-Ford parte de un nodo s y actualiza las distancias entre s y el resto de los nodos, solo puede detectar ciclos negativos si estos pertenecen a la misma componente conexa que s. Si el grafo G de entrada no es conexo, no existe nodo de partida que sirva para reconocer a todas las componentes de G. Proponemos la creación de un nodo con $d_{out} = n \land d_{in} = 0$. En otras palabras para todo nodo v perteneciente a G, existe un eje que va de s a v. Ahora el algoritmo de Bellman-Ford puede utilizar a s como nodo de partida y tenemos garantizado que podremos reconocer todos los ciclos negativos. Acabamos de agregar un nodo y n aristas, con lo cual la complejidad nos queda $O((n+1)*(n+m)) \in O(n^2+n*m)$ como por hipótesis, todo nodo v perteneciente a G cumple que $d_{out}(v) > 0$ vemos que $n \leq m$ y por lo tanto $O(n^2+n*m) \in O(n*m)$ osea que al agregar a s y sus ejes, la complejidad no empeora.
+Por lo tanto, con lo ya expuesto, podemos utilizar el algoritmo con ajuste de Bellman-Ford que expusimos anteriormente para averiguar cual es el máximo subsidio realizable, aplicando una suerte de búsqueda binaria sobre los valores.
 
-Finalmente, nuestro algoritmo definitivo itera de manera binaria, lo cual nos da un ciclo que se recorre $O(log(c))$ veces para la complejidad $O(n.m)$, dándonos, en definitiva, una cota temporal de $O(n.m.log(c))$
+\begin{algorithm}[H]
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{subsidioDeRutas}{\In{n}{nat}, \In{ejesGrafo}{lista[ejes]}}{nat}}		
+		nat: cotaInferior $\leftarrow$ 0
+		
+		nat: cotaSuperior $\leftarrow$ pesoMax(ejesGrafo)
+		
+		\While{cotaInferior $<$ cotaSuperior}{
+		nat: nuevaCota $\leftarrow$ (cotaInferior + cotaSuperior) / 2
+		
+		bool: tieneCiclos $\leftarrow$ ajusteBellmanFord(ejesGrafo, nuevaCota)
+		
+		\eIf{tieneCiclos}{
+			cotaSuperior $\leftarrow$ nuevaCota
+			}{
+			cotaInferior $\leftarrow$ nuevaCota
+			}
+ 		}
+ 		res $\leftarrow$ cotaInferior
+\end{algorithm}
+
+\subsection{Cota temporal}
+TODO
 
 \subsection{Experimentacion}
 

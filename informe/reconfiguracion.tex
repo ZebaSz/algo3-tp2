@@ -104,12 +104,22 @@ Lo cual nos daría un costo total de 215 pesos, siendo esta la forma más barata
 \subsection{Desarrollo}
 Como es usual, podemos representar a las ciudades como nodos de un grafo y a las rutas como los ejes. Dado que no se especifica si las rutas son de una o dos manos vamos a asumir que las rutas son bidireccionales. Como existen rutas que se pueden destruir y rutas que se pueden crear, vamos a dividir estos ejes en dos conjuntos: el conjunto $C$, que tendrá los ejes con los costos de construcción de rutas; y el conjunto $D$, que va a tener los costos de destrucción. En ambos casos, el costo de destrucción y construcción se representará como el peso del eje correspondiente a esa ruta. Notemos que $C \cup D$ contiene las aristas de un grafo completo. %ejes
 
-%parrafointuitivo
+Llamaremos $R$ a nuestro grafo solución. El objetivo del algoritmo es que todas las ciudades se conecten solo de una manera, lo que en grafos sería equivalente a que existiese exactamente un camino simple entre todo par de
+nodos (es decir, que el grafo solución fuera un árbol). Por lo tanto, \textbf{nuestro objetivo es que $R$ sea el conjunto de aristas de un árbol generador del grafo completo de ejes $C \cup D$.} %ejes
 
-Una vez encontrada la solución, vamos a tener rutas que quedaron intactas y rutas que se construyeron. Al subconjunto de aristas de $C$ que contiene las rutas que deben construirse para lograr la solución óptima lo llamaremos $RC$, y al subconjunto de $D$ que contiene las rutas que hay que mantener lo llamaremos $RD$. Podemos notar que $D - RD$ es el conjunto de rutas que hay que destruir, y que $RD \cup RC$ nos da como resultado la representación de la provincia una vez terminado el plan. A este conjunto de ejes que nos da la solución final lo llamaremos $R$. %ejes
+Una vez encontrada la solución, vamos a tener rutas que quedaron intactas y rutas que se construyeron. Al subconjunto de aristas de $C$ que contiene las rutas que deben construirse para lograr la solución óptima lo llamaremos $RC$, y al subconjunto de $D$ que contiene las rutas que hay que mantener lo llamaremos $RD$. Podemos notar que $D - RD$ es el conjunto de rutas que hay que destruir, y que $RD \cup RC$ nos da como resultado la representación de la provincia una vez terminado el plan, osea $RD \cup RC = R$.
 
-El objetivo del algoritmo es que todas las ciudades se conecten solo de una manera, lo que en grafos sería equivalente a que existiese exactamente un camino simple entre todo par de
-nodos (es decir, que el grafo solución fuera un arbol). Por lo tanto, \textbf{nuestro objetivo es que $R$ sea el conjunto de aristas de un árbol generador del grafo completo de ejes $C \cup D$.} %ejes
+El esquema de demostración constará de las siguientes afirmaciones, necesarias para elegir a $RD$ y a $RC$:
+
+\begin{enumerate}
+	\item $RD$ tiene que ser un bosque.
+
+	\item $RC$ tiene aristas que conectan a todas las componentes de $RD$, formando su unión un árbol.
+
+	\item $RD$ sera un subgrafo de $D$ tal que para cada componente conexa $D_i \in D$, existe una componente conexa $RD_i$ árbol generador de $D_i$.
+
+	\item Para encontrar al $RD$ óptimo, es necesario que cada $RD_i$ sea árbol generador máximo de $D_i$.
+\end{enumerate}
 
 Lo primero que podemos notar es que, si $RD$ no es un bosque, tiene ciclos. Y por ende, si tiene ciclos, no hay manera de que agregando aristas se obtenga un árbol. Pero esto es absurdo, porque vimos que $R$ tiene que ser un árbol. Por ende, $RD$ tiene que ser un bosque. %TODO RD no puede ser un bosque porque son aristas nada mas %grafo
 

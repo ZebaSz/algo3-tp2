@@ -86,8 +86,23 @@ A medida que nos informan las rutas, vamos agregando las rutas en dos listas de 
 
 \subsection{Cota temporal}
 
-Para tener una cota de complejidad temporal sobre nuestro algoritmo, debemos hablar sobre nuestra implementación de Kruskal, ya que es basicamente lo unico que hacemos.
-La complejidad de Kruskal está fuertemente atada a la estructura de datos interna utilizada para representar los conjuntos disjuntos. Esta estructura tiene tres funciones en la interfaz, \textit{Init} que inicia el conjunto, \textit{ind} que nos devuelve el representante del conjunto, y \textit{Union} que une los conjuntos. Nosotros lo implementamos con un par de heurísticas \textbf{Union by Rank} y \textbf{Path Compression}, tal que se puede probar que una secuencia de $k$ operaciones de las cuales n son \textit{Init} de estas tres funciones se ejecutan en tiempo $O(k\alpha (n))$ donde $\alpha$ es la inversa de la función de Ackermann. Resumiendo, creamos la estructura, hacemos el sort de la std que tiene una complejidad de $O(nlog(n))$ y en nuestro caso n está acotado por $n^2$ que son la cantidad de aristas máximas que puede haber en un grafo, y por propiedades que exceden el informe(que fueron vistas en clase) nos queda $O(n + m*log(n))$ y como ya vimos que m está acotado $n^2$ podemos también decir que es $O(n^2log(n))$ .Por último, este algoritmo lo corremos dos veces, y para recolectar los costos recorremos las aristas, así que en peor caso es $O(n^2)$, quedando una complejidad temporal del algoritmo de $O(n^2log(n))$ que se ajusta a lo pedido.
+Para tener una cota de la complejidad temporal de nuestro algoritmo, debemos enfatizar en la complejidad de la implementación de Kruskal, ya que es el corazón de la resolución del problema. El algoritmo básicamente lo que hace es :
+\begin{enumerate}
+	\item Creamos un conjunto de ejes A vacío que va terminar siendo nuestra solución
+\item Crear una estructura B que contenga las componentes conexas de un bosque, inicializada con los nodos del grafo como nodos separados.
+\item Creamos un conjunto C con las aristas del grafo.
+\item Mientras C no sea vacío.
+\begin{enumerate}
+\item Sacamos la arista de menor o mayor peso (según los parámetros del algoritmo) de C
+\item Si la arista conecta dos componentes diferentes, se la añade a A y se combinan estas componentes de B.
+\item Caso contrario, descartamos esta arista
+\end{enumerate}
+\end{enumerate}
+ 
+Primero ordenamos los ejes, usamos el sort de la Standard Library así que en el peor de los casos este paso nos costará $O(mlog(m))$ o lo que es lo mismo $O(mlog(n))$. Después tenemos que iterar las aristas, esta parte está fuertemente atada a la estructura de datos que se usa internamente para el bosque, nosotros usamos un Disjoint Set (Conjuntos Disjuntos) y lo implementamos con un par de heurísticas \textbf{Union by Rank} y \textbf{Path Compression}, con esto podemos probar que una secuencia de $k$ operaciones de la estructura corren en tiempo $O(k\alpha (n))$ donde $\alpha$ es la inversa de la función de Ackermann, por lo que la iteración de las aristas nos da una complejidad en peor caso de $O(m\alpha (n))$. Lamentablemente esto se ve mitigado por el ordenamiento de los ejes, así que el algoritmo de Kruskal, en nuestra implementación, tiene una complejidad temporal de $O(mlog(n))$ en peor caso. 
+ 
+En la resolución del problema corremos Kruskal dos veces, para el grafo original y para su complemento, como en el peor de los casos tenemos $n^2$ aristas, estas dos corridas tienen una complejidad de $O(n^2log(n))$. Por último tenemos que recolectar el peso de las aristas resultantes, que son $n-1$ porque es un árbol y esto lo podemos solucionar en tiempo lineal, osea que la complejidad $O(n^2log(n))$ se ajusta a lo pedido.
+
 
 \subsection{Experimentacion}
 

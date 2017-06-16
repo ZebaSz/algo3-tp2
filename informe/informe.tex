@@ -5,6 +5,12 @@
 \usepackage{aed2-symb,aed2-itef,aed2-tad,aed2-dis,caratula}
 \usepackage[pdfencoding=auto, colorlinks=true, linkcolor=blue]{hyperref}
 \usepackage[boxruled, longend]{algorithm2e}
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usetikzlibrary{babel}
+
+\tikzset{nodeList/.style={every node/.style={draw, circle}}}
+\tikzset{pathList/.style={every node/.style={midway, fill=white}}}
 
 \begin{document}
 
@@ -26,9 +32,16 @@
 
 \pagebreak
 
+
 \input{delivery}
+\pagebreak
+
 \input{subsidio}
+\pagebreak
+
 \input{reconfiguracion}
+\pagebreak
+
 \input{apendice}
 
 % compilar 2 veces para actualizar las referencias

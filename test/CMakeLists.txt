@@ -32,7 +32,9 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
     include_directories("${gtest_SOURCE_DIR}/include")
 endif()
 
-set(TEST_FILES SubsidyTest.cpp DisjointSetTest.cpp KruskalTest.cpp ShortestPathTest.cpp ReconfigurationTest.cpp DeliveryTest.cpp AbstractGraphTest.h)
+set(TEST_FILES SubsidyTest.cpp DisjointSetTest.cpp KruskalTest.cpp
+        ShortestPathTest.cpp ReconfigurationTest.cpp DeliveryTest.cpp AbstractGraphTest.h
+        ../data/grafGen.cpp)
 
 add_executable(correrTests ${TEST_FILES})
 target_link_libraries(correrTests algo3-tp2-base gtest_main gtest)

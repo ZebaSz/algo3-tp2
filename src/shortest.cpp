@@ -4,6 +4,7 @@
 #include <queue>
 #include "shortest.h"
 #include "Utils.h"
+#include "boost/heap/fibonacci_heap.hpp"
 
 /**
  * Node distance relaxation
@@ -107,62 +108,49 @@ bool bellmanFordWithAdjustment(int n, int c, int *distance, const edgeList &edge
  *
  */
 
-void dijkstra(int source, int n, int *distance, const edgeList &edges, bool digraph) {
+struct compareMin {
+    bool operator()(const adjacency& n1, const adjacency& n2) const {
+        return n1.weight > n2.weight;
+    }
+};
 
-    // Step 1: create adjacency matrix and boolean struct
-    bool* visiteNodes = new bool[n];
-    int** adjacencyMatrix = new int*[n];
+typedef boost::heap::fibonacci_heap<adjacency, boost::heap::compare<compareMin>> minQueue;
 
-    // Step 2: initialize values from both structures
-    for (int i = 0; i < n; i++){
-        visiteNodes[i] = false;
-        adjacencyMatrix[i] = new int[n];
-        for (int j = 0; j < n; j++){
-            adjacencyMatrix[i][j] = INF;
-        }
+typedef minQueue::handle_type queueNode;
+
+void dijkstra(int source, int n, int *distance, const edgeList &edges) {
+
+    std::list<adjacency>* adjacencyList = new std::list<adjacency>[n];
+    for(edgeList::const_iterator it = edges.begin(); it != edges.end(); ++it) {
+        adjacencyList[it->start].push_back({it->end, it->weight});
     }
 
-    // Step 3: initialize distances
-    for(int v = 0; v < n; v++) {
-        distance[v] = INF;
-    }
     distance[source] = 0;
 
-    // Step 4: initialize adjacency matrix values
-    if (digraph){
-        edgeList::const_iterator it;
-        for(it = edges.begin(); it != edges.end(); ++it) {
-            adjacencyMatrix[it->start][it->end] = it->weight;
-        }
-    } else {
-        edgeList::const_iterator it;
-        for(it = edges.begin(); it != edges.end(); ++it) {
-            adjacencyMatrix[it->start][it->end] = it->weight;
-            adjacencyMatrix[it->end][it->start] = it->weight;
-        }
-    }
+    minQueue queue;
+    queueNode* nodesOnQueue = new queueNode[n];
 
-    // Step 5: Loop until every node has been visited
-    int nextVisitedNode = source;
-    while (nextVisitedNode != INF) {
-        visiteNodes[nextVisitedNode] = true;
-        int myNode = nextVisitedNode;
-        nextVisitedNode = INF;
-        // The next node to visit is the one with the shortest distance
-        for (int v = 0; v < n; v++){
-            if (!visiteNodes[v]){
-                relax(distance, myNode, v, adjacencyMatrix[myNode][v]);
-                if (nextVisitedNode == INF) nextVisitedNode = v;
-                if (distance[nextVisitedNode] > distance[v]) nextVisitedNode = v;
+    for (int i = 0; i < n; i++){
+        if (i != source) {
+            distance[i] = INF;
+        }
+        nodesOnQueue[i] = queue.push({i, distance[i]});
+    }
+    
+    while (!queue.empty()) {
+        adjacency min = queue.top();
+        queue.pop();
+        for (std::list<adjacency>::iterator it = adjacencyList[min.node].begin(); it != adjacencyList[min.node].end(); ++it) {
+            if (distance[min.node] != INF) {
+                int dist = distance[min.node] + it->weight;
+                if (dist < distance[it->node]) {
+                    distance[it->node] = dist;
+                    queue.increase(nodesOnQueue[it->node], {it->node, dist});
+                }
             }
         }
     }
 
-
-    // Step 6: Delete dynamic variables
-    delete[] visiteNodes;
-    for (int i = 0; i < n; i++){
-        delete[] adjacencyMatrix[i];
-    }
-    delete[] adjacencyMatrix;
-}
+    delete[] adjacencyList;
+    delete[] nodesOnQueue;
+ }

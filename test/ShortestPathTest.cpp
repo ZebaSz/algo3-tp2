@@ -17,11 +17,7 @@ TEST_F(ShortestPathTest, dijkstra) {
 
     int distance[4];
 
-    dijkstra(3, 4, distance, edges, false);
-
-    ASSERT_EQ(distance[0], 7);
-
-    dijkstra(3, 4, distance, edges, true);
+    dijkstra(3, 4, distance, edges);
 
     ASSERT_EQ(distance[0], 23);
 }
@@ -49,7 +45,7 @@ TEST_F(ShortestPathTest, coincidence) {
     int* dijDist = new int[n];
     int* bellDist = new int[n];
     for (int i = 0; i < n; ++i) { //check every possible source
-        dijkstra(i, n, dijDist, edges, true);
+        dijkstra(i, n, dijDist, edges);
         bellmanFord(i, n, bellDist, edges);
         for (int j = 0; j < n; ++j) { //check every possible destiny
             ASSERT_EQ(dijDist[j], bellDist[j]);

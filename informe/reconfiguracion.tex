@@ -109,6 +109,20 @@ nodos (es decir, que el grafo solución fuera un árbol). Por lo tanto, \textbf{
 
 Una vez encontrada la solución, vamos a tener rutas que quedaron intactas y rutas que se construyeron. Al subconjunto de aristas de $C$ que contiene las rutas que deben construirse para lograr la solución óptima lo llamaremos $RC$, y al subconjunto de $D$ que contiene las rutas que hay que mantener lo llamaremos $RD$. Podemos notar que $D - RD$ es el conjunto de rutas que hay que destruir, y que $RD \cup RC$ nos da como resultado la representación de la provincia una vez terminado el plan, o sea $RD \cup RC = R$.
 
+Proponemos el siguiente algoritmo:
+
+\begin{enumerate}
+	\item Obtener los datos de entrada para crear $D$ y $C$
+
+	\item Con $D$ construimos $RD$
+
+	\item Conseguir el $RC$ óptimo dado $RD$
+
+	\item Calcular los costos de destrucción y construcción
+\end{enumerate}
+
+A medida que nos informan las rutas, vamos agregando las rutas en dos listas de ejes, dependiendo si es una existente o si es de construcción. Una vez creadas las listas, corremos Kruskal (en este caso prioriza los ejes caros)  sobre los ejes de destrucción, implementamos Kruskal con Disjoint Set, y para reusar el Disjoint Set en la parte de construcción, este recibe por referencia la estructura. Cuando finaliza el Kruskal recorremos los ejes que quedaron y sumamos sus costos, para luego restárselos al costo total de $D$ (ya que eso nos da el costo total de los ejes que destruimos). Después de obtener $RD$, corremos Kruskal de vuelta pero esta vez para buscar el árbol generador mínimo. Para esto le tenemos que pasar el Disjoint Set que nos había quedado del anterior Kruskal, y los ejes de las rutas que se pueden construir. Una vez más, esto nos devuelve los ejes que vamos a utilizar. Calculamos su costo, lo sumamos con el anterior y ya tenemos la respuesta final.
+
 El esquema de demostración constará de las siguientes afirmaciones, necesarias para elegir a $RD$ y a $RC$:
 
 \begin{enumerate}
@@ -121,11 +135,14 @@ El esquema de demostración constará de las siguientes afirmaciones, necesarias
 	\item Para encontrar al $RD$ óptimo, es necesario que cada $RD_i$ sea árbol generador máximo de $D_i$.
 \end{enumerate}
 
-Lo primero que podemos notar es que, si $RD$ no es un bosque, tiene ciclos. Y por ende, si tiene ciclos, no hay manera de que agregando aristas se obtenga un árbol. Pero esto es absurdo, porque vimos que $R$ tiene que ser un árbol. Por ende, $RD$ tiene que ser un bosque.
+A continuación, las demostraciones:
 
-Como $R$ tiene que ser árbol y $RD$ bosque, $RC$ tiene que tener ejes que unan las componentes conexas de $RD$, sin formar ciclos. Además, queremos que el costo de la suma de las aristas que se agreguen sea mínimo. El algoritmo de Kruskal nos va a resolver esto, ya que en el invariante mantiene un bosque y agrega golosamente aristas que conectan componentes hasta alcanzar un árbol. Nos vamos a aprovechar de esto y vamos aplicar Kruskal partiendo del bosque conformado por las aristas de $RD$. Como es bosque, no rompe el invariante y en cada paso conecta a una de las componentes de $RD$ con una arista perteneciente a $C$, agregando dicha arista a $RC$. %grafo
+\begin{enumerate}
+	\item Lo primero que podemos notar es que, si $RD$ no es un bosque, tiene ciclos. Y por ende, si tiene ciclos, no hay manera de que agregando aristas se obtenga un árbol. Pero esto es absurdo, porque vimos que $R$ tiene que ser un árbol. Por ende, $RD$ tiene que ser un bosque.
 
-Entonces, sabemos buscar un $RC$ óptimo dado un $RD$. Ahora, tenemos que buscar un $RD$ tal que los costos resultantes sean mínimos. Para esto se nos ocurrió que $RD$ tiene que contener las aristas de un “Bosque Generador Máximo de $D$”, lo cual definimos como un subgrafo de $D$ tal que para cada componente conexa $D_i \in D$, existe una componente conexa $BGM_i \in$ al BGM de $D$ tal que $BGM_i$ es árbol generador máximo de $D_i$.
+	\item Como $R$ tiene que ser árbol y $RD$ bosque, $RC$ tiene que tener ejes que unan las componentes conexas de $RD$, sin formar ciclos. Además, queremos que el costo de la suma de las aristas que se agreguen sea mínimo. El algoritmo de Kruskal nos va a resolver esto, ya que en el invariante mantiene un bosque y agrega golosamente aristas que conectan componentes hasta alcanzar un árbol. Nos vamos a aprovechar de esto y vamos aplicar Kruskal partiendo del bosque conformado por las aristas de $RD$. Como es bosque, no rompe el invariante y en cada paso conecta a una de las componentes de $RD$ con una arista perteneciente a $C$, agregando dicha arista a $RC$. %grafo
+
+	\item Entonces, sabemos buscar un $RC$ óptimo dado un $RD$. Ahora, tenemos que buscar un $RD$ tal que los costos resultantes sean mínimos. Para esto se nos ocurrió que $RD$ tiene que contener las aristas de un “Bosque Generador Máximo de $D$”, lo cual definimos como un subgrafo de $D$ tal que para cada componente conexa $D_i \in D$, existe una componente conexa $BGM_i \in$ al BGM de $D$ tal que $BGM_i$ es árbol generador máximo de $D_i$.
 
 Veamos por qué el BGM es el bosque óptimo que tenemos para asignar a $RD$. Tenemos a $D$ con componentes conexas $D_1 , D_2 , ... , D_k$, de la cual tomamos $D_i$ con i entre 0 y k. Al sacar un eje cualquiera de $D_i$, si este eje estaba en un ciclo la componente seguirá teniendo los mismos nodos, pero si no, estaríamos dividiendo $D_i$ en dos componentes conexas, llamemoslas $D_{i1}$ y $D_{i2}$, y veamos que esta división de componentes encarece la construcción de $R$ dado este $RD$. 
 
@@ -145,23 +162,10 @@ Cuando aplicamos el algoritmo, dado $RD^{\prime\prime}$, en algún momento se en
 Y como todos los valores son positivos, porque tanto construir como destruir rutas es costoso (nunca se gana dinero) podemos afirmar que
 costo$(RD^{\prime\prime})$ $\geq$ costo$(RD^{\prime})$.
 
-Una deducción que se obtiene de este razonamiento es que sacar mas de un eje empeora todavia más la solución, porque cada vez que le sacamos un eje a un bosque, la cantidad de componentes conexas aumenta en uno. Como dijimos, partir una componente conexa en dos empeora la solución. Podemos usar estas premisas para un razonamiento inductivo que justifica la necesidad de elegir un $RD$ tal que para toda componente conexa $D_i \in D$ exista una componente conexa $RD_i \in RD$ que es árbol generador de $D_i$. En otras palabras, si destruimos el único camino existente entre dos rutas, deberemos necesariamente construir uno nuevo que vuelva a unirlas, y por lo tanto podemos concluir no solo que destruir una ruta útil es perjudicial, sino que destruir una mayor cantidad es más perjudicial aún.
+Una deducción que se obtiene de este razonamiento es que sacar mas de un eje empeora todavia más la solución, porque cada vez que le sacamos un eje a un bosque, la cantidad de componentes conexas aumenta en uno. Como dijimos, partir una componente conexa en dos empeora la solución. Podemos usar estas premisas para un razonamiento inductivo que justifica la necesidad de elegir un $RD$ tal que para toda componente conexa $D_i \in D$ exista una componente conexa $RD_i \in RD$ que es árbol generador de $D_i$. En otras palabras, si destruimos el único camino existente entre dos rutas, deberemos necesariamente construir uno nuevo que vuelva a unirlas, y por lo tanto podemos concluir no solo que destruir una ruta útil es perjudicial, sino que destruir una mayor cantidad es más perjudicial aún.x
 
-Ahora nos queda ver que el bosque generador máximo es el óptimo. Definimos el costo de $BG$, bosque generador de $D$, como la suma de los pesos de los ejes pertenecientes a $D - BG$ y buscamos que $RD$ sea el bosque generador de costo mínimo. Si $RD$ fuera distinto del BGM de $D$, significaría que su costo es menor que el costo del BGM, lo cual es absurdo porque este es el bosque generador obtenido a partir de la destrucción de las rutas más baratas. Entonces $RD$ tiene que ser el BGM de $D$. Por ende, si usamos Kruskal de manera modificada, nos dará este mismo resultado.
-
-Resumiendo, los pasos a seguir son:
-
-\begin{enumerate}
-	\item Obtener los datos de entrada para crear $D$ y $C$
-
-	\item Con $D$ construimos $RD$ (BGM) 
-
-	\item Conseguir el $RC$ óptimo dado $RD$
-
-	\item Calcular los costos de destrucción y construcción
+	\item Ahora nos queda ver que el bosque generador máximo es el óptimo. Definimos el costo de $BG$, bosque generador de $D$, como la suma de los pesos de los ejes pertenecientes a $D - BG$ y buscamos que $RD$ sea el bosque generador de costo mínimo. Si $RD$ fuera distinto del BGM de $D$, significaría que su costo es menor que el costo del BGM, lo cual es absurdo porque este es el bosque generador obtenido a partir de la destrucción de las rutas más baratas. Entonces $RD$ tiene que ser el BGM de $D$. Por ende, si usamos Kruskal de manera modificada, nos dará este mismo resultado.
 \end{enumerate}
-
-A medida que nos informan las rutas, vamos agregando las rutas en dos listas de ejes, dependiendo si es una existente o si es de construcción. Una vez creadas las listas, corremos Kruskal (en este caso prioriza los ejes caros) de sobre los ejes de destrucción, implementamos Kruskal con Disjoint Set, y para reusar el Disjoint Set en la parte de construcción, este recibe por referencia la estructura. Cuando finaliza el Kruskal recorremos los ejes que quedaron y sumamos sus costos, para luego restárselos al costo total de $D$ (ya que eso nos da el costo total de los ejes que destruimos). Después de obtener $RD$, corremos Kruskal de vuelta pero esta vez para buscar el árbol generador mínimo. Para esto le tenemos que pasar el Disjoint Set que nos había quedado del anterior Kruskal, y los ejes de las rutas que se pueden construir. Una vez más, esto nos devuelve los ejes que vamos a utilizar. Calculamos su costo, lo sumamos con el anterior y ya tenemos la respuesta final.
 
 \subsection{Cota temporal}
 

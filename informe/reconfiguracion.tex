@@ -114,14 +114,14 @@ Proponemos el siguiente algoritmo:
 \begin{enumerate}
 	\item Obtener los datos de entrada para crear $D$ y $C$
 
-	\item Con $D$ construimos $RD$
+	\item Con $D$ construir $RD$
 
 	\item Conseguir el $RC$ óptimo dado $RD$
 
 	\item Calcular los costos de destrucción y construcción
 \end{enumerate}
 
-A medida que nos informan las rutas, vamos agregando las rutas en dos listas de ejes, dependiendo si es una existente o si es de construcción. Una vez creadas las listas, corremos Kruskal (en este caso prioriza los ejes caros)  sobre los ejes de destrucción, implementamos Kruskal con Disjoint Set, y para reusar el Disjoint Set en la parte de construcción, este recibe por referencia la estructura. Cuando finaliza el Kruskal recorremos los ejes que quedaron y sumamos sus costos, para luego restárselos al costo total de $D$ (ya que eso nos da el costo total de los ejes que destruimos). Después de obtener $RD$, corremos Kruskal de vuelta pero esta vez para buscar el árbol generador mínimo. Para esto le tenemos que pasar el Disjoint Set que nos había quedado del anterior Kruskal, y los ejes de las rutas que se pueden construir. Una vez más, esto nos devuelve los ejes que vamos a utilizar. Calculamos su costo, lo sumamos con el anterior y ya tenemos la respuesta final.
+A medida que nos informan las rutas, vamos agregandolas en dos listas de ejes, dependiendo si es una existente o si es de construcción. Una vez creadas las listas, corremos Kruskal (en este caso priorizando los ejes caros)  sobre los ejes de destrucción. Es importante aclarar que, para poder utilizar el algoritmo sobre nuestro problema, implementamos Kruskal con Disjoint Set, de forma que siempre nos devuelva un bosque. Cuando finaliza el Kruskal, recorremos los ejes que quedaron y sumamos sus costos, para luego restárselos al costo total de $D$ (ya que eso nos da el costo total de los ejes que destruimos). Después de obtener $RD$, corremos Kruskal de vuelta pero esta vez para buscar el árbol generador mínimo. Para esto, le tenemos que pasar el Disjoint Set que nos había quedado del anterior Kruskal (por referencia), y los ejes de las rutas que se pueden construir. Una vez más, esto nos devuelve los ejes que vamos a utilizar. Calculamos su costo, lo sumamos con el anterior y ya tenemos la respuesta final.
 
 El esquema de demostración constará de las siguientes afirmaciones, necesarias para elegir a $RD$ y a $RC$:
 
@@ -182,9 +182,9 @@ Para tener una cota de la complejidad temporal de nuestro algoritmo, debemos enf
 	\end{enumerate}
 \end{enumerate}
  
-Primero ordenamos los ejes, usamos el sort de la Standard Library así que en el peor de los casos este paso nos costará $O(mlog(m))$ o lo que es lo mismo $O(mlog(n))$. Después tenemos que iterar las aristas, esta parte está fuertemente atada a la estructura de datos que se usa internamente para el bosque, nosotros usamos un Disjoint Set (Conjuntos Disjuntos) y lo implementamos con un par de heurísticas \textbf{Union by Rank} y \textbf{Path Compression}, con esto podemos probar que una secuencia de $k$ operaciones de la estructura corren en tiempo $O(k\alpha (n))$ donde $\alpha$ es la inversa de la función de Ackermann, por lo que la iteración de las aristas nos da una complejidad en peor caso de $O(m\alpha (n))$. Lamentablemente esto se ve mitigado por el ordenamiento de los ejes, así que el algoritmo de Kruskal, en nuestra implementación, tiene una complejidad temporal de $O(mlog(n))$ en peor caso. 
+Primero ordenamos los ejes. Como usamos el sort de la Standard Library, en el peor de los casos este paso nos costará $O(mlog(m))$ o lo que es lo mismo $O(mlog(n))$. Después, tenemos que iterar las aristas. Esta parte está fuertemente atada a la estructura de datos que se usa internamente para el bosque, y como nosotros usamos un Disjoint Set (Conjuntos Disjuntos) y lo implementamos con un par de heurísticas \textbf{Union by Rank} y \textbf{Path Compression}, con esto podemos probar que una secuencia de $k$ operaciones de la estructura corren en tiempo $O(k\alpha (n))$ donde $\alpha$ es la inversa de la función de Ackermann, por lo que la iteración de las aristas nos da una complejidad en peor caso de $O(m\alpha (n))$. De cualquier manera, esto se ve mitigado por el ordenamiento de los ejes, así que el algoritmo de Kruskal, en nuestra implementación, tiene una complejidad temporal de $O(mlog(n))$ en peor caso. 
  
-En la resolución del problema corremos Kruskal dos veces, para el grafo original y para su complemento, como en el peor de los casos tenemos $n^2$ aristas, estas dos corridas tienen una complejidad de $O(n^2log(n))$. Por último tenemos que recolectar el peso de las aristas resultantes, que son $n-1$ porque es un árbol y esto lo podemos solucionar en tiempo lineal, osea que la complejidad $O(n^2log(n))$ se ajusta a lo pedido.
+En la resolución del problema corremos Kruskal dos veces: una para el grafo original y otra para su complemento, y como en el peor de los casos tenemos $n^2$ aristas, estas dos corridas tiene una complejidad de $O(n^2log(n))$. Por último, tenemos que recolectar el peso de las aristas resultantes, que son $n-1$ porque es un árbol y esto lo podemos solucionar en tiempo lineal, o sea que la complejidad $O(n^2log(n))$ se ajusta a lo pedido.
 
 
 \subsection{Experimentacion}

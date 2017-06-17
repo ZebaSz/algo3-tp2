@@ -1,5 +1,7 @@
 \section{Subsidiando el transporte}
 
+\newcommand{\tikzcircle}[1][red,fill=red]{\tikz[baseline=-0.5ex]\draw[#1,radius=2pt] (0,0) circle ;}
+
 \subsection{Descripción del problema}
 En este problema, observamos la provincia de Optilandia, cuyas ciudades estan conectadas por rutas de una sola dirección, donde no necesariamente se puede llegar de una ciudad a todas las demás. Sin embargo, sabemos que desde cualquier ciudad se puede llegar, al menos, a otra ciudad. Cada una de estas rutas tiene una cabina de peaje y, por ende, recorrer cada una de ellas tiene un costo. Sin embargo, por decisiones gubernamentales, cada uno de estos peajes se vio reducido por un costo fijo c (si antes la ruta A valía A1, y la ruta B valía B1, ahora valen A1 - c y B1 - c respectivamente), pudiendo generar que una ruta no solo no le cobre a sus usuarios, sino que acabe dándole dinero.
 
@@ -127,16 +129,74 @@ Entonces, como habíamos dicho anteriormente, la complejidad de nuestro problema
 
 \subsection{Experimentacion}
 
-La experimentación de este ejercicio representó un desafío, ya que en la generación de grafos resultó difícil garantizar condiciones que diesen resultados homogéneos debido a nuestra implementación. Esto requeriría crear grafos fuertemente conexos, de modo que ningún eje estuviese fuera de un ciclo. Sin embargo, sí pudimos observar fácilmente los casos de grafos completos.
+La experimentación de este ejercicio representó un desafío, ya que en la generación de grafos resultó difícil garantizar condiciones que diesen resultados homogéneos.
 
-\begin{center}
-	\includegraphics[scale=0.5]{imagenes/ej2-1.png}
-\end{center}
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.6]{imagenes/ej2-1.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.42\textwidth}
+	\begin{center}
+		Datos del gráfico
 
-En este gráfico se puede observar que, en grafos completos, el algorítmo tiene complejidad cúbica con respecto a la cantidad de ciudades. Esto se ajusta a la complejidad pedida, ya que $m = \frac{n \times (n-1)}{2} \approx n^2$, es decir, $O(n m) \subseteq O(n^3)$.
+		\begin{tabular}{ | l l |}
+			\hline
+			Rutas & m = 30 \\ \hline
+			Peso máximo & c = 30 \\ \hline
+			Curva aproximada & $f(x) = 6200 x - 5000$ \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
 
-\begin{center}
-	\includegraphics[scale=0.5]{imagenes/ej2-2.png}
-\end{center}
+En este gráfico se puede observar que el algoritmo performa de manera perfectamente lineal con respecto a las ciudades. Nuestro analisis dio un coeficiente de correlación lineal igual a 1, con muy bajo margen de error. Esto es esperable, ya que más allá de la distribución interna del grafo, el algoritmo de Bellman-Ford itera n + 1 veces para relajar las distancias, y los ejes adicionales que agregamos desde el nuevo nodo universal dependen de la cantidad de ciudades, no de las rutas entre ellas.
 
-Por otro lado, podemos ver que el máximo peaje tiene impacto logarítmico sobre el tiempo de ejecución, lo que condice con nuestras expectativas y con la cota de complejidad pedida.
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.6]{imagenes/ej2-2.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.42\textwidth}
+	\begin{center}
+		Datos del gráfico
+
+		\begin{tabular}{ | l l |}
+			\hline
+			Ciudades & n = 10 \\ \hline
+			Peso máximo & c = 30 \\ \hline
+			Curva aproximada & $f(x) = 1300 x + 15000$ \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
+
+A su vez, podemos que la cantidad de rutas afecta el algoritmo de manera similar. En este caso, nuestras mediciones mostraron más variación. Esto puede deberse a que, dependiendo de la distribución de las aristas en el grafo, puede que el algoritmo omita algunos pasos de relajación de distancias. Sin embargo, sí debe verificarlo en cada iteración, por lo cual la gran mayoría de las mediciones se mantivo consistente.
+
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.65]{imagenes/ej2-3.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.42\textwidth}
+	\begin{center}
+		Datos del gráfico
+
+		\begin{tabular}{ | l l |}
+			\hline
+			Ciudades & n = 10 \\ \hline
+			Rutas & m = 30 \\ \hline
+			\tikzcircle[fill=blue] & $f(x) = 10000 * log(x) + 15000$ \\
+			\tikzcircle[fill=green] & $f(x) = 10000 * [ log(x) ] + 15000$ \\
+			\tikzcircle & $f(x) = 10000 * \lceil log(x) \rceil + 15000$ \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
+
+A la hora de analizar el impacto del peso máximo, tuvimos que considerar el hecho que el logaritmo tiene valores decimales, pero nuestra implementación (que realiza una búsqueda binaria) solo puede operar con enteros. Por esto, además del gráfico de la función logarítimica, incluimos dos ajustes de los valores del logaritmo a enteros: por redondeo (expresado $[ log(x) ]$) y por parte entera alta o ``techo'' ($\lceil log(x) \rceil$).
+
+Observando estas curvas con redondeo, podemos ver que el máximo peaje tiene impacto logarítmico sobre el tiempo de ejecución, ajustandose entre ambos redondeos mencionados, lo que condice con nuestras expectativas y con la cota de complejidad pedida.

@@ -8,7 +8,7 @@
 #define REPETITIONS (unsigned int)100
 #define MAX_N (unsigned int)20
 #define MAX_M (unsigned int)30
-#define MAX_W (unsigned int)20
+#define MAX_W (unsigned int)50
 
 #define MAX_P (unsigned int)20
 #define MAX_K (unsigned int)20
@@ -56,18 +56,21 @@ void getDataSubsidy() {
     fprintf(data, "Ciudades,Rutas,PesoMaximo,Nanosegundos\n");
     for (unsigned int i = 2; i <= MAX_N; ++i) {
         printf("Running with %d cities for Subsidy problem\n", i);
-        for (unsigned int j = i; j <= std::min(MAX_M, (i*(i-1)) >> 1); ++j) {
+        for (unsigned int j = i; j <= std::min(MAX_M, (i*(i-1))); ++j) {
             printf("Running with %d routes for Subsidy problem\n", j);
             for (unsigned int k = 0; k <= MAX_W; ++k) {
                 printf("Running with %d max weight for Subsidy problem\n", k);
+
                 edgeList baseGraph;
-                genRandomSemiconnectedGraph(i, j, baseGraph, k);
-                convertToDigraph(baseGraph, k);
+                genKGraph(i, baseGraph, k, true);
+                edgeList subgraph;
+                getSubgraph(j, baseGraph, subgraph);
+
                 long best = -1;
                 for (unsigned int l = 0; l < REPETITIONS; ++l) {
                     auto begin = std::chrono::high_resolution_clock::now();
 
-                    binarySearchTax(i, j, baseGraph);
+                    binarySearchTax(i, j, subgraph);
 
                     auto end = std::chrono::high_resolution_clock::now();
                     if (best == -1 ||
@@ -79,6 +82,38 @@ void getDataSubsidy() {
             }
         }
     }
+    fclose(data);
+}
+
+void getDataSubsidyComplete() {
+    remove("subsidy-complete.csv");
+    FILE* data = fopen("subsidy-complete.csv", "a");
+
+    fprintf(data, "Ciudades,PesoMaximo,Nanosegundos\n");
+    for (unsigned int i = 2; i <= MAX_N; ++i) {
+        printf("Running with %d cities and complete graph for Subsidy problem\n", i);
+        for (unsigned int k = 0; k <= MAX_W; ++k) {
+            printf("Running with %d max weight for Subsidy problem\n", k);
+            edgeList baseGraph;
+            genKGraph(i, baseGraph, k, true);
+            long best = -1;
+
+            int j = i * i-1;
+            for (unsigned int l = 0; l < REPETITIONS; ++l) {
+                auto begin = std::chrono::high_resolution_clock::now();
+
+                binarySearchTax(i, j, baseGraph);
+
+                auto end = std::chrono::high_resolution_clock::now();
+                if (best == -1 ||
+                    best > std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count()) {
+                    best = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
+                }
+            }
+            fprintf(data, "%d,%d,%ld\n", i, k, best);
+        }
+    }
+
     fclose(data);
 }
 
@@ -117,8 +152,9 @@ void getDataReconfiguration() {
 }
 
 int main() {
-    getDataDelivery();
+//    getDataDelivery();
     getDataSubsidy();
-    getDataReconfiguration();
+//    getDataSubsidyComplete();
+//    getDataReconfiguration();
     return 0;
 }

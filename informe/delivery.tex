@@ -273,27 +273,96 @@ De cara a la experimentación, nuestra expectativa es que la performance del alg
 
 La metodología de prueba y medición de tiempo se encuentra detallada en los apéndices. Los siguientes gráficos corresponden a cada una de las variables aisladas, manteniendo todas las otras fijas en un mismo numero en tanto esto es posible.
 
-\begin{center}
-	\includegraphics[scale=0.5]{imagenes/ej1-1.png}
-\end{center}
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.65]{imagenes/ej1-1.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.42\textwidth}
+	\begin{center}
+		Datos del gráfico
+
+		\begin{tabular}{ | l l |}
+			\hline
+			Rutas totales & m = 30 \\
+			- Premium disponibles & p = 3 \\
+			- Premium utilizadas & k = 2 \\ \hline
+			Curva aproximada & $f(x) = 70 x^2 + 12000$ \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
 
 Como se puede apreciar en este gráfico, el tiempo de ejecución depende fuertemente la cantidad de ciudades. Esto no es una sorpresa, ya que como hemos mencionado nuestra cota de complejidad es $O(n^2k^2)$.
 
-\begin{center}
-	\includegraphics[scale=0.5]{imagenes/ej1-2.png}
-\end{center}
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.65]{imagenes/ej1-2.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.42\textwidth}
+	\begin{center}
+		Datos del gráfico
+
+		\begin{tabular}{ | l l |}
+			\hline
+			Ciudades totales & n = 10 \\ \hline
+			Rutas Premium & \\
+			- disponibles & p = 3 \\
+			- utilizadas & k = 2 \\ \hline
+			Curva aproximada & $f(x) = 320 x + 9500$ \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
 
 En este gráfico, podemos notar que si bien la cantidad de rutas no define la complejidad del algoritmo (hay otros aspectos que definen la complejidad), en nuestra implementación tienen un impacto lineal. Esto se condice con el costo $O(mk)$ previamente mencionado.
 
-\begin{center}
-	\includegraphics[scale=0.5]{imagenes/ej1-3.png}
-\end{center}
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.65]{imagenes/ej1-3.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.42\textwidth}
+	\begin{center}
+		Datos del gráfico
+
+		\begin{tabular}{ | l l |}
+			\hline
+			Ciudades totales & n = 10 \\ \hline
+			Rutas & \\
+			- totales & m = 20 \\
+			- premium utilizadas & k = 1 \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
 
 Como esperábamos, la cantidad de rutas premium totales no influye en la complejidad si no modificamos la cantidad total de rutas o los niveles del supergrafo.
 
-\begin{center}
-	\includegraphics[scale=0.5]{imagenes/ej1-4.png}
-\end{center}
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.65]{imagenes/ej1-4.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.42\textwidth}
+	\begin{center}
+		Datos del gráfico
+
+		\begin{tabular}{ | l l |}
+			\hline
+			Ciudades totales & n = 10 \\ \hline
+			Rutas totales & m = 30 \\ \hline
+			Curva aproximada & $f(x) = 800 x^2 +$ \\
+			 & $2000 x + 10000$ \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
 
 Por otro lado, al aumentar la cantidad máxima de rutas premium utilizables, el impacto es nuevamente cuadrático. También se puede ver que la correlación entre tiempo de ejecución y k es más fuerte, ya que los 3 costos mencionados dependen de k.
 

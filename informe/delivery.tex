@@ -245,7 +245,7 @@ Este algoritmo realiza las mismas acciones que $agregarEjeComun$, pero reasigna 
 	\textbf{Dijkstra}
 \end{center}
 
-Implementamos el algoritmo de Dijkstra usando una cola de prioridad y listas de adyacencias. Internamente la cola de prioridad la representamos con Fibonacci Heap(de la biblioteca boost), este nos aporta inserción y decrementar la prioridad a un elemento en $O(1)$ en peor caso, y extraer el mínimo en $O(log(n))$ amortizado y $O(n)$ en peor caso (con n la cantidad de elementos que hay en el heap). La listas de adyacencias las implementamos con un array de listas de la STD, por lo que la complejidad del algoritmo de Dijkstra es de $O(m + n log(n))$ con $m$ la cantidad de aristas y $n$ la cantidad de nodos.\bigskip
+Implementamos el algoritmo de Dijkstra usando una cola de prioridad y listas de adyacencias. Internamente la cola de prioridad la representamos con Fibonacci Heap(de la biblioteca boost), este nos aporta inserción y disminución de la prioridad de un elemento en $O(1)$ en peor caso, y extracción del mínimo en $O(log(n))$ amortizado y $O(n)$ en peor caso (con n la cantidad de elementos que hay en el heap). La listas de adyacencias las implementamos con un array de listas de la STD, por lo que la complejidad del algoritmo de Dijkstra es de $O(m + n log(n))$ con $m$ la cantidad de aristas y $n$ la cantidad de nodos.\bigskip
 
 Ahora, queda ver como nos afectan estas complejidades al algoritmo de deliveryOptimo. En este algoritmo, usamos dos ciclos: uno para los ejes comunes, y uno para los ejes premium. Como sabemos que la cantidad total de ejes es $m$, y que el costo de agregarEjePremium y de agregarEjeComun es $O(k)$, al aplicarle uno de estos dos algoritmos a todos los ejes tenemos una complejidad de $O(mk)$.
 

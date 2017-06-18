@@ -1,0 +1,52 @@
+\renewcommand\labelitemii{$\circ$}
+\section{Informe de cambios}
+	\subsection*{Cambios generales}
+
+	\begin{itemize}
+		\item Se agregaron gráficos representando los ejemplos provistos para cada problema
+		
+		\item Se realizaron correcciones ortográficas y de redacción, para facilitar la lectura y el entendimiento
+
+		\item Los gráficos de complejidad fueron rehechos para explicitar más información, en particular:
+
+		\begin{itemize}
+			\item Coeficiente de Correlación de Pearson
+
+			\item Funciones de las curva graficadas
+
+			\item Constantes utilizadas al analizar una sola variables
+		\end{itemize}
+
+		\item Se volvieron a tomar algunas mediciones que tenían ruido excesivo
+	\end{itemize}
+
+	\subsection*{Ejercicio I: Delivery óptimo}
+
+	\begin{itemize}
+		\item Se realizó un cambio en el algoritmo de Dijkstra, para mejorar su complejidad. En lugar de utilizar una matriz de adyacencia, pasamos a usar una cola de prioridad implementada con Fibonacci Heap y listas de adyacencia, de forma que la complejidad de este algoritmo sea la más óptima posible.
+		
+	\end{itemize}
+
+	\subsection*{Ejercicio II: Subsidiando el transporte}
+
+		Este algoritmo tuvo que ser refactorizado, ya que contaba con errores y su demostración era difícil e insuficiente. El mismo fue modificado de la siguiente forma:
+		
+		\begin{itemize}
+			\item Al principio se agrega un nodo universal al grafo; el mismo es utilizado como origen siempre al correr Bellman-Ford
+
+			\item Ya no se verifica si el grafo es conexo o cuáles son sus componentes conexas; el nodo universal es agregado siempre
+
+			\item En consecuencia de lo anterior, ya no se utiliza DisjointSet para tomar representantes de las componentes conexas existentes
+		\end{itemize}
+
+		Esto nos permite respetar la cota de complejidad, simplificar el algoritmo y su demostración de correctitud, y considerar casos particulares que anteriormente fallaban.
+
+		Debido a estos cambios, las mediciones se tomaron nuevamente y todas las demostraciones y los análisis fueron reescritos.
+
+	\subsection*{Ejercicio III: Reconfiguración de rutas}
+
+	\begin{itemize}
+
+		\item En la experimentación, adicionalmente, se analizó la complejidad en base a la cantidad de aristas del grafo; esto no utiliza mediciones distintas, los valores del eje X fueron transformados teniendo en cuenta que $m = \frac{n * (n - 1)}{2}$, y se utiliza una curva acorde
+
+	\end{itemize}

@@ -191,10 +191,64 @@ En la resolución del problema corremos Kruskal dos veces: una para el grafo ori
 
 Al experimentar con este problema, nos esperabamos encontrar que el problema solo estuviese definido por la cantidad de ciudades, ya que la cantidad de rutas dependía de la misma (si unimos las rutas existentes con las potenciales, obtenemos un grafo completo). Supusimos que la proporción de rutas existentes y a construir no causaría ninguna diferencia de complejidad, ya que el algoritmo requiere que se recorran todas y la suma siempre da igual para un n dado.
 
-\begin{center}
-	\includegraphics[scale=0.5]{imagenes/ej3-1.png}
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.60]{imagenes/ej3-1.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.44\textwidth}
+	\begin{center}
+		Datos del gráfico
 
-	\includegraphics[scale=0.5]{imagenes/ej3-2.png}
-\end{center}
+		\begin{tabular}{ | l l |}
+			\hline
+			Rutas existentes & $| D | = 10$ \\ \hline
+			Curva aproximada & $f(x) = 27 x^2 log(x) + 1500$ \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
 
-Efectivamente, la experimentación confirmó que el algorítmo no se ve afectado por la proporción entre las rutas ya existentes y aquellas a construir. Por otro lado, la cantidad de ciudades tiene un impacto aproximadamente cuadrático. Esto es de esperarse, ya que la complejidad efectiva es $O(n^2log(n))$, pero el aspecto cuadrático es más visible que el logarítmo.
+Efectivamente, la cantidad de ciudades tiene un impacto de aproximadamente $O(n^2log(n))$. Podemos analizar este mismo aspecto desde el lado de las rutas, usando las mismas mediciones y transformando el eje X:
+
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.60]{imagenes/ej3-1-bis.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.44\textwidth}
+	\begin{center}
+		Datos del gráfico
+
+		\begin{tabular}{ | l l |}
+			\hline
+			Rutas existentes & $| D | = 10$ \\ \hline
+			Curva aproximada & $f(x) = 32 * n * log(n) + 1500$ \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
+
+La complejidad, vista de esta forma, sería $O(m log(n))$. La curva graficada corresponde a $O(m log(m))$, que por propiedades del logaritmo ya mencionadas es equivalente a nivel asintótico.
+
+\noindent
+\begin{minipage}{0.55\textwidth}
+	\hfill
+	\includegraphics[scale=0.60]{imagenes/ej3-2.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.44\textwidth}
+	\begin{center}
+		Datos del gráfico
+
+		\begin{tabular}{ | l l |}
+			\hline
+			Ciudades & n = 10 \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{minipage}
+
+Por otro lado, podemos confirmar que el algorítmo no se ve afectado por la proporción entre las rutas ya existentes y aquellas a construir.

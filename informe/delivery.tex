@@ -245,11 +245,11 @@ Este algoritmo realiza las mismas acciones que $agregarEjeComun$, pero reasigna 
 	\textbf{Dijkstra}
 \end{center}
 
-El algoritmo de Dijkstra. Al usar la implementación y las estructuras que vimos en clase, obtenemos un costo de $O(n^2)$, donde n es la cantidad de nodos del grafo que recibimos en la entrada.\bigskip
+Implementamos el algoritmo de Dijkstra usando una cola de prioridad y listas de adyacencias. Internamente la cola de prioridad la representamos con Fibonacci Heap(de la biblioteca boost), este nos aporta inserción y decrementar la prioridad a un elemento en $O(1)$ en peor caso, y extraer el mínimo en $O(log(n))$ amortizado y $O(n)$ en peor caso (con n la cantidad de elementos que hay en el heap). La listas de adyacencias las implementamos con un array de listas de la STD, por lo que la complejidad del algoritmo de Dijkstra es de $O(m + n log(n))$ con $m$ la cantidad de aristas y $n$ la cantidad de nodos.\bigskip
 
 Ahora, queda ver como nos afectan estas complejidades al algoritmo de deliveryOptimo. En este algoritmo, usamos dos ciclos: uno para los ejes comunes, y uno para los ejes premium. Como sabemos que la cantidad total de ejes es $m$, y que el costo de agregarEjePremium y de agregarEjeComun es $O(k)$, al aplicarle uno de estos dos algoritmos a todos los ejes tenemos una complejidad de $O(mk)$.
 
-Luego, generamos el vector de distancias aplicandole Dijkstra al grafo con $k+1$ niveles que generamos. Sin embargo, como nuestro grafo tiene $k+1$ repeticiones del grafo inicial, acaba teniendo $k$ veces $n$ nodos; es decir, $nk$ nodos en total. Por lo tanto, al aplicarle Dijkstra, como la complejidad depende de la cantidad de nodos en el grafo, tendrá un costo de $O((n(k+1))^2)$, que se puede acotar por $O((nk)^2)$
+Luego, generamos el vector de distancias aplicandole Dijkstra al grafo con $k+1$ niveles que generamos. Sin embargo, como nuestro grafo tiene $k+1$ repeticiones del grafo inicial, acaba teniendo $k$ veces $n$ nodos; es decir, $nk$ nodos en total y esto mismo nos va a pasar con las aristas, donde acaba teniendo $2mk$ ejes en total (el 2 proviene de que al grafo original lo representamos con un dígrafo). Por lo tanto, al aplicarle Dijkstra, tendrá un costo de $O(mk + n * log(n))$.
 
 Finalmente, recorremos todos los niveles para buscar el camino mínimo que va de origen a destino y utiliza entre 0 y k rutas premium. Esto implica un último ciclo, donde se recorren las $k$ posibles soluciones, lo que nos da un costo de $O(k)$.
 
@@ -258,14 +258,12 @@ En resumen, tenemos tres costos significativos en nuestro algoritmo:
 \begin{itemize}
 	\item $O(mk)$
 
-	\item $O((nk)^2)$
+	\item $O(mk + n * log(n))$
 
 	\item $O(k)$
 \end{itemize}
 
-Es trivial notar que $O(k)$ $\subseteq$ $O(mk)$, por lo que $O(k)$ + $O(mk)$ $\subseteq$ $O(k + mk)$ $\subseteq$ $O(m(k+1)$ $\subseteq$ $O(mk)$. Por otra parte, por propiedades de arbol, sabemos que m $\leq$ $n^2$ para cualquier grafo; por lo tanto, podemos acotar $m$ por $n^2$. Entonces, $O(m)$ $\subseteq$ $O(n^2)$ $\rightarrow$ $O(mk)$ $\subseteq$ $O(kn^2)$ $\subseteq$ $O((nk)^2)$. Por lo tanto, $O(mk + (nk)^2)$ $\subseteq$ $O((nk)^2)$.
-
-Por lo visto en el parrafo anterior, tenemos: $O(mk + k + (nk)^2)$ $\subseteq$ $O((nk)^2)$. Por lo tanto, nuestro algoritmo tiene complejidad $O((nk)^2)$ que es igual a $O(n^2k^2)$.
+Por lo que el algoritmo nos termina quedando $O(mk + mk + n * log(n) + k)$ que a su vez es $O((2m+1)k + n * log(n))$ por lo que el algoritmo tiene una complejidad de $O(mk + n * log(n))$. Como sabemos la cantidad de aristas está acotada por la cantidad de nodos al cuadrado, osea $k^2n^2$ por lo que la complejidad se ajusta a lo pedido $O(k^2n^2)$.
 
 \subsection{Experimentacion}
 

@@ -39,7 +39,7 @@ int optimumDelivery(int origin, int destination, int n, int k,
         addPremiumEdge(*it, n, k, superGraph);
     }
     
-    dijkstra(origin, premiumGraphNodes, distance, superGraph, true);
+    dijkstra(origin, premiumGraphNodes, distance, superGraph);
     int answer = INF;
     for (int i = 0; i <= k; i++) {
         Utils::log(DEBUG, "Resultado posible %d", distance[destination + i * n]);

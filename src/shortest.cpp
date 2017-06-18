@@ -125,7 +125,7 @@ void dijkstra(int source, int n, int *distance, const edgeList &edges) {
     //Create adjacency list
     std::list<adjacency>* adjacencyList = new std::list<adjacency>[n];
     for(edgeList::const_iterator it = edges.begin(); it != edges.end(); ++it) {
-        adjacencyList[it->start].push_back({it->end, it->weight});
+        adjacencyList[it->start].push_back({(int) it->end, it->weight});
     }
 
     distance[source] = 0;

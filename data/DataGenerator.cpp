@@ -6,9 +6,9 @@
 #include "../src/reconfiguration.h"
 
 #define REPETITIONS (unsigned int)100
-#define MAX_N (unsigned int)20
+#define MAX_N (unsigned int)30
 #define MAX_M (unsigned int)30
-#define MAX_W (unsigned int)50
+#define MAX_W (unsigned int)20
 
 #define MAX_P (unsigned int)20
 #define MAX_K (unsigned int)20
@@ -26,10 +26,10 @@ void getDataDelivery() {
                 printf("Running with %d premium routes for Delivery problem\n", k);
                 edgeList baseGraph;
                 genConex(i, j, baseGraph, MAX_W);
+                edgeList edges(baseGraph.begin(), baseGraph.end());
+                edgeList premiumEdges;
+                getSubgraph(k, edges, premiumEdges);
                 for (unsigned int l = 0; l <= std::min(k, MAX_K); ++l) {
-                    edgeList edges(baseGraph.begin(), baseGraph.end());
-                    edgeList premiumEdges;
-                    getSubgraph(l, edges, premiumEdges);
                     long best = -1;
                     for (unsigned int m = 0; m < REPETITIONS; ++m) {
                         auto begin = std::chrono::high_resolution_clock::now();
@@ -152,8 +152,8 @@ void getDataReconfiguration() {
 }
 
 int main() {
-//    getDataDelivery();
-    getDataSubsidy();
+    getDataDelivery();
+//    getDataSubsidy();
 //    getDataSubsidyComplete();
 //    getDataReconfiguration();
     return 0;

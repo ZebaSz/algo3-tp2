@@ -1,5 +1,5 @@
 \section{Apéndices}
-	\subsection{Apéndice I: generación de datos}
+	\subsection{Apéndice I: generación y análisis de datos}
 	Para poder analizar las complejidades de los algoritmos propuestos, se utilizaron las siguientes herramientas para generar mediciones y graficar datos:
 
 	\begin{itemize}
@@ -29,6 +29,8 @@
 		Se utilizaron los DataFrames de Pandas para el manejo de datos (guardados en \texttt{.csv}), y las funciones de regresión de Seaborn para el graficado, en conjunto con matplotlib.
 
 	\end{itemize}
+
+	Los gráficos incluyen el coeficiente de correlación (o "r") de Pearson, al igual que un p-valor para la hipotesis nula que los valores pueden haber sido generados sin correlación real. Esto quiere decir, un R cercano a 1 con un p-valor mínimo indica que hay una fuerte correlación positiva entre los valores graficados; un p-valor elevado, por otro lado, invalida una posible correlación positiva o negativa.
 
 	\subsection{Apéndice II: herramientas de compilación y testing}
 	Durante el desarrollo se utilizaron las siguientes herramientas:

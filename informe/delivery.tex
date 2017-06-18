@@ -274,57 +274,58 @@ La metodología de prueba y medición de tiempo se encuentra detallada en los ap
 \noindent
 \begin{minipage}{0.55\textwidth}
 	\hfill
-	\includegraphics[scale=0.65]{imagenes/ej1-1.png}
+	\includegraphics[scale=0.6]{imagenes/ej1-1-fib.png}
 \end{minipage}
 \hfill
-\begin{minipage}{0.42\textwidth}
+\begin{minipage}{0.44\textwidth}
 	\begin{center}
 		Datos del gráfico
 
 		\begin{tabular}{ | l l |}
 			\hline
 			Rutas totales & m = 30 \\
-			- Premium disponibles & p = 3 \\
+			- Premium disponibles & p = 4 \\
 			- Premium utilizadas & k = 2 \\ \hline
-			Curva aproximada & $f(x) = 70 x^2 + 12000$ \\
+			Curva aproximada & $f(x) = 1900 x * log(x) $ \\
+			& $+ 50000$ \\
 			\hline
 		\end{tabular}
 	\end{center}
 \end{minipage}
 
-Como se puede apreciar en este gráfico, el tiempo de ejecución depende fuertemente la cantidad de ciudades. Esto no es una sorpresa, ya que como hemos mencionado nuestra cota de complejidad es $O(n^2k^2)$.
+Como se puede apreciar en este gráfico, el tiempo de ejecución depende fuertemente la cantidad de ciudades. Esta parte del tiempo de ejecución corresponde al algoritmo de Dijkstra, cuya complejidad bajo nuestra implementación es $O(mk + n * log(n))$, ya que el resto del algoritmo no depende de n. En este análisis, $m$ y $k$ son constantes, lo que nos deja una curva que responde a la complejidad de $O(n * log(n))$.
 
 \noindent
 \begin{minipage}{0.55\textwidth}
 	\hfill
-	\includegraphics[scale=0.65]{imagenes/ej1-2.png}
+	\includegraphics[scale=0.6]{imagenes/ej1-2-fib.png}
 \end{minipage}
 \hfill
-\begin{minipage}{0.42\textwidth}
+\begin{minipage}{0.44\textwidth}
 	\begin{center}
 		Datos del gráfico
 
 		\begin{tabular}{ | l l |}
 			\hline
-			Ciudades totales & n = 10 \\ \hline
+			Ciudades totales & n = 8 \\ \hline
 			Rutas Premium & \\
-			- disponibles & p = 3 \\
+			- disponibles & p = 4 \\
 			- utilizadas & k = 2 \\ \hline
-			Curva aproximada & $f(x) = 320 x + 9500$ \\
+			Curva aproximada & $f(x) = 1300 x + 40000$ \\
 			\hline
 		\end{tabular}
 	\end{center}
 \end{minipage}
 
-En este gráfico, podemos notar que si bien la cantidad de rutas no define la complejidad del algoritmo (hay otros aspectos que definen la complejidad), en nuestra implementación tienen un impacto lineal. Esto se condice con el costo $O(mk)$ previamente mencionado.
+En este gráfico podemos ver el otro lado de la complejidad en Dijkstra, al igual que el impacto de la generación del supergrafo. Esto se condice con el costo $O(mk)$ previamente mencionado para ambos proceso.
 
 \noindent
 \begin{minipage}{0.55\textwidth}
 	\hfill
-	\includegraphics[scale=0.65]{imagenes/ej1-3.png}
+	\includegraphics[scale=0.6]{imagenes/ej1-3-fib.png}
 \end{minipage}
 \hfill
-\begin{minipage}{0.42\textwidth}
+\begin{minipage}{0.44\textwidth}
 	\begin{center}
 		Datos del gráfico
 
@@ -332,22 +333,22 @@ En este gráfico, podemos notar que si bien la cantidad de rutas no define la co
 			\hline
 			Ciudades totales & n = 10 \\ \hline
 			Rutas & \\
-			- totales & m = 20 \\
-			- premium utilizadas & k = 1 \\
+			- totales & m = 30 \\
+			- premium utilizadas & k = 5 \\
 			\hline
 		\end{tabular}
 	\end{center}
 \end{minipage}
 
-Como esperábamos, la cantidad de rutas premium totales no influye en la complejidad si no modificamos la cantidad total de rutas o los niveles del supergrafo.
+Como esperábamos, la cantidad de rutas premium totales no parece influir en la complejidad si no modificamos la cantidad total de rutas o los niveles del supergrafo. En particular, al analizar con el coeficiente de correlacion de Pearson, el valor es muy próximo a cero, lo cual indica que los valores son independientes.
 
 \noindent
 \begin{minipage}{0.55\textwidth}
 	\hfill
-	\includegraphics[scale=0.65]{imagenes/ej1-4.png}
+	\includegraphics[scale=0.6]{imagenes/ej1-4-fib.png}
 \end{minipage}
 \hfill
-\begin{minipage}{0.42\textwidth}
+\begin{minipage}{0.44\textwidth}
 	\begin{center}
 		Datos del gráfico
 
@@ -355,13 +356,12 @@ Como esperábamos, la cantidad de rutas premium totales no influye en la complej
 			\hline
 			Ciudades totales & n = 10 \\ \hline
 			Rutas totales & m = 30 \\ \hline
-			Curva aproximada & $f(x) = 800 x^2 +$ \\
-			 & $2000 x + 10000$ \\
+			Curva aproximada & $f(x) = 37000 x + 10000$ \\
 			\hline
 		\end{tabular}
 	\end{center}
 \end{minipage}
 
-Por otro lado, al aumentar la cantidad máxima de rutas premium utilizables, el impacto es nuevamente cuadrático. También se puede ver que la correlación entre tiempo de ejecución y k es más fuerte, ya que los 3 costos mencionados dependen de k.
+Por otro lado, al aumentar la cantidad máxima de rutas premium utilizables, el impacto es nuevamente lineal. También se puede ver que la correlación lineal entre tiempo de ejecución y k es perfecta, con un coeficiente igual a 1 y un p-valor ínfimo indicando que la correlación debe existir. Ya que los 3 costos mencionados dependen de k, esto era esperado.
 
-A su vez, en este gráfico no se limitó el total de rutas premium existentes, y se puede ver nuevamente que dicho valor no influye en la complejidad.
+A su vez, en este gráfico no se limitó el total de rutas premium existentes, y se puede ver nuevamente que dicho valor no influye en la complejidad, dada la baja dispersión de los puntos.

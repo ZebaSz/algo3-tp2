@@ -17,6 +17,6 @@ target_link_libraries (problema2 algo3-tp2-base)
 add_executable(problema3 src/problema3.cpp)
 target_link_libraries (problema3 algo3-tp2-base)
 
-add_subdirectory(test)
+#add_subdirectory(test)
 
-add_subdirectory(data)
+#add_subdirectory(data)
